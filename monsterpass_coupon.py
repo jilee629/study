@@ -19,8 +19,8 @@ driver = webdriver.Chrome(service=service, options=options)
 
 # login
 driver.get('https://partner.monpass.im/')
-driver.find_element(By.NAME, 'id').send_keys('jmms4778')
-driver.find_element(By.NAME, 'pw').send_keys('4778ms')
+driver.find_element(By.NAME, 'id').send_keys('')
+driver.find_element(By.NAME, 'pw').send_keys('')
 driver.find_element(By.CSS_SELECTOR, '.BU2.border.sc-bdVaJa.djlRTQ').click()
 time.sleep(1)
 
