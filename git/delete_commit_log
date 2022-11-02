@@ -12,6 +12,5 @@ $ git reset --hard 9e0b40864a8b79fa93a1423cb28237deca3d0c3a
 HEAD is now at 9e0b408 Update README.md
 
 
-
 3. force 옵션으로 github repo에 저장하기
 $ git push -f origin master
