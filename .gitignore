@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+<<<<<<< HEAD
+=======
+
+# excel
+.xlsx
+>>>>>>> b28b9ea0bfa449eccafc8fd2921f32dbdb1dee3b
