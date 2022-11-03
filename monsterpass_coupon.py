@@ -1,4 +1,3 @@
-from curses import KEY_END
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -15,12 +14,15 @@ options.add_argument("--start-maximized")
 
 service = Service(ChromeDriverManager().install())
 
+id = input('Your ID: ')
+password = input('Password: ')
+
 driver = webdriver.Chrome(service=service, options=options)
 
 # login
 driver.get('https://partner.monpass.im/')
-driver.find_element(By.NAME, 'id').send_keys('jmms4778')
-driver.find_element(By.NAME, 'pw').send_keys('4778ms')
+driver.find_element(By.NAME, 'id').send_keys(id)
+driver.find_element(By.NAME, 'pw').send_keys(password)
 driver.find_element(By.CSS_SELECTOR, '.BU2.border.sc-bdVaJa.djlRTQ').click()
 time.sleep(1)
 
