@@ -14,12 +14,12 @@ options.add_argument("--start-maximized")
 
 service = Service(ChromeDriverManager().install())
 
-id = input('Your ID: ')
-password = input('Password: ')
-
 driver = webdriver.Chrome(service=service, options=options)
 
 # login
+id = input('Your ID: ')
+password = input('Password: ')
+
 driver.get('https://partner.monpass.im/')
 driver.find_element(By.NAME, 'id').send_keys(id)
 driver.find_element(By.NAME, 'pw').send_keys(password)
@@ -27,8 +27,7 @@ driver.find_element(By.CSS_SELECTOR, '.BU2.border.sc-bdVaJa.djlRTQ').click()
 time.sleep(1)
 
 driver.get('https://partner.monpass.im/member')
+time.sleep(3)
 
 element = driver.find_element(By.CSS_SELECTOR, '.sc-jzJRlG.ipeLkB')
 element.send_keys(Keys.END)
-# action = ActionChains(driver)
-# action.move_to_element(element).perform()
