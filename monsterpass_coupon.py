@@ -30,5 +30,3 @@ driver.get('https://partner.monpass.im/member')
 
 element = driver.find_element(By.CSS_SELECTOR, '.sc-jzJRlG.ipeLkB')
 element.send_keys(Keys.END)
-# action = ActionChains(driver)
-# action.move_to_element(element).perform()
