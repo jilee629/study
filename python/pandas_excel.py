@@ -10,6 +10,4 @@ columns = ['Year', 'GDP rate', 'GDP']
 index = ['1', '2', '3']
 df = pd.DataFrame(data, columns=columns, index=index)
 
-# today=date.today()
-# print(today)
 df.to_excel(f'{date.today()}.xlsx', engine='openpyxl')
