@@ -18,13 +18,11 @@ driver.implicitly_wait(5)
 # login
 
 # ID, Password 입력받기
-# id = input('Your ID: ')
-# password = input('Password: ')
+id = input('Your ID: ')
+password = input('Password: ')
 
 # main page
 driver.get('https://partner.monpass.im/')
-# driver.find_element(By.NAME, 'id').send_keys(id)
-# driver.find_element(By.NAME, 'pw').send_keys(passwd)
 driver.find_element(By.CSS_SELECTOR, '.ui-input-text input[name="id"]').send_keys(id)
 driver.find_element(By.CSS_SELECTOR, '.ui-input-text input[name="pw"]').send_keys(passwd)
 driver.find_element(By.CSS_SELECTOR, '.BU2.border.sc-bdVaJa.djlRTQ').click()
