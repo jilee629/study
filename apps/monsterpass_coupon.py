@@ -5,6 +5,11 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import time
+import pandas as pd
+
+# ID, Password 입력받기
+id = input('Your ID: ')
+passwd = input('Password: ')
 
 options = Options()
 options.add_experimental_option('detach', True)
@@ -16,11 +21,6 @@ driver = webdriver.Chrome(service=service, options=options)
 driver.implicitly_wait(5)
 
 # login
-
-# ID, Password 입력받기
-id = input('Your ID: ')
-password = input('Password: ')
-
 # main page
 driver.get('https://partner.monpass.im/')
 driver.find_element(By.CSS_SELECTOR, '.ui-input-text input[name="id"]').send_keys(id)
@@ -47,30 +47,44 @@ members = soup.select('.ui-repeat.sc-cSHVUG.keecsQ > a > p > strong')
 
 # 전화번호 추출
 phones = [member.text for member in members] 
+print(f'phones : {len(phones)}')
 
-# 번호별 ticket 개수 추출
+# # 번호별 ticket 개수 추출
+# # 함수 사용할 때 리스트가 많으면 에러 발생
 def get_ticket(phone):
     driver.find_element(By.NAME, 'search').send_keys(phone.replace('-',''))
-    # 검색 클릭
     driver.find_element(By.CSS_SELECTOR, '.GY5.sc-kgoBCf.cxrvvx').click()
-    time.sleep(.5)
-    # 번호 클릭
+    time.sleep(2)
     driver.find_element(By.CSS_SELECTOR, '.ui-repeat.sc-cSHVUG.keecsQ').click()
-    time.sleep(.5)
+    time.sleep(2)
     # ticket = driver.find_element(By.XPATH, '//*[@id="root"]/main/div/article/aside/section/div[3]/button[2]/div/strong').text
     ticket = driver.find_element(By.CSS_SELECTOR, '.sc-bMVAic.greGXT button:nth-of-type(2) div strong').text
     driver.find_element(By.NAME, 'search').clear()
+    print(phone, ticket)
     return ticket
 
-# 전화번호별 ticket 개수 검색
 tickets = [get_ticket(phone) for phone in phones]
+print(f'tickes : {len(tickets)}')
 
-zip_list = zip(phones, tickets)
-# [print(z) for z in zip_list]
-print(len(list(zip_list)))
+# # 함수 사용하지 않는걸로 시험결과 -> 동일
+# tickets = []
+# for phone in phones:
+#     driver.find_element(By.NAME, 'search').send_keys(phone.replace('-',''))
+#     driver.find_element(By.CSS_SELECTOR, '.GY5.sc-kgoBCf.cxrvvx').click()
+#     time.sleep(1)
+#     driver.find_element(By.CSS_SELECTOR, '.ui-repeat.sc-cSHVUG.keecsQ').click()
+#     time.sleep(1)
+#     ticket = driver.find_element(By.CSS_SELECTOR, '.sc-bMVAic.greGXT button:nth-of-type(2) div strong').text
+#     driver.find_element(By.NAME, 'search').clear()
+#     tickets.append(ticket)
 
 driver.quit()
 
+data = list(zip(phones, tickets))
+print(len(data))
+col = ['phone', 'ticket']
+data_frame = pd.DataFrame(data, columns=col)
+data_frame.to_excel('ticket.xlsx', startrow=1, header=True, engine='openpyxl')
 
 
 
