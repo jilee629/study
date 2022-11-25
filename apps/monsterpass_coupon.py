@@ -49,8 +49,6 @@ def get_members():
 # 전화번호 추출
 def get_phones(members):
     phones = [member.text for member in members] 
-    print(phones)
-    print(f'phones : {len(phones)}')
     return phones
 
 # 사용자별 정기권 가져오기
@@ -71,11 +69,9 @@ def get_tickets(phones):
         time.sleep(2)
         driver.find_element(By.CSS_SELECTOR, '.ui-repeat.sc-cSHVUG.keecsQ').click()
         time.sleep(2)
-        # ticket = driver.find_element(By.XPATH, '//*[@id="root"]/main/div/article/aside/section/div[3]/button[2]/div/strong').text
         ticket = driver.find_element(By.CSS_SELECTOR, '.sc-bMVAic.greGXT button:nth-of-type(2) div strong').text
         driver.find_element(By.NAME, 'search').clear()
-    tickets.append(ticket)
-    print(f'tickets : {len(tickets)}')
+        tickets.append(ticket)
     return tickets
 
 # 엑셀에 저장하기
@@ -89,15 +85,17 @@ def save_to_excel(phones, tickets):
 
 if __name__ == "__main__":
     url = 'https://partner.monpass.im/'
-    # id = input('Your ID: ')
-    # passwd = input('Password: ')
-    id = 'jmms4778'
-    passwd = '4778ms'
+    id = input('Your ID: ')
+    passwd = input('Password: ')
+
     page_login(url, id, passwd)
-    more_click()
+    # more_click()
 
     members = get_members()
     phones = get_phones(members)
+    print(phones)
+    print(f'phones : {len(phones)}')
+
     tickets = get_tickets(phones)
 
     driver.quit()
