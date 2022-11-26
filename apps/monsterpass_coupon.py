@@ -4,15 +4,16 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
-import time
+from datetime import datetime
+import time, json
 import requests
 import pandas as pd
 
 options = Options()
 options.add_experimental_option('detach', True)
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
-options.add_argument("headless")
-# options.add_argument("--start-maximized")
+# options.add_argument("headless")
+options.add_argument("--start-maximized")
 service = Service(ChromeDriverManager().install())
 driver = webdriver.Chrome(service=service, options=options)
 driver.implicitly_wait(5)
@@ -40,65 +41,64 @@ def more_click():
             break
 
 # member list 추출
-def get_members():
-    html = driver.page_source
-    soup = BeautifulSoup(html, 'lxml')
+def get_members(soup):
     members = soup.select('.ui-repeat.sc-cSHVUG.keecsQ > a > p > strong')
-    return members
+    phones = get_phones(members)
+    return phones
 
 # 전화번호 추출
 def get_phones(members):
-    phones = [member.text for member in members] 
-    print(phones)
-    print(f'phones : {len(phones)}')
+    phones = [m.text for m in members] 
     return phones
 
 # 사용자별 정기권 가져오기
-def get_user_ticket():
-    user = 'https://api.monpass.im/api/crm/users/phone/01053253938/'
-    headers = {
-        'Authorization': 'access_token myToken'
-        }
-    reponse = requests.get(user, headers=headers)
-    print(reponse)
-
-# # user ticket 개수 추출 (4000개 이상에서 error 발생)
 def get_tickets(phones):
+    headers = {
+        'token': '3caa27de5783be469f1d96705405caf0c13ebed54376c0b185cc5b26fe926895',
+    }
     tickets = []
-    for phone in phones:
-        driver.find_element(By.NAME, 'search').send_keys(phone.replace('-',''))
-        driver.find_element(By.CSS_SELECTOR, '.GY5.sc-kgoBCf.cxrvvx').click()
-        time.sleep(2)
-        driver.find_element(By.CSS_SELECTOR, '.ui-repeat.sc-cSHVUG.keecsQ').click()
-        time.sleep(2)
-        # ticket = driver.find_element(By.XPATH, '//*[@id="root"]/main/div/article/aside/section/div[3]/button[2]/div/strong').text
-        ticket = driver.find_element(By.CSS_SELECTOR, '.sc-bMVAic.greGXT button:nth-of-type(2) div strong').text
-        driver.find_element(By.NAME, 'search').clear()
-    tickets.append(ticket)
-    print(f'tickets : {len(tickets)}')
-    return tickets
+    for p in phones:
+        url = "https://api.monpass.im/api/crm/users/phone/" + p.replace('-','') + "/"
+        res = requests.get(url, headers=headers)
+        data = json.loads(res.text)
+        tickets.append(data['data']['ticket'])
+    return list(zip(phones, tickets))
 
 # 엑셀에 저장하기
-def save_to_excel(phones, tickets):
-    data = list(zip(phones, tickets))
-    print(len(data))
+def save_to_excel(tickets):
+    data = tickets
+    now = datetime.now()
     col = ['phone', 'ticket']
-    data_frame = pd.DataFrame(data, columns=col)
-    data_frame.to_excel('ticket.xlsx', startrow=1, header=True, engine='openpyxl')
+    df = pd.DataFrame(data, columns=col)
+    fname = f"{now.year}{now.month}{now.day}_{now.hour}{now.minute}{now.second}"
+    df.to_excel(f'{fname}_ticket.xlsx', header=True, engine='openpyxl')
 
 
 if __name__ == "__main__":
-    url = 'https://partner.monpass.im/'
-    # id = input('Your ID: ')
-    # passwd = input('Password: ')
-    id = 'jmms4778'
-    passwd = '4778ms'
+    url = "https://partner.monpass.im/"
+    id = input('Your ID: ')
+    passwd = input('Password: ')
+
     page_login(url, id, passwd)
     more_click()
 
-    members = get_members()
-    phones = get_phones(members)
+    html = driver.page_source
+    soup = BeautifulSoup(html, 'lxml')
+
+    # 전체회원수 읽어오기
+    t_member = soup.select_one('.sc-iFMziU.gNKmAv').text
+    print("Total members: ", t_member[0:-1])
+
+    # 명단에서 phone 번호만 추출하기
+    phones = get_members(soup)
+    print("Total phones: ", len(phones))
+
+    # phone에 할당된 ticket 개수 가져오기(1시간, 2시간 구분 안됨)
+    # (phone, ticket) 형식을 가진 리스트 
     tickets = get_tickets(phones)
+    print("Total tickets: ", len(tickets))
+
+    save_to_excel(tickets)
 
     driver.quit()
 
