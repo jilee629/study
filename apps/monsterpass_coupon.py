@@ -49,7 +49,6 @@ def get_members(soup):
 # 전화번호 추출
 def get_phones(members):
     phones = [m.text for m in members] 
-
     return phones
 
 # 사용자별 정기권 가져오기
@@ -80,7 +79,7 @@ if __name__ == "__main__":
     passwd = input('Password: ')
 
     page_login(url, id, passwd)
-    # more_click()
+    more_click()
 
     html = driver.page_source
     soup = BeautifulSoup(html, 'lxml')
@@ -95,7 +94,6 @@ if __name__ == "__main__":
 
     # phone에 할당된 ticket 개수 가져오기(1시간, 2시간 구분 안됨)
     # (phone, ticket) 형식을 가진 리스트 
-
     tickets = get_tickets(phones)
     print("Total tickets: ", len(tickets))
 
