@@ -5,8 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 from datetime import datetime
-import time, json
-import requests
+import time, json, requests
 import pandas as pd
 
 options = Options()
@@ -95,13 +94,15 @@ if __name__ == "__main__":
 
     # phone에 할당된 ticket 개수 가져오기(1시간, 2시간 구분 안됨)
     # (phone, ticket) 형식을 가진 리스트 
-
     tickets = get_tickets(phones)
     print("Total tickets: ", len(tickets))
-
     save_to_excel(tickets)
 
+    # 브라우저 닫기
     driver.quit()
+
+
+   
 
 
 
