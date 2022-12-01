@@ -78,7 +78,7 @@ def save_to_excel(data):
     col = ['phone', 'ticket']
     df = pd.DataFrame(data, columns=col)
     fname = f"{now.year}{now.month}{now.day}_{now.hour}{now.minute}{now.second}"
-    df.to_excel(f'{fname}_ticket.xlsx', header=True, engine='openpyxl')
+    df.to_excel(f'misa_{fname}.xlsx', header=True, engine='openpyxl')
 
 
 if __name__ == "__main__":
@@ -107,7 +107,7 @@ if __name__ == "__main__":
     
     # ticket이 있는 사용자만 추출하기
     ticket_users = get_ticket_users(tickets)
-    print("Total tickets: ", len(ticket_users))
+    print("Total ticket users: ", len(ticket_users))
 
     # 브라우저 닫기
     driver.quit()
