@@ -10,9 +10,16 @@ for letter in ['A', 'B', 'C']:
 '''
 
 # enumrate 이용해서 index 추가
-# 기본적으로 tuple로 반환
-print('#'*40)
+for i, letter in enumerate(['A', 'B', 'C']):
+    print(i, letter)
+'''
+0 A
+1 B
+2 C
+'''
 
+# enumrate 이용해서 index 추가
+# 기본적으로 tuple로 반환
 for entry in enumerate(['A', 'B', 'C']):
     print(entry)
 '''
@@ -21,13 +28,3 @@ for entry in enumerate(['A', 'B', 'C']):
 (2, 'C')
 '''
 
-# enumrate 이용해서 index 추가
-print('#'*40)
-
-for i, letter in enumerate(['A', 'B', 'C']):
-    print(i, letter)
-'''
-0 A
-1 B
-2 C
-'''
