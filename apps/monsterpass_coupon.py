@@ -48,21 +48,29 @@ def get_members(soup):
 # 전화번호 추출
 def get_phones(members):
     phones = [m.text for m in members] 
-
     return phones
 
-# 사용자별 정기권 가져오기
+# 사용자별 정기권 추출하기
 def get_tickets(phones):
     headers = {
-        'token': '3caa27de5783be469f1d96705405caf0c13ebed54376c0b185cc5b26fe926895',
+        'token': '6e25d6162436a26d02eaf40b40d48654eb5f0212a59eb8aca7eecf9ed283558c',
     }
     tickets = []
     for p in phones:
         url = "https://api.monpass.im/api/crm/users/phone/" + p.replace('-','') + "/"
         res = requests.get(url, headers=headers)
-        data = json.loads(res.text)
-        tickets.append(data['data']['ticket'])
+        # print(res.status_code)
+        res_data = res.json()
+        tickets.append(res_data['data']['ticket'])
     return list(zip(phones, tickets))
+
+# 티켓이 있는 사용자만 추출하기
+def get_ticket_users(tickets):
+    ticket_users = []
+    for t in tickets:
+        if t[1] != 0:
+            ticket_users.append(t)
+    return ticket_users
 
 # 엑셀에 저장하기
 def save_to_excel(data):
@@ -79,7 +87,7 @@ if __name__ == "__main__":
     passwd = input('Password: ')
 
     page_login(url, id, passwd)
-    # more_click()
+    more_click()
 
     html = driver.page_source
     soup = BeautifulSoup(html, 'lxml')
@@ -96,10 +104,18 @@ if __name__ == "__main__":
     # (phone, ticket) 형식을 가진 리스트 
     tickets = get_tickets(phones)
     print("Total tickets: ", len(tickets))
-    save_to_excel(tickets)
+    
+    # ticket이 있는 사용자만 추출하기
+    ticket_users = get_ticket_users(tickets)
+    print("Total tickets: ", len(ticket_users))
 
     # 브라우저 닫기
     driver.quit()
+    
+    save_to_excel(tickets)
+    save_to_excel(ticket_users)
+
+    
 
 
    
