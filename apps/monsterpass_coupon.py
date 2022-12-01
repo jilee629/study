@@ -11,7 +11,7 @@ import pandas as pd
 options = Options()
 options.add_experimental_option('detach', True)
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
-# options.add_argument("headless")
+options.add_argument("headless")
 options.add_argument("--start-maximized")
 service = Service(ChromeDriverManager().install())
 
