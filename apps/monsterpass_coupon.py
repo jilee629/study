@@ -77,6 +77,7 @@ def save_to_excel(data):
     now = datetime.now()
     col = ['phone', 'ticket']
     df = pd.DataFrame(data, columns=col)
+    df.index += 1
     fname = f"{now.year}{now.month}{now.day}_{now.hour}{now.minute}{now.second}"
     df.to_excel(f'misa_{fname}.xlsx', header=True, engine='openpyxl')
 
