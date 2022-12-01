@@ -14,6 +14,7 @@ options.add_experimental_option('excludeSwitches', ['enable-logging'])
 # options.add_argument("headless")
 options.add_argument("--start-maximized")
 service = Service(ChromeDriverManager().install())
+
 driver = webdriver.Chrome(service=service, options=options)
 driver.implicitly_wait(5)
 
@@ -47,45 +48,64 @@ def get_members(soup):
 
 # 전화번호 추출
 def get_phones(members):
-    phones = [m.text for m in members] 
+    phones = [m.text for m in members]
     return phones
 
 # 사용자별 정기권 추출하기
-def get_tickets(phones):
+def get_tickets(phones, token):
     headers = {
-        'token': '6e25d6162436a26d02eaf40b40d48654eb5f0212a59eb8aca7eecf9ed283558c',
+        'token': token,
     }
     tickets = []
     for p in phones:
         url = "https://api.monpass.im/api/crm/users/phone/" + p.replace('-','') + "/"
         res = requests.get(url, headers=headers)
-        # print(res.status_code)
         res_data = res.json()
         tickets.append(res_data['data']['ticket'])
     return list(zip(phones, tickets))
 
 # 티켓이 있는 사용자만 추출하기
-def get_ticket_users(tickets):
-    ticket_users = []
+def get_user_tickets(tickets):
+    user_tickets = []
     for t in tickets:
         if t[1] != 0:
-            ticket_users.append(t)
-    return ticket_users
+            user_tickets.append(t)
+    return user_tickets
 
+# ticket의 상세 개수 추출하기
+def get_detail_tickets(user_tickets, token):
+    headers = {
+        'token': token,
+    }
+    user_detail_tickets = []
+    for p, t in user_tickets:
+        url = "https://api.monpass.im/api/crm/users/phone/" + p.replace('-','') + "/benefits/ticket"
+        res = requests.get(url, headers=headers)
+        res_data = res.json()
+        d1 = (p, t)
+        for r in res_data['data']:
+            d2 = d1 + (r['name'], r['count'])
+            d1 = d2
+        user_detail_tickets.append(d2)
+    return user_detail_tickets
+   
 # 엑셀에 저장하기
-def save_to_excel(data):
-    now = datetime.now()
-    col = ['phone', 'ticket']
+def save_to_excel(data, col, prefix):
+    t = datetime.now()
     df = pd.DataFrame(data, columns=col)
     df.index += 1
-    fname = f"{now.year}{now.month}{now.day}_{now.hour}{now.minute}{now.second}"
-    df.to_excel(f'misa_{fname}.xlsx', header=True, engine='openpyxl')
+    fname = f"{t.year}{t.month}{t.day}_{t.hour}{t.minute}{t.second}"
+    df.to_excel(f'{prefix}_{fname}.xlsx', header=True, engine='openpyxl')
 
 
 if __name__ == "__main__":
+    
     url = "https://partner.monpass.im/"
     id = input('Your ID: ')
     passwd = input('Password: ')
+
+    # token을 추출하는 방법이 필요함. 현재는 직접 입력
+    token = '9f8ef675397e6f48ebc07a9cd1936c1581f0786735ad450a4f8837f678f4aa70'
 
     page_login(url, id, passwd)
     more_click()
@@ -101,27 +121,31 @@ if __name__ == "__main__":
     phones = get_members(soup)
     print("Total phones: ", len(phones))
 
-    # phone에 할당된 ticket 개수 가져오기(1시간, 2시간 구분 안됨)
-    # (phone, ticket) 형식을 가진 리스트 
-    tickets = get_tickets(phones)
+    # phone에 할당된 ticket 전체 개수 가져오기
+    tickets = get_tickets(phones, token)
     print("Total tickets: ", len(tickets))
-    
-    # ticket이 있는 사용자만 추출하기
-    ticket_users = get_ticket_users(tickets)
-    print("Total ticket users: ", len(ticket_users))
 
+    # ticket 가진 사용자만 ticket 전체 개수 추출하기
+    user_tickets = get_user_tickets(tickets)
+    print("User ticket: ", len(user_tickets))
+    
+    # ticket 가진 사용자만 시간별 개수 추출하기
+    user_detail_tickets = get_detail_tickets(user_tickets, token)
+    print("User detail tickets: ", len(user_detail_tickets))
+    
     # 브라우저 닫기
     driver.quit()
-    
-    save_to_excel(tickets)
-    save_to_excel(ticket_users)
-
-    
 
 
-   
+    #엑셀 저장
+    col = ['Phone', 'Total ticket']
 
+    # Total tickets
+    # save_to_excel(tickets, col, f"total_{len(tickets)}")
 
+    # User tickets
+    # save_to_excel(user_tickets, col, f"user_{len(user_tickets)}") 
 
-
-
+    # # User detail tickets
+    col = None
+    save_to_excel(user_detail_tickets, col, f"detail_{len(user_detail_tickets)}")
