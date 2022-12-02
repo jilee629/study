@@ -60,6 +60,7 @@ def get_tickets(phones, token):
     for p in phones:
         url = "https://api.monpass.im/api/crm/users/phone/" + p.replace('-','') + "/"
         res = requests.get(url, headers=headers)
+        res.raise_for_status()
         res_data = res.json()
         tickets.append(res_data['data']['ticket'])
     return list(zip(phones, tickets))
@@ -81,6 +82,7 @@ def get_detail_tickets(user_tickets, token):
     for p, t in user_tickets:
         url = "https://api.monpass.im/api/crm/users/phone/" + p.replace('-','') + "/benefits/ticket"
         res = requests.get(url, headers=headers)
+        res.raise_for_status()
         res_data = res.json()
         d1 = (p, t)
         for r in res_data['data']:
