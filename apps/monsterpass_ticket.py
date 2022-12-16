@@ -132,16 +132,16 @@ if __name__ == "__main__":
     phones = get_members(soup)
     print(f"Total phones: {len(phones)}")
 
-    # phone에 할당된 ticket 전체 개수 가져오기
-    tickets = get_tickets(phones, token)
-    print(f"Verified users: {len(tickets)}")
+    # 전체 사용자에 대해 ticket 조회하기
+    total_users = get_tickets(phones, token)
+    print(f"Verified users: {len(total_users)}")
 
     # ticket 가진 사용자만 전체 개수 추출하기
-    user_tickets = get_user_tickets(tickets)
-    print(f"Ticket users: {len(user_tickets)}")
+    ticket_users = get_user_tickets(total_users)
+    print(f"Ticket users: {len(ticket_users)}")
 
     # ticket 가진 사용자만 시간별 개수 추출하기
-    user_detail_tickets = get_detail_tickets(user_tickets, token)
+    user_detail_tickets = get_detail_tickets(ticket_users, token)
     print(f"Detail user tickets: {len(user_detail_tickets)}")
     
     # 브라우저 닫기
@@ -149,7 +149,7 @@ if __name__ == "__main__":
 
     #엑셀 저장
     col = ['Phone', 'Total ticket']
-    save_to_excel(tickets, col, f"total_{len(tickets)}")
+    save_to_excel(total_users, col, f"total_{len(total_users)}")
     col = None
     save_to_excel(user_detail_tickets, col, f"detail_{len(user_detail_tickets)}")
     
