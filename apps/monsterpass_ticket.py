@@ -107,7 +107,7 @@ def save_to_excel(data, col, prefix):
     t = datetime.now()
     df = pd.DataFrame(data, columns=col)
     df.index += 1
-    fdate = f"{t.year}{t.month}{t.day}_{t.hour}_{t.minute}"
+    fdate = f"{t.year}_{t.month}{t.day}_{t.hour}{t.minute}"
     df.to_excel(f"{fdate}_{prefix}.xlsx", header=True, engine='openpyxl')
 
 
