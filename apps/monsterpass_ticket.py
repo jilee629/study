@@ -108,7 +108,9 @@ def save_to_excel(data, col, prefix):
     t = datetime.now()
     df = pd.DataFrame(data, columns=col)
     df.index += 1
-    fdate = f"{t.year}_{t.month}{t.day}_{t.hour}{t.minute}"
+    fdate = t.strftime("%Y") \
+        + '_' + t.strftime("%m") + t.strftime("%d") \
+        + '_' + t.strftime("%H") + t.strftime("%M")
     df.to_excel(f"{fdate}_{prefix}.xlsx", header=True, engine='openpyxl')
 
 
@@ -139,7 +141,7 @@ if __name__ == "__main__":
         print("Member count is matched")
     else:
         print("Member count is dismatched")
-        quit
+        exit
     
     # 전체 사용자에 대해 ticket 조회하기
     all_user_tickets = get_tickets(phones, token)
