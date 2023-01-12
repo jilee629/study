@@ -120,11 +120,12 @@ if __name__ == "__main__":
     driver = get_driver()
     page_login(url, id, passwd)
     token = get_token()
-    more_click()
 
+    # more 클릭
+    more_click()
     html = driver.page_source
     soup = BeautifulSoup(html, 'lxml')
-
+    
     # 전체회원수 읽어오기
     t_member = soup.select_one('.sc-iFMziU.gNKmAv').text
     print(f"Total members: {t_member[0:-1]}")
@@ -133,6 +134,13 @@ if __name__ == "__main__":
     phones = get_members(soup)
     print(f"Number of phone: {len(phones)}")
 
+    # 중간확인
+    if int(t_member[0:-1]) == len(phones):
+        print("Member count is matched")
+    else:
+        print("Member count is dismatched")
+        quit
+    
     # 전체 사용자에 대해 ticket 조회하기
     all_user_tickets = get_tickets(phones, token)
     print(f"Verified phone: {len(all_user_tickets)}")
