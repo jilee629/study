@@ -12,7 +12,7 @@ def get_driver():
     options = Options()
     options.add_experimental_option('detach', True)
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    # options.add_argument("headless")
+    options.add_argument("headless")
     options.add_argument("--start-maximized")
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
@@ -108,9 +108,7 @@ def save_to_excel(data, col, prefix):
     t = datetime.now()
     df = pd.DataFrame(data, columns=col)
     df.index += 1
-    fdate = t.strftime("%Y") \
-        + '_' + t.strftime("%m") + t.strftime("%d") \
-        + '_' + t.strftime("%H") + t.strftime("%M")
+    fdate = t.strftime("%Y-%m-%d-%H-%M")
     df.to_excel(f"{fdate}_{prefix}.xlsx", header=True, engine='openpyxl')
 
 
@@ -160,7 +158,7 @@ if __name__ == "__main__":
 
     #엑셀 저장
     # col = ['Phone', 'Total ticket']
-    # save_to_excel(total_users, col, f"total_{len(total_users)}")
+    # save_to_excel(all_user_tickets, col, f"total_{len(all_user_tickets)}")
     col = None
     save_to_excel(detail_user_with_ticket, col, f"detail_{len(detail_user_with_ticket)}")
     
