@@ -5,6 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 from datetime import datetime
+from tqdm import tqdm
 import time, json, requests
 import pandas as pd
 
@@ -66,15 +67,12 @@ def get_tickets(phones, token):
         'token': token,
     }
     tickets = []
-    for i, p in enumerate(phones):
+    for p in tqdm(phones):
         url = "https://api.monpass.im/api/crm/users/phone/" + p.replace('-','') + "/"
         res = requests.get(url, headers=headers)
         res.raise_for_status()
         res_data = res.json()
         tickets.append(res_data['data']['ticket'])
-        if i%5 == 0:
-            print(".", end="")
-    print("")
     return list(zip(phones, tickets))
 
 # 티켓이 있는 사용자만 추출하기
@@ -139,7 +137,7 @@ if __name__ == "__main__":
         print("Member count is matched")
     else:
         print("Member count is dismatched")
-        exit
+        exit()
     
     # 전체 사용자에 대해 ticket 조회하기
     all_user_tickets = get_tickets(phones, token)
