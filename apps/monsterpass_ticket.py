@@ -38,7 +38,7 @@ def more_click():
     while True:
         try:
             driver.find_element(By.CSS_SELECTOR, '.sc-cBdUnI.fBYDFC').click()
-            time.sleep(.1)
+            time.sleep(.2)
             print(".", end="")
         except:
             print("")
@@ -51,56 +51,69 @@ def get_token():
     return token
 
 # member list 추출
-def get_members(soup):
-    members = soup.select('.ui-repeat.sc-cSHVUG.keecsQ > a > p > strong')
-    phones = get_phones(members)
-    return phones
+def get_phone_list(soup):
+    phone = soup.select('.ui-repeat.sc-cSHVUG.keecsQ > a > p > strong')
+    phone_list = get_phone(phone)
+    return phone_list
 
 # 전화번호 추출
-def get_phones(members):
-    phones = [m.text for m in members]
+def get_phone(phone_list):
+    phones = [m.text for m in phone_list]
     return phones
 
-# 사용자별 정기권 추출하기
-def get_tickets(phones, token):
-    headers = {
-        'token': token,
-    }
-    tickets = []
-    for p in tqdm(phones):
-        url = "https://api.monpass.im/api/crm/users/phone/" + p.replace('-','') + "/"
-        res = requests.get(url, headers=headers)
-        res.raise_for_status()
-        res_data = res.json()
-        tickets.append(res_data['data']['ticket'])
-    return list(zip(phones, tickets))
-
-# 티켓이 있는 사용자만 추출하기
-def get_user_tickets(tickets):
+# 티켓이 있는 사용자만 티켓개수 추출하기
+def get_user_ticket(tickets):
     user_tickets = []
     for t in tickets:
         if t[1] != 0:
             user_tickets.append(t)
     return user_tickets
 
-# ticket의 상세 개수 추출하기
-def get_detail_user_tickets(user_tickets, token):
+def get_data(url, token):
     headers = {
         'token': token,
     }
-    detail_user_tickets = []
-    for p, t in user_tickets:
-        url = "https://api.monpass.im/api/crm/users/phone/" + p.replace('-','') + "/benefits/ticket"
-        res = requests.get(url, headers=headers)
-        res.raise_for_status()
-        res_data = res.json()
-        d1 = (p, t)
+    res = requests.get(url, headers=headers)
+    res.raise_for_status()
+    res_data = res.json()
+    return res_data
+
+# 사용자 ticket 정보 추출하기
+def get_ticket_data(phones, token):
+    global_url = "https://api.monpass.im/api/crm/users/phone/"
+    ticket = []
+    visit = []
+    for phone in tqdm(phones):
+        url = global_url + phone.replace('-','') + "/"
+        # ticket 개수
+        res_data = get_data(url, token)
+        ticket.append(res_data['data']['ticket'])
+        # 방문 시간
+        url = url + "logs?page=1"
+        res_data = get_data(url, token)
+        # vtime = str(res_data['data']['rows'][0]['time'])[0:10]
+        try:
+            vtime = str(res_data['data']['rows'][0]['time'])[0:10]
+        except:
+            vtime = "0000000000"
+        visit.append(datetime.utcfromtimestamp(int(vtime)))
+    return list(zip(phones, ticket, visit))
+
+# ticket의 상세 개수 추출하기
+def get_detail_user_ticket(phones, token):
+    global_url = "https://api.monpass.im/api/crm/users/phone/"
+    data = []
+    for phone, ticket, visit in phones:
+        url = global_url + phone.replace('-','') + "/benefits/ticket"
+        res_data = get_data(url, token)
+        d1 = (phone, ticket, visit)
         for r in res_data['data']:
-            d2 = d1 + (r['name'], r['count'])
+            d2 = d1 + (r['name'], r['count'], r['exp_date'])
             d1 = d2
-        detail_user_tickets.append(d2)
-    return detail_user_tickets
-   
+        data.append(d2)
+    return data
+
+  
 # 엑셀에 저장하기
 def save_to_excel(data, col, prefix):
     t = datetime.now()
@@ -114,49 +127,45 @@ if __name__ == "__main__":
     url = "https://partner.monpass.im/"
     id = input('Your ID: ')
     passwd = input('Password: ')
+    # id = ''
+    # passwd = ''
 
     driver = get_driver()
     page_login(url, id, passwd)
     token = get_token()
 
-    # more 클릭
     more_click()
+    
     html = driver.page_source
     soup = BeautifulSoup(html, 'lxml')
     
-    # 전체회원수 읽어오기
-    t_member = soup.select_one('.sc-iFMziU.gNKmAv').text
-    print(f"Total members: {t_member[0:-1]}")
-
     # 명단에서 phone 번호만 추출하기
-    phones = get_members(soup)
-    print(f"Number of phone: {len(phones)}")
+    phone_list = get_phone_list(soup)
 
     # 중간확인
-    if int(t_member[0:-1]) == len(phones):
-        print("Member count is matched")
-    else:
-        print("Member count is dismatched")
+    total_user_cnt = soup.select_one('.sc-iFMziU.gNKmAv').text
+    print(f"Total User Count: {total_user_cnt[0:-1]}")
+    print(f"Number of phone: {len(phone_list)}")
+    if int(total_user_cnt[0:-1]) != len(phone_list):
+        print("User count and phone list count are dismatched")
         exit()
-    
-    # 전체 사용자에 대해 ticket 조회하기
-    all_user_tickets = get_tickets(phones, token)
-    print(f"Verified phone: {len(all_user_tickets)}")
+   
+    # 전체 사용자에 대해 ticket 개수 조회
+    all_user_ticket_data = get_ticket_data(phone_list, token)
 
-    # ticket 가진 사용자만 전체 개수 추출하기
-    user_with_ticket = get_user_tickets(all_user_tickets)
-    print(f"User with tickets: {len(user_with_ticket)}")
-
-    # ticket 가진 사용자만 시간별 개수 추출하기
-    detail_user_with_ticket = get_detail_user_tickets(user_with_ticket, token)
-    print(f"Detail user with tickets: {len(detail_user_with_ticket)}")
+    # ticket 가진 사용자만 골라내기
+    ticket_user_list = get_user_ticket(all_user_ticket_data)
+    print(f"Ticket user count: {len(ticket_user_list)}")
+    # ticket 가진 사용자만 종류별 티켓개수 추출하기
+    ticket_user_data = get_detail_user_ticket(ticket_user_list, token)
     
     # 브라우저 닫기
     driver.quit()
 
     #엑셀 저장
-    # col = ['Phone', 'Total ticket']
-    # save_to_excel(all_user_tickets, col, f"total_{len(all_user_tickets)}")
     col = None
-    save_to_excel(detail_user_with_ticket, col, f"detail_{len(detail_user_with_ticket)}")
+    save_to_excel(ticket_user_data, col, f"ticket_{len(ticket_user_data)}")
+    # col = ['Phone', 'Total ticket']
+    save_to_excel(all_user_ticket_data, col, f"total_{len(all_user_ticket_data)}")
+
     
