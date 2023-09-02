@@ -46,28 +46,32 @@ def more_click():
 
 # token 가져오기
 def get_token():
-    token = driver.execute_script("return localStorage.getItem('token')")
-    print(f"token: {token}")
-    return token
+    res_token = driver.execute_script("return localStorage.getItem('token')")
+    print(f"token: {res_token}")
+    return res_token
 
 # member list 추출
-def get_phone_list(soup):
-    phone = soup.select('.ui-repeat.sc-cSHVUG.keecsQ > a > p > strong')
-    phone_list = get_phone(phone)
-    return phone_list
+def get_phones(soup):
+    # phone = soup.select('.ui-repeat.sc-cSHVUG.keecsQ > a > p > strong')
+    # phone_list = get_phone(phone)
+    # return phone_list
+    res_phone = soup.select('.ui-repeat.sc-cSHVUG.keecsQ > a > p > strong')
+    phones = [m.text for m in res_phone]
+    return phones
+    
 
 # 전화번호 추출
-def get_phone(phone_list):
-    phones = [m.text for m in phone_list]
-    return phones
+# def get_phone(phone_list):
+    phones = [m.text for m in phones]
+    # return phones
 
 # 티켓이 있는 사용자만 티켓개수 추출하기
-def get_user_ticket(tickets):
-    user_tickets = []
+def get_ticket_user(tickets):
+    ticket_user = []
     for t in tickets:
         if t[1] != 0:
-            user_tickets.append(t)
-    return user_tickets
+            ticket_user.append(t)
+    return ticket_user
 
 def get_data(url, token):
     headers = {
@@ -79,32 +83,34 @@ def get_data(url, token):
     return res_data
 
 # 사용자 ticket 정보 추출하기
-def get_ticket_data(phones, token):
-    global_url = "https://api.monpass.im/api/crm/users/phone/"
+def get_user_info(phones, token):
+    curl = "https://api.monpass.im/api/crm/users/phone/"
     ticket = []
     visit = []
     for phone in tqdm(phones):
-        url = global_url + phone.replace('-','') + "/"
         # ticket 개수
+        url = curl + phone.replace('-','') + "/"
         res_data = get_data(url, token)
         ticket.append(res_data['data']['ticket'])
+
         # 방문 시간
+        # 전화번호만 등록되고 방문기록은 얺는 경우가 있음
         url = url + "logs?page=1"
         res_data = get_data(url, token)
-        # vtime = str(res_data['data']['rows'][0]['time'])[0:10]
         try:
             vtime = str(res_data['data']['rows'][0]['time'])[0:10]
         except:
-            vtime = "0000000000"
+            vtime = "1234512345"
         visit.append(datetime.utcfromtimestamp(int(vtime)))
+
     return list(zip(phones, ticket, visit))
 
 # ticket의 상세 개수 추출하기
-def get_detail_user_ticket(phones, token):
-    global_url = "https://api.monpass.im/api/crm/users/phone/"
+def get_ticket_info(phones, token):
+    curl = "https://api.monpass.im/api/crm/users/phone/"
     data = []
     for phone, ticket, visit in phones:
-        url = global_url + phone.replace('-','') + "/benefits/ticket"
+        url = curl + phone.replace('-','') + "/benefits/ticket"
         res_data = get_data(url, token)
         d1 = (phone, ticket, visit)
         for r in res_data['data']:
@@ -140,32 +146,33 @@ if __name__ == "__main__":
     soup = BeautifulSoup(html, 'lxml')
     
     # 명단에서 phone 번호만 추출하기
-    phone_list = get_phone_list(soup)
+    phones = get_phones(soup)
 
     # 중간확인
     total_user_cnt = soup.select_one('.sc-iFMziU.gNKmAv').text
     print(f"Total User Count: {total_user_cnt[0:-1]}")
-    print(f"Number of phone: {len(phone_list)}")
-    if int(total_user_cnt[0:-1]) != len(phone_list):
+    print(f"Number of phone: {len(phones)}")
+    if int(total_user_cnt[0:-1]) != len(phones):
         print("User count and phone list count are dismatched")
         exit()
-   
-    # 전체 사용자에 대해 ticket 개수 조회
-    all_user_ticket_data = get_ticket_data(phone_list, token)
+
+    # 전체 사용자에 대한 정보(ticket, visit)
+    all_user_info = get_user_info(phones, token)
 
     # ticket 가진 사용자만 골라내기
-    ticket_user_list = get_user_ticket(all_user_ticket_data)
-    print(f"Ticket user count: {len(ticket_user_list)}")
-    # ticket 가진 사용자만 종류별 티켓개수 추출하기
-    ticket_user_data = get_detail_user_ticket(ticket_user_list, token)
+    ticket_user = get_ticket_user(all_user_info)
+    print(f"Ticket user count: {len(ticket_user)}")
+
+    # ticket 가진 사용자의 종류별 티켓개수 추출하기
+    ticket_info = get_ticket_info(ticket_user, token)
     
     # 브라우저 닫기
     driver.quit()
 
     #엑셀 저장
     col = None
-    save_to_excel(ticket_user_data, col, f"ticket_{len(ticket_user_data)}")
+    save_to_excel(ticket_info, col, f"ticket_{len(ticket_info)}")
     # col = ['Phone', 'Total ticket']
-    save_to_excel(all_user_ticket_data, col, f"total_{len(all_user_ticket_data)}")
+    save_to_excel(all_user_info, col, f"total_{len(all_user_info)}")
 
     
