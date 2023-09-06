@@ -53,19 +53,10 @@ def get_token():
 
 # member list 추출
 def get_phones(soup):
-    # phone = soup.select('.ui-repeat.sc-cSHVUG.keecsQ > a > p > strong')
-    # phone_list = get_phone(phone)
-    # return phone_list
     res_phone = soup.select('.ui-repeat.sc-cSHVUG.keecsQ > a > p > strong')
     phones = [p.text for p in res_phone]
     return phones
     
-
-# 전화번호 추출
-# def get_phone(phone_list):
-    phones = [m.text for m in phones]
-    # return phones
-
 # 티켓이 있는 사용자만 티켓개수 추출하기
 def get_ticket_user(tickets):
     ticket_user = []
