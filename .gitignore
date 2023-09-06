@@ -132,4 +132,4 @@ dmypy.json
 .xlsx
 
 # text file
-.txt
+*.txt

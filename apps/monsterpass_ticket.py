@@ -8,6 +8,7 @@ from datetime import datetime
 from tqdm import tqdm
 import time, json, requests
 import pandas as pd
+import os
 
 def get_driver():
     options = Options()
@@ -56,7 +57,7 @@ def get_phones(soup):
     # phone_list = get_phone(phone)
     # return phone_list
     res_phone = soup.select('.ui-repeat.sc-cSHVUG.keecsQ > a > p > strong')
-    phones = [m.text for m in res_phone]
+    phones = [p.text for p in res_phone]
     return phones
     
 
@@ -83,11 +84,11 @@ def get_data(url, token):
     return res_data
 
 # 사용자 ticket 정보 추출하기
-def get_user_info(phones, token):
+def get_user_info(user, token):
     curl = "https://api.monpass.im/api/crm/users/phone/"
     ticket = []
     visit = []
-    for phone in tqdm(phones):
+    for phone in tqdm(user):
         # ticket 개수
         url = curl + phone.replace('-','') + "/"
         res_data = get_data(url, token)
@@ -100,16 +101,17 @@ def get_user_info(phones, token):
         try:
             vtime = str(res_data['data']['rows'][0]['time'])[0:10]
         except:
-            vtime = "1234512345"
+            vtime = "0123456789"
+            print(phone, ': Server is not responding.')
         visit.append(datetime.utcfromtimestamp(int(vtime)))
 
     return list(zip(phones, ticket, visit))
 
 # ticket의 상세 개수 추출하기
-def get_ticket_info(phones, token):
+def get_ticket_info(user, token):
     curl = "https://api.monpass.im/api/crm/users/phone/"
     data = []
-    for phone, ticket, visit in phones:
+    for phone, ticket, visit in user:
         url = curl + phone.replace('-','') + "/benefits/ticket"
         res_data = get_data(url, token)
         d1 = (phone, ticket, visit)
@@ -128,16 +130,24 @@ def save_to_excel(data, col, prefix):
     fdate = t.strftime("%Y-%m-%d-%H-%M")
     df.to_excel(f"{fdate}_{prefix}.xlsx", header=True, engine='openpyxl')
 
+def get_credit():
+    try:
+        with open('credit.txt', 'r') as file:
+            credit = file.readlines()
+            credit = [credit[0].strip(), credit[1].strip()]
+    except:
+        id = input('Your ID: ')
+        passwd = input('Password: ')
+        credit = ['id', 'passwd']
+    return credit
 
 if __name__ == "__main__":
-    url = "https://partner.monpass.im/"
-    id = input('Your ID: ')
-    passwd = input('Password: ')
-    # id = ''
-    # passwd = ''
-
+ 
+    credit = get_credit()
     driver = get_driver()
-    page_login(url, id, passwd)
+
+    url = "https://partner.monpass.im/"
+    page_login(url, credit[0], credit[1])
     token = get_token()
 
     more_click()
