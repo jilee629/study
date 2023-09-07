@@ -1,5 +1,5 @@
 def sep(num):
-    print(str(num), '-' * 80)
+    print(f"test({str(num)}) {'-' * 40}")
 
 def test_zip():
     numbers = [1, 2, 3]
@@ -19,7 +19,7 @@ def test_zip():
     # (1, 'A')
     # (2, 'B')
     # (3, 'C')
-    
+
     sep(4)
     data = list(zip(numbers, letters))
     print(data)
@@ -77,8 +77,7 @@ def test_enum():
 
 def test_datetime():
     from datetime import datetime
-    import time
-
+    
     sep(1)
     print(datetime.now())
     # 2023-09-07 17:43:45.092355
@@ -88,11 +87,14 @@ def test_datetime():
     print(t.year, t.month, t.day, t.hour, t.minute, t.second)
     # 2023 9 7 17 43 45
 
-    sep(3)
+def test_time():
+    import time
+
+    sep(1)
     print(time.time())
     # 1694076225.113485
     
-    sep(4)
+    sep(2)
     print(time.ctime())
     # Thu Sep  7 17:43:45 2023
 
@@ -111,6 +113,58 @@ def test_request_1():
 
     sep(4)
     print(res.headers['Content-Type'])
+
+def test_pandas_df():
+    import pandas as pd
+
+    sep(1)
+    # dict data 일경우, key는 columns에 value는 index에 들어감
+    data = {'name' : ['A', 'B', 'C'], 'id' : ['a', 'b', 'c'], 'age' : ['11', '12', '13']}
+    df = pd.DataFrame(data)
+    print(df)
+    # name id age
+    # 0    A  a  11
+    # 1    B  b  12
+    # 2    C  c  13
+
+    sep(2)
+    data = [['A', 'a', '11'], ['B', 'b', '12'], ['C', 'c', '13']]
+    columns = ['name', 'id', 'age']
+    index = ['1', '2', '3']
+    df = pd.DataFrame(data, columns=columns, index=index)
+    print(df)
+    # name id age
+    # 1    A  a  11
+    # 2    B  b  12
+    # 3    C  c  13
+
+    sep(3)
+    data2 = [('A', 'a', '11'), ('B', 'b', '12'), ('C', 'c', '13')]
+    columns = ['name', 'id', 'age']
+    index = ['1', '2', '3']
+    df = pd.DataFrame(data, columns=columns, index=index)
+    print(df)
+    # name id age
+    # 1    A  a  11
+    # 2    B  b  12
+    # 3    C  c  13
+
+def test_pandas_save():
+    import pandas as pd
+
+    sep(1)
+    data = {'name' : ['A', 'B', 'C'], 'id' : ['a', 'b', 'c'], 'age' : ['11', '12', '13']}
+    index = ['1', '2', '3']
+    df = pd.DataFrame(data, index=index)
+    df.to_excel('test_pandas1.xlsx', engine='openpyxl')
+    # index 지정하지 않으면 0부터
+
+    sep(2)
+    data = [['A', 'a', '11'], ['B', 'b', '12'], ['C', 'c', '13']]
+    columns = ['name', 'id', 'age']
+    df = pd.DataFrame(data, columns=columns)
+    df.index += 2
+    df.to_excel('test_pandas2.xlsx', engine='openpyxl')
 
 
 
