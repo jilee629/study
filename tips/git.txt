@@ -1,0 +1,21 @@
+%% git log 형식 지정하기
+# git log --pretty=oneline
+
+%% git log 한줄로 보기
+# git log --oneline
+
+%% git log diff 보기
+# git log -p
+# git log -p 2 (최근 2개)
+
+
+%% commit 취소하기
+# git reset --hard 9e0b40864a8b79fa93a1423cb28237deca3d0c3a
+# git reset --hard HEAD^  (가장 최근)
+
+
+%% remote main에 push 하기
+# git push origin main
+# git push -f origin main
+
+

@@ -130,4 +130,4 @@ dmypy.json
 
 # user defined
 *.xlsx
-*.txt
+credit.txt
