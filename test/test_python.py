@@ -1,4 +1,4 @@
-def zip_test_1():
+def test_zip_1():
     numbers = [1, 2, 3]
     letters = ["A", "B", "C"]
     data = zip(numbers, letters)
@@ -11,7 +11,7 @@ def zip_test_1():
 (3, 'C')
 """
 
-def zip_test_2():
+def test_zip_2():
     numbers = [1, 2, 3]
     letters = ["A", "B", "C"]
     data = list(zip(numbers, letters))
@@ -20,7 +20,7 @@ def zip_test_2():
 [(1, 'A'), (2, 'B'), (3, 'C')]
 """
 
-def zip_test_3():
+def ztest_zip_3():
     numbers = [1, 2, 3]
     letters = ["A", "B", "C"]
     data = dict(zip(numbers, letters))
@@ -30,7 +30,7 @@ def zip_test_3():
 """
 
 # unzip
-def zip_test_4():
+def test_zip_4():
     numbers = [1, 2, 3]
     letters = ["A", "B", "C"]
     data = list(zip(numbers, letters))
@@ -43,7 +43,7 @@ def zip_test_4():
 """
 
 # 병렬처리
-def zip_test_5():
+def test_zip_5():
     for number, upper, lower in zip("12345", "ABCDE", "abcde"):
         print(number, upper, lower)
 """
@@ -54,7 +54,7 @@ def zip_test_5():
 5 E e
 """
 
-def list_test_1():
+def test_list_1():
     list1 = ['a', 'b', 'c']
     list2 = ['e', 'f', 'g']
     list1.append(list2)
@@ -66,7 +66,7 @@ list1.append(list2)
 print('append:', list1)
 """
 
-def list_test_2():
+def test_list_2():
     list1 = ['a', 'b', 'c']
     list2 = ['e', 'f', 'g']
     list1.extend(list2)
@@ -78,7 +78,7 @@ list3.extend(list4)
 print('extend:', list3)
 """
 
-def request_test_1():
+def test_request_1():
     import requests
     res = requests.get("https://jsonplaceholder.typicode.com/users/1")
     print(res)
@@ -86,6 +86,24 @@ def request_test_1():
     print(res.headers)
     print('\nContent-Type: ', res.headers['Content-Type'])
 
+def test_enum_1():
+    for i, letter in enumerate(['A', 'B', 'C']):
+        print(i, letter)   
+"""
+0 A
+1 B
+2 C
+"""
+
+def test_enum_2():
+    for entry in enumerate(['A', 'B', 'C']):
+        print(entry)
+"""
+(0, 'A')
+(1, 'B')
+(2, 'C')
+"""
+
 if __name__ == "__main__":
     
-    request_test_1()
+    test_enum_2()
