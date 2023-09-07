@@ -78,8 +78,14 @@ list3.extend(list4)
 print('extend:', list3)
 """
 
-
+def request_test_1():
+    import requests
+    res = requests.get("https://jsonplaceholder.typicode.com/users/1")
+    print(res)
+    print(res.content)
+    print(res.headers)
+    print('\nContent-Type: ', res.headers['Content-Type'])
 
 if __name__ == "__main__":
     
-    list_test_2()
+    request_test_1()
