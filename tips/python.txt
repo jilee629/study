@@ -1,8 +1,5 @@
 %% packet upgrade
 # pip install -U, --upgrade <package>
 
-%% pip upgrade
-# python.exe -m pip install --upgrade pip
-
 %% 설치된 package에서 업데이트된 리스트 확인
 # pip list -o, --outdated
