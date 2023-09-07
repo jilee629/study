@@ -109,11 +109,19 @@ def test_datetime_1():
     import time
     print(datetime.now())
     # 2023-09-07 17:43:45.092355
+    
     t = datetime.now()
     print(t.year, t.month, t.day, t.hour, t.minute, t.second)
     # 2023 9 7 17 43 45
+
+
+def test_datetime_2():
+    from datetime import datetime
+    import time
+
     print(time.time())
     # 1694076225.113485
+    
     print(time.ctime())
     # Thu Sep  7 17:43:45 2023
 
@@ -129,4 +137,5 @@ if __name__ == "__main__":
     # test_request_1()
     # test_enum_1():
     # test_enum_2():
-    test_datetime_1()
+    # test_datetime_1()
+    test_datetime_2()
