@@ -54,6 +54,32 @@ def zip_test_5():
 5 E e
 """
 
+def list_test_1():
+    list1 = ['a', 'b', 'c']
+    list2 = ['e', 'f', 'g']
+    list1.append(list2)
+    print(list1)    
+"""
+list1 = ['a', 'b', 'c']
+list2 = ['e', 'f', 'g']
+list1.append(list2)
+print('append:', list1)
+"""
+
+def list_test_2():
+    list1 = ['a', 'b', 'c']
+    list2 = ['e', 'f', 'g']
+    list1.extend(list2)
+    print(list1)
+"""
+list3 = ['a', 'b', 'c']
+list4 = ['e', 'f', 'g']
+list3.extend(list4)
+print('extend:', list3)
+"""
+
+
+
 if __name__ == "__main__":
     
-    zip_test_1()
+    list_test_2()
