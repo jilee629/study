@@ -4,9 +4,10 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
+import requests
 from datetime import datetime
+import time
 from tqdm import tqdm
-import time, json, requests
 import pandas as pd
 
 def get_credit():
@@ -43,13 +44,17 @@ def page_login(url, id, passwd):
     return
 
 def more_click():
+    t = 1
     while True:
         try:
             driver.find_element(By.CSS_SELECTOR, '.sc-cBdUnI.fBYDFC').click()
+            # print(".", end="")
+            print(t, "page reading is done.")
+            t += 1
             time.sleep(.1)
-            print(".", end="")
         except:
-            print("")
+            # print("")
+            print("No more page")
             break
 
 def get_token():
@@ -108,7 +113,7 @@ def get_user_info(user, token):
 def get_ticket_info(user, token):
     curl = "https://api.monpass.im/api/crm/users/phone/"
     data = []
-    for phone, ticket, visit in user:
+    for phone, ticket, visit in tqdm(user):
         url = curl + phone.replace('-','') + "/benefits/ticket"
         res_data = get_data(url, token)
         d1 = (phone, ticket, visit)
