@@ -86,15 +86,15 @@ def get_data(url, token):
     return res_data
 
 # 사용자 ticket 정보 추출하기
-def get_user_info(user, token):
+def get_user_info(phones, token):
     curl = "https://api.monpass.im/api/crm/users/phone/"
-    ticket = []
-    visit = []
-    for phone in tqdm(user):
+    tickets = []
+    visits = []
+    for phone in tqdm(phones):
         # ticket 개수
         url = curl + phone.replace('-','') + "/"
         res_data = get_data(url, token)
-        ticket.append(res_data['data']['ticket'])
+        tickets.append(res_data['data']['ticket'])
 
         # 방문 시간
         url = url + "logs?page=1"
@@ -104,10 +104,10 @@ def get_user_info(user, token):
         except:
             # 전화번호만 등록되고 방문기록은 얺는 경우가 있음
             vtime = "0123456789"
-            print(str(phone), ': Server is not responding.')
-        visit.append(datetime.utcfromtimestamp(int(vtime)))
-
-    return list(zip(phones, ticket, visit))
+            print(' ', phone, ': Server is not responding.')
+        visits.append(datetime.utcfromtimestamp(int(vtime)))
+       
+    return list(zip(phones, tickets, visits))
 
 # ticket의 상세 개수 추출하기
 def get_ticket_info(user, token):
