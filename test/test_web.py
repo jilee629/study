@@ -1,10 +1,9 @@
 def sep(num):
     print(f"test({str(num)}) {'-' * 40}")
 
-
 def test_request():
     import requests
-    res = requests.get("https://jsonplaceholder.typicode.com/users/1")
+    res = requests.get("https://www.google.com")
 
     sep(1)
     print(res)
@@ -16,68 +15,82 @@ def test_request():
     print(res.raise_for_status())
 
     sep(3)
-    print(res.content)
-
-    sep(4)
     print(res.headers)
 
-    sep(5)
+    sep(4)
     print(res.headers['Content-Type'])
 
-def test_bs_select():
-    from bs4 import BeautifulSoup
-
-    html = '<div class="in_wrap place-at-center">\
-                <div class="ui-input-text">\
-                    <input name="id" placeholder="아이디" value>\
-                    <input name="pw" type="password" placeholder="비밀번호" value>\
-                </div>\
-                <div class="ui-large-button">\
-                    <button class="sc-bdVaJa djlRTQ BU2 border">로그인</button>\
-                </div>\
-            </div>'
-    soup = BeautifulSoup(html, 'html.parser')
-
-    sep(1)
-    # class는 .으로 시작, 공백은 .으로 처리
-    print(soup.select('.sc-bdVaJa.djlRTQ.BU2.border'))
-
-    sep(2)
-    # class와 속성 지정
-    print(soup.select('.ui-input-text input[name="id"]'))
-
-    sep(3)
-    # 바로 아래 단계별로 검색
-    print(soup.select('.ui-input-text > button'))
-
-    sep(4)
-    # 문자열만 가져오기
-    print(soup.select_one('.ui-large-button').text)
-
-def test_selenium_op():
+def test_seleinum_dirver():
     from webdriver_manager.chrome import ChromeDriverManager
     from selenium import webdriver
     from selenium.webdriver.chrome.service import Service
     from selenium.webdriver.chrome.options import Options
-    from selenium.webdriver.common.by import By
-
+    
     options = Options()
-    # 셀레니움 실행동안 브라우저 닫지 않기
     options.add_experimental_option('detach', True)
-    # 개발도구 로그 보지 않기
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
     options.add_argument("--start-maximized")
     # options.add_argument("headless")
-
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
     driver.get('https://www.google.com/')
-    data = driver.find_element(By.CSS_SELECTOR, '.MV3Tnb').text
-    print(f'결과 : {data}')
-    # driver.quit()
+
+    return driver
+
+def test_bs_select():
+    from bs4 import BeautifulSoup
+   
+    driver = test_seleinum_dirver()
+    html = driver.page_source
+    soup = BeautifulSoup(html, 'html.parser')
+    driver.quit()
+        
+    sep(1)
+    print(type(driver))
+    # <class 'selenium.webdriver.chrome.webdriver.WebDriver'>
+    print(type(html))
+    # <class 'str'>
+    print(type(soup))
+    # <class 'bs4.BeautifulSoup'>
+        
+    sep(2)
+    # class는 .으로 시작, 공백은 .으로 처리
+    print(soup.select('.uU7dJb'))
+    
+    sep(3)
+    print(soup.select_one('.uU7dJb').text)
+
+    sep(4)
+    # class와 a tag의 href 속성 지정
+    print(soup.select('.KxwPGc.iTjxkf a[href="https://policies.google.com/privacy?hl=ko&fg=1"]'))
+    
+    sep(5)
+    print(soup.select_one('.KxwPGc.iTjxkf a[href="https://policies.google.com/privacy?hl=ko&fg=1"]').text)
+    
+
+def test_selenium_find():
+    from selenium.webdriver.common.by import By
+    
+    driver = test_seleinum_dirver()
+   
+    sep(1)
+    print(driver.find_element(By.CSS_SELECTOR, '.uU7dJb'))
+    
+    sep(2)
+    print(driver.find_element(By.CSS_SELECTOR, '.uU7dJb').text)
+    
+    sep(3)
+    print(driver.find_element(By.CSS_SELECTOR, '.KxwPGc.iTjxkf a[href="https://policies.google.com/privacy?hl=ko&fg=1"]'))
+    
+    sep(4)
+    print(driver.find_element(By.CSS_SELECTOR, '.KxwPGc.iTjxkf a[href="https://policies.google.com/privacy?hl=ko&fg=1"]').text)
+    
+    driver.quit()
 
 
 if __name__ == "__main__":
+    
     import sys
+    
     test = getattr(sys.modules[__name__], sys.argv[1])
     test()
