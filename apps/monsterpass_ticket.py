@@ -12,7 +12,7 @@ import pandas as pd
 
 def get_credit():
     try:
-        with open('credit.txt', 'r') as file:
+        with open('credit', 'r') as file:
             credit = file.readlines()
             credit = [credit[0].strip(), credit[1].strip()]
     except:
