@@ -104,7 +104,7 @@ def get_user_info(user, token):
         except:
             # 전화번호만 등록되고 방문기록은 얺는 경우가 있음
             vtime = "0123456789"
-            print(phone, ': Server is not responding.')
+            print(str(phone), ': Server is not responding.')
         visit.append(datetime.utcfromtimestamp(int(vtime)))
 
     return list(zip(phones, ticket, visit))
