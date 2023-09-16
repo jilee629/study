@@ -40,20 +40,18 @@ def page_login(url, id, passwd):
     time.sleep(1)
     # 회원관리 페이지
     driver.get('https://partner.monpass.im/member')
-    time.sleep(1)
+    time.sleep(2)
     return
 
-def more_click():
+def more_click(total_users):
     t = 1
     while True:
         try:
             driver.find_element(By.CSS_SELECTOR, '.sc-cBdUnI.fBYDFC').click()
-            # print(".", end="")
-            print(t, "page reading is done.")
+            print(f"{t} page reading is done. {50*t} / {total_users}")
             t += 1
-            time.sleep(.1)
+            time.sleep(.3)
         except:
-            # print("")
             print("No more page")
             break
 
@@ -85,29 +83,33 @@ def get_data(url, token):
     res_data = res.json()
     return res_data
 
+def get_user_ticket(phone, token):
+    curl = "https://api.monpass.im/api/crm/users/phone/" 
+    url = curl + phone.replace('-','') + "/"
+    res_data = get_data(url, token)
+    ticket = res_data['data']['ticket']
+    return ticket
+
+def get_user_visit(phone, token):
+    curl = "https://api.monpass.im/api/crm/users/phone/"
+    url = curl + phone.replace('-','') + "/" + "logs?page=1"
+    res_data = get_data(url, token)
+    try:
+        vtime = str(res_data['data']['rows'][0]['time'])[0:10]
+    except:
+        # 전화번호만 등록되고 방문기록은 얺는 경우가 있음
+        vtime = "0123456789"
+        print(' ', phone, ': Server is not responding.')
+    return vtime
+
 # 사용자 ticket 정보 추출하기
 def get_user_info(phones, token):
-    curl = "https://api.monpass.im/api/crm/users/phone/"
-    tickets = []
-    visits = []
+    tickets = list()
+    vtime = list()
     for phone in tqdm(phones):
-        # ticket 개수
-        url = curl + phone.replace('-','') + "/"
-        res_data = get_data(url, token)
-        tickets.append(res_data['data']['ticket'])
-
-        # 방문 시간
-        url = url + "logs?page=1"
-        res_data = get_data(url, token)
-        try:
-            vtime = str(res_data['data']['rows'][0]['time'])[0:10]
-        except:
-            # 전화번호만 등록되고 방문기록은 얺는 경우가 있음
-            vtime = "0123456789"
-            print(' ', phone, ': Server is not responding.')
-        visits.append(datetime.utcfromtimestamp(int(vtime)))
-       
-    return list(zip(phones, tickets, visits))
+        tickets.append(get_user_ticket(phone, token))
+        vtime.append(get_user_visit(phone, token))
+    return list(zip(phones, tickets, vtime))
 
 # ticket의 상세 개수 추출하기
 def get_ticket_info(user, token):
@@ -141,8 +143,15 @@ if __name__ == "__main__":
     page_login(url, credit[0], credit[1])
     token = get_token()
 
-    more_click()
-    
+    # page내 전체외원수 읽어오기
+    total_user_cnt = driver.find_element(By.CSS_SELECTOR, '.sc-iFMziU.gNKmAv').text
+    total_users = total_user_cnt[0:-1]
+    print(f"Total user count: {total_users}")
+
+    # more 클릭마다 50명씩 읽어짐
+    more_click(total_users)
+
+    # selenium보다 beautifulsoup이 속도가 더 빠름    
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
     
@@ -150,11 +159,11 @@ if __name__ == "__main__":
     phones = get_phones(soup)
 
     # 중간확인
-    total_user_cnt = soup.select_one('.sc-iFMziU.gNKmAv').text
-    print(f"Total User Count: {total_user_cnt[0:-1]}")
-    print(f"Number of phone: {len(phones)}")
+    # total_user_cnt = soup.select_one('.sc-iFMziU.gNKmAv').text
+    print(f"Total user count: {total_user_cnt[0:-1]}")
+    print(f"Phone list count: {len(phones)}")
     if int(total_user_cnt[0:-1]) != len(phones):
-        print("User count and phone list count are dismatched")
+        print("Count dismatch")
         exit()
 
     # 전체 사용자에 대한 정보(ticket, visit)
