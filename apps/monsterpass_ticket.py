@@ -100,7 +100,8 @@ def get_user_visit(phone, token):
         # 전화번호만 등록되고 방문기록은 얺는 경우가 있음
         vtime = "0123456789"
         print(' ', phone, ': Server is not responding.')
-    return vtime
+    visit = datetime.utcfromtimestamp(int(vtime))
+    return visit
 
 # 사용자 ticket 정보 추출하기
 def get_user_info(phones, token):
