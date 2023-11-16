@@ -142,11 +142,11 @@ def get_ticket_detail(phones, token):
     [['1시간(아이) 정기', '1', '2049-10-25T15:00:00.000Z', '2시간(아이) 정기', '5', '2050-01-31T15:00:00.000Z'],]
     '''
 
-def data_align(phones, tickets, visits, ticketinfos):
+def data_align(phones, tickets, visits, detailtickets):
     data = list()
-    for p, t, v, info in zip(phones, tickets, visits, ticketinfos):
+    for p, t, v, d in zip(phones, tickets, visits, detailtickets):
         data1 = [p, t, v]
-        data1.extend(info)
+        data1.extend(d)
         data.append(data1)
     # print(data)
     return data
