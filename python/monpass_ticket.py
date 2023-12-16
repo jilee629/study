@@ -29,7 +29,7 @@ def get_driver():
     options = Options()
     options.add_experimental_option('detach', True)
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    # options.add_argument("headless")
+    options.add_argument("headless")
     options.add_argument("--start-maximized")
     driver = webdriver.Chrome(service=service, options=options)
     return driver
@@ -53,19 +53,19 @@ def enter_memberpage():
     return
 
 def more_click(total_user_cnt):
-    for i in tqdm(range(50, int(total_user_cnt), 50), desc='more_click'):
+    for i in tqdm(range(50, int(total_user_cnt), 50), desc=' more_click'):
         driver.find_element(By.CSS_SELECTOR, '.sc-cBdUnI.fBYDFC').click()
         try:
-            element = WebDriverWait(driver, 10).until(
+            element = WebDriverWait(driver, 3).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '.sc-cBdUnI.fBYDFC'))
             )
         except:
-            return
+            break
+    return
 
 def get_total_user_cnt():
     total_user_cnt = driver.find_element(By.CSS_SELECTOR, '.sc-iFMziU.gNKmAv').text
-    print(f"Total user count: {total_user_cnt}")
-    return total_user_cnt[0:-1]
+    return int(total_user_cnt[0:-1])
 
 def get_data(url, token):
     headers = {
@@ -80,13 +80,12 @@ def get_data(url, token):
 def get_phone(soup):
     phone = soup.select('.ui-repeat.sc-cSHVUG.keecsQ > a > p > strong')
     phones = [p.text for p in phone]
-    print(f"Phone count: {len(phones)}")
     return phones
 
 def get_ticket(phones, token):
     curl = "https://api.monpass.im/api/crm/users/phone/" 
     tickets = list()
-    for phone in tqdm(phones, desc='user_ticket'):
+    for phone in tqdm(phones, desc=' user_ticket'):
         url = curl + phone.replace('-','') + "/"
         res_data = get_data(url, token)
         ticket = res_data['data']['ticket']
@@ -96,7 +95,7 @@ def get_ticket(phones, token):
 def get_visit(phones, token):
     curl = "https://api.monpass.im/api/crm/users/phone/"
     visits = list()
-    for phone in tqdm(phones, desc='user_visit'):
+    for phone in tqdm(phones, desc=' user_visit'):
         url = curl + phone.replace('-','') + "/" + "logs?page=1"
         res_data = get_data(url, token)
         try:
@@ -112,17 +111,17 @@ def get_visit(phones, token):
 # 티켓이 있는 사용자만 추출하기
 def filter_ticketuser_phone(user_infos):
     ticketuser_phones = list()
-    for info in tqdm(user_infos, desc='ticket_user'):
+    for info in tqdm(user_infos, desc=' ticket_user'):
         if info[1] != 0:
             ticketuser_phones.append(info[0])
-    print(f'Ticket users: {len(ticketuser_phones)}')
+    return ticketuser_phones
 
 # ticket의 상세 개수 추출하기
 
 def get_ticket_detail(phones, token):
     curl = "https://api.monpass.im/api/crm/users/phone/"
     ticket_info = list()
-    for phone in tqdm(phones, desc='ticket_info'):
+    for phone in tqdm(phones, desc=' ticket_info'):
         url = curl + phone.replace('-','') + "/benefits/ticket"
         res_data = get_data(url, token)
         data1 = list()
@@ -161,9 +160,9 @@ if __name__ == "__main__":
     token = get_token()
     enter_memberpage()
 
-    # total_user_cnt = 2000
-    total_user_cnt = int(get_total_user_cnt())
-
+    # total_user_cnt = 500
+    total_user_cnt = get_total_user_cnt()
+    print(f"-> Total user count: {total_user_cnt}")
     more_click(total_user_cnt)
 
     # selenium보다 beautifulsoup이 속도가 더 빠름    
@@ -172,6 +171,7 @@ if __name__ == "__main__":
     
     # 전체 사용자에 대한 정보
     user_phones = get_phone(soup)
+    print(f"-> Phone count: {len(user_phones)}")
     if total_user_cnt != len(user_phones):
         print('! Count dismatch')
         exit()
@@ -179,7 +179,7 @@ if __name__ == "__main__":
     user_ticket = get_ticket(user_phones, token)
     user_visit = get_visit(user_phones, token)
     total_ticket_cnt_1 = sum(user_ticket)
-    print(f"Total ticket count 1: {total_ticket_cnt_1}")
+    print(f"-> Total ticket count 1: {total_ticket_cnt_1}")
     if total_user_cnt != len(user_ticket):
         print('! Count dismatch')
         exit()
@@ -192,11 +192,12 @@ if __name__ == "__main__":
 
     # ticket을 가진 사용자에 대한 상세 정보
     ticketuser_phones = filter_ticketuser_phone(user_info)
+    print(f"-> Ticket users: {len(ticketuser_phones)}")
     ticketuser_ticket = get_ticket(ticketuser_phones, token)
     ticketuser_visit = get_visit(ticketuser_phones, token)
     ticketuser_ticket_info = get_ticket_detail(ticketuser_phones, token)
     total_ticket_cnt_2 = sum(ticketuser_ticket)
-    print(f"Total ticket count 2: {total_ticket_cnt_2}\n")
+    print(f"-> Total ticket count 2: {total_ticket_cnt_2}\n")
     if len(ticketuser_phones) != len(ticketuser_ticket):
         print('! Count dismatch')
         exit()
