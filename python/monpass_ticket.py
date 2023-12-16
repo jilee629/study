@@ -3,33 +3,35 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import requests
 from datetime import datetime, timedelta
 import time
 from tqdm import tqdm
 import pandas as pd
+import tomllib
 
 def get_credit():
     try:
-        with open('credit', 'r') as file:
-            credit = file.readlines()
-            credit = [credit[0].strip(), credit[1].strip()]
+        with open('python/credit.toml', 'rb') as f:
+            data = tomllib.load(f)
+            username = data['monpass']['username']
+            password = data['monpass']['password']
     except:
-        id = input('Your ID: ')
-        passwd = input('Password: ')
-        credit = ['id', 'passwd']
-    return credit
+        username = input('Your ID: ')
+        password = input('Password: ')
+    return [username, password]
 
 def get_driver():
     service = Service(ChromeDriverManager().install())
     options = Options()
     options.add_experimental_option('detach', True)
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    options.add_argument("headless")
+    # options.add_argument("headless")
     options.add_argument("--start-maximized")
     driver = webdriver.Chrome(service=service, options=options)
-    driver.implicitly_wait(5)
     return driver
 
 def page_login(url, id, passwd):
@@ -42,6 +44,7 @@ def page_login(url, id, passwd):
 
 def get_token():
     token = driver.execute_script("return localStorage.getItem('token')")
+    print(f"Token: {token}")
     return token
 
 def enter_memberpage():
@@ -52,11 +55,16 @@ def enter_memberpage():
 def more_click(total_user_cnt):
     for i in tqdm(range(50, int(total_user_cnt), 50), desc='more_click'):
         driver.find_element(By.CSS_SELECTOR, '.sc-cBdUnI.fBYDFC').click()
-    time.sleep(2)
-    return
+        try:
+            element = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, '.sc-cBdUnI.fBYDFC'))
+            )
+        except:
+            return
 
 def get_total_user_cnt():
     total_user_cnt = driver.find_element(By.CSS_SELECTOR, '.sc-iFMziU.gNKmAv').text
+    print(f"Total user count: {total_user_cnt}")
     return total_user_cnt[0:-1]
 
 def get_data(url, token):
@@ -72,10 +80,8 @@ def get_data(url, token):
 def get_phone(soup):
     phone = soup.select('.ui-repeat.sc-cSHVUG.keecsQ > a > p > strong')
     phones = [p.text for p in phone]
+    print(f"Phone count: {len(phones)}")
     return phones
-    '''
-    ['010-4213-7811', '010-4031-7134',]
-    '''
 
 def get_ticket(phones, token):
     curl = "https://api.monpass.im/api/crm/users/phone/" 
@@ -85,11 +91,7 @@ def get_ticket(phones, token):
         res_data = get_data(url, token)
         ticket = res_data['data']['ticket']
         tickets.append(ticket)
-    # print(tickets)
     return tickets
-    '''
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    '''
 
 def get_visit(phones, token):
     curl = "https://api.monpass.im/api/crm/users/phone/"
@@ -105,11 +107,7 @@ def get_visit(phones, token):
             print(' ', phone, ': Server is not responding.')
         visit = datetime.utcfromtimestamp(int(vtime))
         visits.append(visit)
-    # print(visits)
     return visits
-    '''
-    [datetime.datetime(2023, 11, 14, 7, 45, 33), datetime.datetime(2023, 11, 14, 7, 45, 36),]
-    '''
 
 # 티켓이 있는 사용자만 추출하기
 def filter_ticketuser_phone(user_infos):
@@ -117,11 +115,7 @@ def filter_ticketuser_phone(user_infos):
     for info in tqdm(user_infos, desc='ticket_user'):
         if info[1] != 0:
             ticketuser_phones.append(info[0])
-    # print(ticketuser_phones)
-    return ticketuser_phones
-    '''
-    ['010-8882-1463', '010-4047-5702']
-    '''
+    print(f'Ticket users: {len(ticketuser_phones)}')
 
 # ticket의 상세 개수 추출하기
 
@@ -136,11 +130,7 @@ def get_ticket_detail(phones, token):
             data2 = data1 + [res['name'], res['count'], res['exp_date']]
             data1 = data2
         ticket_info.append(data1)
-    # print(ticket_info)
     return ticket_info
-    '''
-    [['1시간(아이) 정기', '1', '2049-10-25T15:00:00.000Z', '2시간(아이) 정기', '5', '2050-01-31T15:00:00.000Z'],]
-    '''
 
 def data_align(phones, tickets, visits, detailtickets):
     data = list()
@@ -148,11 +138,7 @@ def data_align(phones, tickets, visits, detailtickets):
         data1 = [p, t, v]
         data1.extend(d)
         data.append(data1)
-    # print(data)
     return data
-    '''
-    [['010-8882-1463', 4, datetime.datetime(2023, 9, 8, 13, 1, 15), '2시간 정기 (1년기한)', '4', '2024-05-02T15:00:00.000Z'],]
-    '''
 
 def save_to_excel(data, prefix):
     col = None
@@ -173,12 +159,10 @@ if __name__ == "__main__":
 
     page_login(url, credit[0], credit[1])
     token = get_token()
-    print(f">> token: {token}\n")
     enter_memberpage()
 
     # total_user_cnt = 2000
     total_user_cnt = int(get_total_user_cnt())
-    print(f">> Total user count: {total_user_cnt}\n")
 
     more_click(total_user_cnt)
 
@@ -188,23 +172,19 @@ if __name__ == "__main__":
     
     # 전체 사용자에 대한 정보
     user_phones = get_phone(soup)
-    print(f">> Phone count: {len(user_phones)}\n")
-    
     if total_user_cnt != len(user_phones):
-        print('>> Count dismatch')
+        print('! Count dismatch')
         exit()
 
     user_ticket = get_ticket(user_phones, token)
     user_visit = get_visit(user_phones, token)
-
     total_ticket_cnt_1 = sum(user_ticket)
-    print(f">> Total ticket count 1: {total_ticket_cnt_1}\n")
-
+    print(f"Total ticket count 1: {total_ticket_cnt_1}")
     if total_user_cnt != len(user_ticket):
-        print('>> Count dismatch')
+        print('! Count dismatch')
         exit()
     elif total_user_cnt != len(user_visit):
-        print('>> Count dismatch')
+        print('! Count dismatch')
         exit()
     
     user_info = list(zip(user_phones, user_ticket, user_visit))
@@ -212,31 +192,26 @@ if __name__ == "__main__":
 
     # ticket을 가진 사용자에 대한 상세 정보
     ticketuser_phones = filter_ticketuser_phone(user_info)
-    print(f'>> Ticket users: {len(ticketuser_phones)}\n')
-
     ticketuser_ticket = get_ticket(ticketuser_phones, token)
     ticketuser_visit = get_visit(ticketuser_phones, token)
     ticketuser_ticket_info = get_ticket_detail(ticketuser_phones, token)
- 
     total_ticket_cnt_2 = sum(ticketuser_ticket)
-    print(f">> Total ticket count 2: {total_ticket_cnt_2}\n")
-
+    print(f"Total ticket count 2: {total_ticket_cnt_2}\n")
     if len(ticketuser_phones) != len(ticketuser_ticket):
-        print('>> Count dismatch')
+        print('! Count dismatch')
         exit()
     elif len(ticketuser_phones) != len(ticketuser_ticket_info):
-        print('>> Count dismatch')
+        print('! Count dismatch')
         exit()
-    
+
     ticketuser_info = data_align(ticketuser_phones, ticketuser_ticket,
                                   ticketuser_visit, ticketuser_ticket_info)
-
     save_to_excel(ticketuser_info, f"ticket_{len(ticketuser_phones)}_{total_ticket_cnt_2}")
     
     driver.quit()
 
     sec = time.time() - start
-    print(timedelta(seconds=sec))
+    print(f"Elapsed time : {timedelta(seconds=sec)}")
     
     
 
