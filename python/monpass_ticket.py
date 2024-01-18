@@ -53,7 +53,7 @@ def enter_memberpage():
     return
 
 def more_click(total_user_cnt):
-    for i in tqdm(range(50, int(total_user_cnt), 50), desc=' more_click'):
+    for i in tqdm(range(50, int(total_user_cnt), 50), desc='more_click'):
         driver.find_element(By.CSS_SELECTOR, '.sc-cBdUnI.fBYDFC').click()
         try:
             element = WebDriverWait(driver, 3).until(
@@ -77,26 +77,38 @@ def get_data(url, token):
     return res_data
 
 # phone list 추출
-def get_phone(soup):
+def get_phone(soup, compare_cnt):
     phone = soup.select('.ui-repeat.sc-cSHVUG.keecsQ > a > p > strong')
-    phones = [p.text for p in phone]
+    phones = [p.text.replace('-', '') for p in phone]
+
+    print(f" -> Phone count: {len(phones)}")
+    if compare_cnt != len(phones):
+        print('! Count dismatch')
+        exit()
+
     return phones
 
-def get_ticket(phones, token):
+def get_ticket(phones, token, compare_cnt):
     curl = "https://api.monpass.im/api/crm/users/phone/" 
     tickets = list()
-    for phone in tqdm(phones, desc=' user_ticket'):
-        url = curl + phone.replace('-','') + "/"
+    for phone in tqdm(phones, desc='ticket'):
+        url = curl + phone
         res_data = get_data(url, token)
         ticket = res_data['data']['ticket']
         tickets.append(ticket)
+
+    print(f" -> Total ticket count : {sum(tickets)}")
+    if compare_cnt != len(tickets):
+        print('! Count dismatch')
+        exit()
+
     return tickets
 
-def get_visit(phones, token):
+def get_visit(phones, token, compare_cnt):
     curl = "https://api.monpass.im/api/crm/users/phone/"
     visits = list()
-    for phone in tqdm(phones, desc=' user_visit'):
-        url = curl + phone.replace('-','') + "/" + "logs?page=1"
+    for phone in tqdm(phones, desc='visit'):
+        url = curl + phone +"/logs?page=1"
         res_data = get_data(url, token)
         try:
             vtime = str(res_data['data']['rows'][0]['time'])[0:10]
@@ -106,35 +118,51 @@ def get_visit(phones, token):
             print(' ', phone, ': Server is not responding.')
         visit = datetime.utcfromtimestamp(int(vtime))
         visits.append(visit)
+
+    if compare_cnt != len(visits):
+        print('! Count dismatch')
+        exit()
+
     return visits
 
+def get_phone_len(phones):
+    phone_lens = [len(p)for p in phones]
+    return phone_lens
+
 # 티켓이 있는 사용자만 추출하기
-def filter_ticketuser_phone(user_infos):
-    ticketuser_phones = list()
-    for info in tqdm(user_infos, desc=' ticket_user'):
-        if info[1] != 0:
-            ticketuser_phones.append(info[0])
-    return ticketuser_phones
+def filter_t_user_phone(user_infos):
+    t_user_phones = list()
+    for info in tqdm(user_infos, desc='filter_ticket'):
+        if info[2] != 0:
+            t_user_phones.append(info[0])
+    print(f" -> Ticket users: {len(t_user_phones)}")
+
+    return t_user_phones
 
 # ticket의 상세 개수 추출하기
 
-def get_ticket_detail(phones, token):
+def get_ticket_detail(phones, token, compare_cnt):
     curl = "https://api.monpass.im/api/crm/users/phone/"
     ticket_info = list()
-    for phone in tqdm(phones, desc=' ticket_info'):
-        url = curl + phone.replace('-','') + "/benefits/ticket"
+    for phone in tqdm(phones, desc='ticket_detail'):
+        url = curl + phone + "/benefits/ticket"
         res_data = get_data(url, token)
         data1 = list()
         for res in res_data['data']:
             data2 = data1 + [res['name'], res['count'], res['exp_date']]
             data1 = data2
         ticket_info.append(data1)
+
+    if compare_cnt != len(ticket_info):
+        print('! Count dismatch')
+        exit()
+
     return ticket_info
 
-def data_align(phones, tickets, visits, detailtickets):
+def data_align(phones, length, tickets, visits, detailtickets):
     data = list()
-    for p, t, v, d in zip(phones, tickets, visits, detailtickets):
-        data1 = [p, t, v]
+    for p, l, t, v, d in zip(phones, length, tickets, visits, detailtickets):
+        data1 = [p, l, t, v]
         data1.extend(d)
         data.append(data1)
     return data
@@ -160,9 +188,9 @@ if __name__ == "__main__":
     token = get_token()
     enter_memberpage()
 
-    # total_user_cnt = 500
+    # total_user_cnt = 200
     total_user_cnt = get_total_user_cnt()
-    print(f"-> Total user count: {total_user_cnt}")
+    print(f" -> Total user count: {total_user_cnt}")
     more_click(total_user_cnt)
 
     # selenium보다 beautifulsoup이 속도가 더 빠름    
@@ -170,50 +198,24 @@ if __name__ == "__main__":
     soup = BeautifulSoup(html, 'html.parser')
     
     # 전체 사용자에 대한 정보
-    user_phones = get_phone(soup)
-    print(f"-> Phone count: {len(user_phones)}")
-    if total_user_cnt != len(user_phones):
-        print('! Count dismatch')
-        exit()
-
-    user_ticket = get_ticket(user_phones, token)
-    user_visit = get_visit(user_phones, token)
-    total_ticket_cnt_1 = sum(user_ticket)
-    print(f"-> Total ticket count 1: {total_ticket_cnt_1}")
-    if total_user_cnt != len(user_ticket):
-        print('! Count dismatch')
-        exit()
-    elif total_user_cnt != len(user_visit):
-        print('! Count dismatch')
-        exit()
-    
-    user_info = list(zip(user_phones, user_ticket, user_visit))
-    save_to_excel(user_info, f"total_{len(user_phones)}_{total_ticket_cnt_1}")
+    user_phones = get_phone(soup, total_user_cnt)
+    phone_lenth = get_phone_len(user_phones)
+    user_ticket = get_ticket(user_phones, token, total_user_cnt)
+    user_visit = get_visit(user_phones, token, total_user_cnt)
+    user_info = list(zip(user_phones, phone_lenth ,user_ticket, user_visit))
+    save_to_excel(user_info, f"total_{len(user_phones)}_{sum(user_ticket)}")
 
     # ticket을 가진 사용자에 대한 상세 정보
-    ticketuser_phones = filter_ticketuser_phone(user_info)
-    print(f"-> Ticket users: {len(ticketuser_phones)}")
-    ticketuser_ticket = get_ticket(ticketuser_phones, token)
-    ticketuser_visit = get_visit(ticketuser_phones, token)
-    ticketuser_ticket_info = get_ticket_detail(ticketuser_phones, token)
-    total_ticket_cnt_2 = sum(ticketuser_ticket)
-    print(f"-> Total ticket count 2: {total_ticket_cnt_2}\n")
-    if len(ticketuser_phones) != len(ticketuser_ticket):
-        print('! Count dismatch')
-        exit()
-    elif len(ticketuser_phones) != len(ticketuser_ticket_info):
-        print('! Count dismatch')
-        exit()
-
-    ticketuser_info = data_align(ticketuser_phones, ticketuser_ticket,
-                                  ticketuser_visit, ticketuser_ticket_info)
-    save_to_excel(ticketuser_info, f"ticket_{len(ticketuser_phones)}_{total_ticket_cnt_2}")
+    t_user_phones = filter_t_user_phone(user_info)
+    t_user_phone_len = get_phone_len(t_user_phones)
+    t_user_ticket = get_ticket(t_user_phones, token, len(t_user_phones))
+    t_user_visit = get_visit(t_user_phones, token, len(t_user_phones))
+    t_user_ticket_detail = get_ticket_detail(t_user_phones, token, len(t_user_phones))
+    t_user_info = data_align(t_user_phones, t_user_phone_len, t_user_ticket,
+                                t_user_visit, t_user_ticket_detail)
+    save_to_excel(t_user_info, f"ticket_{len(t_user_phones)}_{sum(t_user_ticket)}")
     
     driver.quit()
 
     sec = time.time() - start
     print(f"Elapsed time : {timedelta(seconds=sec)}")
-    
-    
-
-    
