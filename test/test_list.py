@@ -1,21 +1,13 @@
-d1 = ['a', 'b', 'c']
-d2 = ['e', 'f', 'g']
-d1.append(d2)
-print(d1)
-'''
-['a', 'b', 'c', ['e', 'f', 'g']]
-'''
+L1 = ['a', 'b', 'c']
 
-d1 = ['a', 'b', 'c']
-d2 = ['e', 'f', 'g']
-d1.extend(d2)
-print(d1)
-'''
-['a', 'b', 'c', 'e', 'f', 'g']
-'''
+L1.append('d')
+print(f"-> append: {L1}")
 
-d1 = ['a', 'b', 'c']
-print(tuple(d1))
-'''
-('a', 'b', 'c')
-'''
+L1.remove('c')
+print(f"-> remove: {L1}")
+
+L1.insert(1, 'c')
+print(f"-> insert: {L1}")
+
+L1.extend(['e'])
+print(f"-> extend: {L1}")

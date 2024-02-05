@@ -73,14 +73,15 @@ def save_to_excel(data):
 
 if __name__ == "__main__":
 
-    start = time.time()
+    start = datetime.now()
     
     credit = get_credit()
     driver = get_driver()
     page_login(credit[0], credit[1])
     token = get_token()
-
-    df = pd.read_excel("20240204_점핑몬스터 미사점_고객정보.xlsx")
+    
+    today = datetime.now().strftime('%Y%m%d')
+    df = pd.read_excel(today + "_점핑몬스터 미사점_고객정보.xlsx")
     list_cs = df[['전화번호','잔여 오티켓']].values.tolist()
 
     cs_info = list()
@@ -94,5 +95,5 @@ if __name__ == "__main__":
     save_to_excel(cs_info)
     driver.quit()
 
-    sec = time.time() - start
+    sec = datetime.now() - start
     print(f"Elapsed time : {timedelta(seconds=sec)}")
