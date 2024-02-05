@@ -3,12 +3,13 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from datetime import datetime, timedelta
-from tqdm import tqdm
 import pandas as pd
 import tomllib
-import time
 import requests
+from tqdm import tqdm
+import time
+from datetime import timedelta
+
 
 def get_driver():
     service = Service(ChromeDriverManager().install())
@@ -67,20 +68,23 @@ def filter_ticket(data):
 def save_to_excel(data):
     df = pd.DataFrame(data)
     df.index += 1
-    t = datetime.now()
-    fdate = t.strftime("%Y-%m-%d-%H-%M")
-    df.to_excel(f"{fdate}_total_{len(data)}.xlsx", engine='openpyxl')
+    # t = datetime.now()
+    # fdate = t.strftime("%Y-%m-%d-%H-%M")
+    # df.to_excel(f"{fdate}_total_{len(data)}.xlsx", engine='openpyxl')
+    # fname = datetime.now().strftime('%Y-%m-%d-%H-%M') + str(len(data))
+    fname = time.strftime('%Y-%m-%d-%H-%M', time.localtime()) + "_total_" + str(len(data))
+    df.to_excel(f"{fname}.xlsx", engine='openpyxl')
 
 if __name__ == "__main__":
 
-    start = datetime.now()
+    start = time.time()
     
     credit = get_credit()
     driver = get_driver()
     page_login(credit[0], credit[1])
     token = get_token()
     
-    today = datetime.now().strftime('%Y%m%d')
+    today = time.strftime('%Y%m%d', time.localtime())
     df = pd.read_excel(today + "_점핑몬스터 미사점_고객정보.xlsx")
     list_cs = df[['전화번호','잔여 오티켓']].values.tolist()
 
@@ -95,5 +99,5 @@ if __name__ == "__main__":
     save_to_excel(cs_info)
     driver.quit()
 
-    sec = datetime.now() - start
-    print(f"Elapsed time : {timedelta(seconds=sec)}")
+    delta = time.time() - start
+    print(f"Elapsed time : {timedelta(seconds=delta)}")
