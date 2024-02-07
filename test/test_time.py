@@ -22,8 +22,7 @@ print(f"-> localtime strftime: {time.strftime('%Y-%m-%d-%H-%M-%S', time.localtim
 
 print(f"-> datetime strftime: {datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}")
 
-start = time.now()
-# time.sleep(1)
-# end = datetime.now()
-# sec = end - start
-# print(f"-> timedelta: {timedelta(seconds=sec)}")
+start = time.time()
+time.sleep(1)
+delta = time.time() - start
+print(f"-> timedelta: {timedelta(seconds=delta)}")

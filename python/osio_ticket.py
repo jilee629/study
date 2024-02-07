@@ -67,16 +67,15 @@ def filter_ticket(data):
 def save_to_excel(data):
     df = pd.DataFrame(data)
     df.index += 1
-    t = datetime.now()
-    fdate = t.strftime("%Y-%m-%d-%H-%M")
+    fdate = datetime.now()t.strftime("%Y-%m-%d-%H-%M")
     df.to_excel(f"{fdate}_total_{len(data)}.xlsx", engine='openpyxl')
 
 if __name__ == "__main__":
 
-    start = datetime.now()
+    start = time.time()
     
-    credit = get_credit()
     driver = get_driver()
+    credit = get_credit()
     page_login(credit[0], credit[1])
     token = get_token()
     
@@ -95,5 +94,5 @@ if __name__ == "__main__":
     save_to_excel(cs_info)
     driver.quit()
 
-    sec = datetime.now() - start
-    print(f"Elapsed time : {timedelta(seconds=sec)}")
+    delta = time.time() - start
+    print(f"Elapsed time : {timedelta(seconds=delta)}")
