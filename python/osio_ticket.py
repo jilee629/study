@@ -96,4 +96,4 @@ if __name__ == "__main__":
     driver.quit()
 
     delta = time.time() - start
-    print(f"Elapsed time : {timedelta(seconds=delta)}")
+    print(f"-> Elapsed time : {timedelta(seconds=delta)}")
