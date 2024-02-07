@@ -3,12 +3,13 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from datetime import datetime, timedelta
-from tqdm import tqdm
 import pandas as pd
 import tomllib
-import time
 import requests
+from tqdm import tqdm
+import time
+from datetime import timedelta
+
 
 def get_driver():
     service = Service(ChromeDriverManager().install())
@@ -79,7 +80,7 @@ if __name__ == "__main__":
     page_login(credit[0], credit[1])
     token = get_token()
     
-    today = datetime.now().strftime('%Y%m%d')
+    today = time.strftime('%Y%m%d', time.localtime())
     df = pd.read_excel(today + "_점핑몬스터 미사점_고객정보.xlsx")
     list_cs = df[['전화번호','잔여 오티켓']].values.tolist()
 
