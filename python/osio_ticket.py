@@ -8,7 +8,7 @@ import tomllib
 import requests
 from tqdm import tqdm
 import time
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 
 def get_driver():
@@ -68,7 +68,7 @@ def filter_ticket(data):
 def save_to_excel(data):
     df = pd.DataFrame(data)
     df.index += 1
-    fdate = datetime.now()t.strftime("%Y-%m-%d-%H-%M")
+    fdate = datetime.now().strftime("%Y-%m-%d-%H-%M")
     df.to_excel(f"{fdate}_total_{len(data)}.xlsx", engine='openpyxl')
 
 if __name__ == "__main__":
