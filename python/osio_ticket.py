@@ -45,31 +45,42 @@ def get_token():
     print(f"-> Token: {token}")
     return token
 
-def get_ticket(phone, token):
+def send_query(url):
     headers = {
         'Authorization': 'Bearer ' + token,
     }
-    curl = "https://osio-api.peoplcat.com/shop/osio/user/search?type=phone&phone="
-    url = curl + phone.replace('-', '')
     res = requests.get(url, headers=headers)
     res.raise_for_status()
-    res_data = res.json()
-    ticket = filter_ticket(res_data)
-    return ticket
+    return res.json()
 
-def filter_ticket(data):
-    ticket = list()
-    for d in data['shop_users'][0]['user_osio_data']:
-        ticket.append(d['shop_osio_product_name'])
-        ticket.append(d['user_osio_data_value'])
-        ticket.append(d['expiry_date'])
-    return ticket
+def get_shop_user_no(data):
+    url = "https://osio-api.peoplcat.com/shop/osio/user/search?type=phone&phone=" + str(data)
+    res_data = send_query(url)
+    shop_user_no = res_data['shop_users'][0]['shop_user_no']
+    return shop_user_no
+
+def get_entry_time(data):
+    url = "https://osio-api.peoplcat.com/shop/v2/user/entry/log?shop_user_no=" + str(data)
+    res_data = send_query(url)
+    try:
+        return res_data['log'][0]['entry_datetime']
+    except:
+        return None
+
+def get_last_visit(data):
+    last_visit = list()
+    for phone in tqdm(data):
+        shop_user_no = get_shop_user_no(phone)
+        entry_time = get_entry_time(shop_user_no)
+        last_visit.append(entry_time)
+    return last_visit
 
 def save_to_excel(data):
     df = pd.DataFrame(data)
     df.index += 1
     fdate = datetime.now().strftime("%Y%m%d%H%M")
-    df.to_excel(f"{fdate}_total_{len(data)}.xlsx", engine='openpyxl')
+    df.to_excel(f"{fdate}.xlsx", engine='openpyxl')
+
 
 if __name__ == "__main__":
 
@@ -81,18 +92,31 @@ if __name__ == "__main__":
     token = get_token()
     
     today = time.strftime('%Y%m%d', time.localtime())
-    df = pd.read_excel(today + "_점핑몬스터 미사점_고객정보.xlsx")
-    list_cs = df[['전화번호','잔여 오티켓']].values.tolist()
+    df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str')
 
-    cs_info = list()
-    for cs in tqdm(list_cs):
-        info = list(cs)
-        if cs[1] != 0:
-            info.extend(get_ticket(cs[0], token))
-        info.insert(1, len(cs[0]))
-        cs_info.append(info)
+    cs_phone = df['전화번호'].values.tolist()
+    cs_ticket_name = df['오시오명'].values.tolist()
+    cs_ticket_count = df['오시오 잔여값'].values.tolist()
+    cs_ticket_expired = df['오시오 만료일'].values.tolist()
+    cs_last_visit = get_last_visit(cs_phone)
 
-    save_to_excel(cs_info)
+    cs_data = {
+                'phone' : cs_phone,
+                'ticket_name' : cs_ticket_name,
+                'ticket_count' : cs_ticket_count,
+                'ticket_expired' : cs_ticket_expired,
+                'last_visited' : cs_last_visit,
+            }
+
+    print("lenth : ", 
+          len(cs_data['phone']),
+          len(cs_data['ticket_name']),
+          len(cs_data['ticket_count']),
+          len(cs_data['ticket_expired']),
+          len(cs_data['last_visited']),
+          )
+
+    save_to_excel(cs_data)
     driver.quit()
 
     delta = time.time() - start
