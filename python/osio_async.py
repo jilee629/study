@@ -116,55 +116,54 @@ async def main_visit_count(cs_user_no, cs_shop_user_no):
         result = await asyncio.gather(*tasks)
         return result
 
-start = time.time()
+if __name__ == "__main__":
+    start = time.time()
 
-driver = get_driver()
-credit = get_credit()
-page_login(credit[0], credit[1])
-token = get_token()
+    driver = get_driver()
+    credit = get_credit()
+    page_login(credit[0], credit[1])
+    token = get_token()
 
-today = time.strftime('%Y%m%d', time.localtime())
-df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str')
-# df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str', nrows = 10)
+    headers = {
+        'Authorization': 'Bearer ' + token,
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0',
+    }
 
-cs_phone = df['전화번호'].values.tolist()
-cs_ticket_name = df['오시오명'].values.tolist()
-cs_ticket_count = df['오시오 잔여값'].values.tolist()
-cs_ticket_expired = df['오시오 만료일'].values.tolist()
+    today = time.strftime('%Y%m%d', time.localtime())
+    # df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str')
+    df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str', nrows = 10)
 
-headers = {
-    'Authorization': 'Bearer ' + token,
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0',
-}
+    cs_phone = df['전화번호'].values.tolist()
+    cs_ticket_name = df['오시오명'].values.tolist()
+    cs_ticket_count = df['오시오 잔여값'].values.tolist()
+    cs_ticket_expired = df['오시오 만료일'].values.tolist()
+    cs_shop_user_no = asyncio.run(main_shop_user_no(cs_phone))
+    cs_entry_datetime = asyncio.run(main_entry_datetime(cs_shop_user_no))
+    cs_user_no = asyncio.run(main_user_no(cs_phone))
+    cs_visit_count = asyncio.run(main_visit_count(cs_user_no, cs_shop_user_no))
 
-cs_shop_user_no = asyncio.run(main_shop_user_no(cs_phone))
-cs_entry_datetime = asyncio.run(main_entry_datetime(cs_shop_user_no))
+    cs_data = {
+                'phone' : cs_phone,
+                'osio_name' : cs_ticket_name,
+                'osio_count' : cs_ticket_count,
+                'osio_expired' : cs_ticket_expired,
+                'shop_user_no' : cs_shop_user_no,
+                'entry_datetime' : cs_entry_datetime,
+                'user_no' : cs_user_no,
+                'visit_count' : cs_visit_count,
+            }
 
-cs_user_no = asyncio.run(main_user_no(cs_phone))
-cs_visit_count = asyncio.run(main_visit_count(cs_user_no, cs_shop_user_no))
+    driver.quit()
+    delta = time.time() - start
+    print(f"-> Elapsed time : {timedelta(seconds=delta)}")
 
-cs_data = {
-            'phone' : cs_phone,
-            'osio_name' : cs_ticket_name,
-            'osio_count' : cs_ticket_count,
-            'osio_expired' : cs_ticket_expired,
-            'shop_user_no' : cs_shop_user_no,
-            'entry_datetime' : cs_entry_datetime,
-            'user_no' : cs_user_no,
-            'visit_count' : cs_visit_count,
-        }
+    [print(f"{key} : {len(value)}") for key, value in cs_data.items()]
 
-driver.quit()
-delta = time.time() - start
-print(f"-> Elapsed time : {timedelta(seconds=delta)}")
+    df = pd.DataFrame(cs_data)
+    fdate = datetime.now().strftime("%Y%m%d%H%M")
+    df.to_excel(f"{fdate}.xlsx", engine='openpyxl')
 
-[print(f"{key} : {len(value)}") for key, value in cs_data.items()]
-
-df = pd.DataFrame(cs_data)
-fdate = datetime.now().strftime("%Y%m%d%H%M")
-df.to_excel(f"{fdate}.xlsx", engine='openpyxl')
-
-# [print(val) for val in cs_data.values()]
+    # [print(val) for val in cs_data.values()]
 
 
 
