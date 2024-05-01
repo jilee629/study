@@ -9,8 +9,6 @@ import requests
 from tqdm import tqdm
 import time
 from datetime import datetime, timedelta
-import asyncio
-import aiohttp
 
 def get_driver():
     service = Service(ChromeDriverManager().install())
@@ -93,8 +91,7 @@ if __name__ == "__main__":
     cs_ticket_expired = df['오시오 만료일'].values.tolist()
 
     cs_entry_datatime = list()
-    for i, phone in enumerate(cs_phone):
-        print(f"Task {i} run")
+    for phone in tqdm(cs_phone):
         cs_entry_datatime.append(get_entry_datetime(phone))
 
     cs_data = {
