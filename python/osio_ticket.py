@@ -74,37 +74,6 @@ def get_entry_datetime(phone):
     except:
         return None
 
-# def query_user_no_shop_user_no(phone):
-#     url = "https://osio-api.peoplcat.com/shop/osio/user/search?type=phone&phone=" + phone
-#     result = send_query(url)
-#     shop_user_no = result['shop_users'][0]['shop_user_no']
-#     user_no = result['shop_users'][0]['user_no']
-#     return str(user_no), str(shop_user_no)
-
-# def query_visit_count(user_no, shop_user_no):
-#     url = "https://osio-api.peoplcat.com/shop/user/summary/data?user_no=" + user_no + "&shop_user_no=" + shop_user_no
-#     result = send_query(url)
-#     return result['visit_count']
-
-# def get_visit_count(phone):
-#     visit_count = list()
-#     for p in tqdm(phone, desc='visit_count'):
-#         user_no , shop_user_no = query_user_no_shop_user_no(p)
-#         user_visit_count = query_visit_count(user_no, shop_user_no)
-#         visit_count.append(user_visit_count)
-#     return visit_count
-
-# def get_entry_datetime1(visit_count, phone):
-#     last_visit = list()
-#     for v, p in zip(tqdm(visit_count, desc='entry_datetime'), phone):
-#         if v == 0:
-#             last_visit.append(None)
-#         else:
-#             shop_user_no= query_shop_user_no(p)
-#             entry_time = query_entry_datetime(shop_user_no)
-#             last_visit.append(entry_time)
-#     return last_visit
-
 if __name__ == "__main__":
 
     start = time.time()
@@ -116,31 +85,37 @@ if __name__ == "__main__":
     
     today = time.strftime('%Y%m%d', time.localtime())
     df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str')
-    cs_data = list()
+    # df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str', nrows = 5)
 
-    cs_num = len(df.index)
-    cs_num = 5
+    cs_phone = df['전화번호'].values.tolist()
+    cs_ticket_name = df['오시오명'].values.tolist()
+    cs_ticket_count = df['오시오 잔여값'].values.tolist()
+    cs_ticket_expired = df['오시오 만료일'].values.tolist()
 
-    for i in range(cs_num):
-        print(f"Task {i+1} / {cs_num} run")
-        data = list()
-        data.append(df['전화번호'][i])
-        data.append(df['오시오명'][i])
-        data.append(df['오시오 잔여값'][i])
-        data.append(df['오시오 만료일'][i])
-        data.append(get_entry_datetime(data[0]))
-        cs_data.append(data)
+    cs_entry_datatime = list()
+    for i, phone in enumerate(cs_phone):
+        print(f"Task {i} run")
+        cs_entry_datatime.append(get_entry_datetime(phone))
 
+    cs_data = {
+                'phone' : cs_phone,
+                'osio_name' : cs_ticket_name,
+                'osio_count' : cs_ticket_count,
+                'osio_expired' : cs_ticket_expired,
+                'entry_datetime' : cs_entry_datatime,
+            }
+  
     driver.quit()
+
     delta = time.time() - start
     print(f"-> Elapsed time : {timedelta(seconds=delta)}")
 
-    # [print(cs) for cs in cs_data]
+    [print(len(val), end=' ') for val in cs_data.values()]
 
-    columns = ['전화번호','오시오명','오시오잔여값','오시오만료일','최근방문일']
-    df = pd.DataFrame(cs_data, columns=columns)
+    df = pd.DataFrame(cs_data)
     fdate = datetime.now().strftime("%Y%m%d%H%M")
     df.to_excel(f"{fdate}.xlsx", engine='openpyxl')
     
-
+    # [print(val) for val in cs_data.values()]
+    
 
