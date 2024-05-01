@@ -51,52 +51,59 @@ def send_query(url):
         'Authorization': 'Bearer ' + token,
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0',
     }
-    res = requests.get(url, headers=headers)
-    res.raise_for_status()
-    return res.json()
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    return response.json()
 
 def query_shop_user_no(phone):
     url = "https://osio-api.peoplcat.com/shop/osio/user/search?type=phone&phone=" + phone
-    res_data = send_query(url)
-    shop_user_no = res_data['shop_users'][0]['shop_user_no']
+    result = send_query(url)
+    shop_user_no = result['shop_users'][0]['shop_user_no']
     return str(shop_user_no)
-
-def query_user_no_shop_user_no(phone):
-    url = "https://osio-api.peoplcat.com/shop/osio/user/search?type=phone&phone=" + phone
-    res_data = send_query(url)
-    shop_user_no = res_data['shop_users'][0]['shop_user_no']
-    user_no = res_data['shop_users'][0]['user_no']
-    return str(user_no), str(shop_user_no)
-
-def query_visit_count(user_no, shop_user_no):
-    url = "https://osio-api.peoplcat.com/shop/user/summary/data?user_no=" + user_no + "&shop_user_no=" + shop_user_no
-    res_data = send_query(url)
-    return res_data['visit_count']
 
 def query_entry_datetime(shop_user_no):
     url = "https://osio-api.peoplcat.com/shop/v2/user/entry/log?shop_user_no=" + shop_user_no
-    res_data = send_query(url)
-    return res_data['log'][0]['entry_datetime']
+    result = send_query(url)
+    return result['log'][0]['entry_datetime']
 
-def get_visit_count(phone):
-    visit_count = list()
-    for p in tqdm(phone, desc='visit_count'):
-        user_no , shop_user_no = query_user_no_shop_user_no(p)
-        user_visit_count = query_visit_count(user_no, shop_user_no)
-        visit_count.append(user_visit_count)
-    return visit_count
+def get_entry_datetime(phone):
+    shop_user_no= query_shop_user_no(phone)
+    try:
+        entry_time = query_entry_datetime(shop_user_no)
+        return entry_time
+    except:
+        return None
 
-def get_entry_datetime(visit_count, phone):
-    last_visit = list()
-    for v, p in zip(tqdm(visit_count, desc='entry_datetime'), phone):
-        if v == 0:
-            last_visit.append(None)
-        else:
-            shop_user_no= query_shop_user_no(p)
-            entry_time = query_entry_datetime(shop_user_no)
-            last_visit.append(entry_time)
-    return last_visit
+# def query_user_no_shop_user_no(phone):
+#     url = "https://osio-api.peoplcat.com/shop/osio/user/search?type=phone&phone=" + phone
+#     result = send_query(url)
+#     shop_user_no = result['shop_users'][0]['shop_user_no']
+#     user_no = result['shop_users'][0]['user_no']
+#     return str(user_no), str(shop_user_no)
 
+# def query_visit_count(user_no, shop_user_no):
+#     url = "https://osio-api.peoplcat.com/shop/user/summary/data?user_no=" + user_no + "&shop_user_no=" + shop_user_no
+#     result = send_query(url)
+#     return result['visit_count']
+
+# def get_visit_count(phone):
+#     visit_count = list()
+#     for p in tqdm(phone, desc='visit_count'):
+#         user_no , shop_user_no = query_user_no_shop_user_no(p)
+#         user_visit_count = query_visit_count(user_no, shop_user_no)
+#         visit_count.append(user_visit_count)
+#     return visit_count
+
+# def get_entry_datetime1(visit_count, phone):
+#     last_visit = list()
+#     for v, p in zip(tqdm(visit_count, desc='entry_datetime'), phone):
+#         if v == 0:
+#             last_visit.append(None)
+#         else:
+#             shop_user_no= query_shop_user_no(p)
+#             entry_time = query_entry_datetime(shop_user_no)
+#             last_visit.append(entry_time)
+#     return last_visit
 
 if __name__ == "__main__":
 
@@ -109,28 +116,31 @@ if __name__ == "__main__":
     
     today = time.strftime('%Y%m%d', time.localtime())
     df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str')
+    cs_data = list()
 
-    cs_phone = df['전화번호'].values.tolist()
-    cs_ticket_name = df['오시오명'].values.tolist()
-    cs_ticket_count = df['오시오 잔여값'].values.tolist()
-    cs_ticket_expired = df['오시오 만료일'].values.tolist()
-    cs_visit_count = get_visit_count(cs_phone)
-    cs_entry_datetime = get_entry_datetime(cs_visit_count, cs_phone)
-    cs_data = {
-                'phone' : cs_phone,
-                'ticket_name' : cs_ticket_name,
-                'ticket_count' : cs_ticket_count,
-                'ticket_expired' : cs_ticket_expired,
-                'visit_count' : cs_visit_count,
-                'entry_datetime' : cs_entry_datetime,
-            }
-    [print(len(val)) for val in cs_data.values()]
+    cs_num = len(df.index)
+    cs_num = 5
+
+    for i in range(cs_num):
+        print(f"Task {i+1} / {cs_num} run")
+        data = list()
+        data.append(df['전화번호'][i])
+        data.append(df['오시오명'][i])
+        data.append(df['오시오 잔여값'][i])
+        data.append(df['오시오 만료일'][i])
+        data.append(get_entry_datetime(data[0]))
+        cs_data.append(data)
+
     driver.quit()
+    delta = time.time() - start
+    print(f"-> Elapsed time : {timedelta(seconds=delta)}")
 
-    df = pd.DataFrame(cs_data)
+    # [print(cs) for cs in cs_data]
+
+    columns = ['전화번호','오시오명','오시오잔여값','오시오만료일','최근방문일']
+    df = pd.DataFrame(cs_data, columns=columns)
     fdate = datetime.now().strftime("%Y%m%d%H%M")
     df.to_excel(f"{fdate}.xlsx", engine='openpyxl')
     
-    delta = time.time() - start
-    print(f"-> Elapsed time : {timedelta(seconds=delta)}")
+
 
