@@ -5,10 +5,10 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import pandas as pd
 import tomllib
-import requests
 from tqdm import tqdm
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
+import urllib3
 
 def get_driver():
     service = Service(ChromeDriverManager().install())
@@ -44,31 +44,22 @@ def get_token():
     print(f"-> Token: {token}")
     return token
 
-def send_query(url):
-    headers = {
-        'Authorization': 'Bearer ' + token,
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0',
-    }
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-    return response.json()
+def get_shop_user_no(phone, headers):
 
-def query_shop_user_no(phone):
     url = "https://osio-api.peoplcat.com/shop/osio/user/search?type=phone&phone=" + phone
-    result = send_query(url)
-    shop_user_no = result['shop_users'][0]['shop_user_no']
+    http = urllib3.PoolManager()
+    response = http.request('GET', url, headers=headers)
+    shop_user_no = response.json()['shop_users'][0]['shop_user_no']
     return str(shop_user_no)
 
-def query_entry_datetime(shop_user_no):
-    url = "https://osio-api.peoplcat.com/shop/v2/user/entry/log?shop_user_no=" + shop_user_no
-    result = send_query(url)
-    return result['log'][0]['entry_datetime']
+def get_entry_datetime(shop_user_no, headers):
 
-def get_entry_datetime(phone):
-    shop_user_no= query_shop_user_no(phone)
+    url = "https://osio-api.peoplcat.com/shop/v2/user/entry/log?shop_user_no=" + shop_user_no
+    http = urllib3.PoolManager()
     try:
-        entry_time = query_entry_datetime(shop_user_no)
-        return entry_time
+        response = http.request('GET', url, headers=headers)
+        entry_datetime = response.json()['log'][0]['entry_datetime']
+        return entry_datetime
     except:
         return None
 
@@ -80,39 +71,42 @@ if __name__ == "__main__":
     credit = get_credit()
     page_login(credit[0], credit[1])
     token = get_token()
-    
+
+    headers = {
+        'Authorization': 'Bearer ' + token,
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0',
+    }
+
     today = time.strftime('%Y%m%d', time.localtime())
-    df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str')
-    # df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str', nrows = 5)
+    # df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str')
+    df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str', nrows = 5)
 
     cs_phone = df['전화번호'].values.tolist()
     cs_ticket_name = df['오시오명'].values.tolist()
     cs_ticket_count = df['오시오 잔여값'].values.tolist()
     cs_ticket_expired = df['오시오 만료일'].values.tolist()
-
-    cs_entry_datatime = list()
-    for phone in tqdm(cs_phone):
-        cs_entry_datatime.append(get_entry_datetime(phone))
-
+    cs_shop_user_no = [get_shop_user_no(phone, headers) for phone in tqdm(cs_phone)]
+    cs_entry_datatime = [get_entry_datetime(shop_user_no, headers) for shop_user_no in tqdm(cs_shop_user_no)]
+ 
     cs_data = {
                 'phone' : cs_phone,
                 'osio_name' : cs_ticket_name,
                 'osio_count' : cs_ticket_count,
                 'osio_expired' : cs_ticket_expired,
+                'osio_shop_user_no' : cs_shop_user_no,
                 'entry_datetime' : cs_entry_datatime,
             }
   
     driver.quit()
 
-    delta = time.time() - start
-    print(f"-> Elapsed time : {timedelta(seconds=delta)}")
-
-    [print(len(val), end=' ') for val in cs_data.values()]
+    print(f"-> Elapsed time : {time.time() - start}")
+          
+    [print(f"{key} : {len(value)}") for key, value in cs_data.items()]
 
     df = pd.DataFrame(cs_data)
     fdate = datetime.now().strftime("%Y%m%d%H%M")
     df.to_excel(f"{fdate}.xlsx", engine='openpyxl')
     
-    # [print(val) for val in cs_data.values()]
+    [print(val) for val in cs_data.values()]
     
 

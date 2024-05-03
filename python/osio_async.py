@@ -46,11 +46,10 @@ def get_token():
     return token
 
 async def shop_user_no(session, url, i):
+    print(f"Task shop_user_no-{i} run")
     async with session.get(url, headers=headers) as response:
-        start = time.time()
         response = await response.json()
         shop_user_no = response['shop_users'][0]['shop_user_no']
-        print(f"Task shop_user_no-{i} : {timedelta(seconds=(time.time() - start))}")
         return shop_user_no
 
 async def main_shop_user_no(cs_phone):
@@ -63,12 +62,11 @@ async def main_shop_user_no(cs_phone):
         return result
 
 async def entry_datetime(session, url, i):
+    print(f"Task entry_datetime-{i} run")
     async with session.get(url, headers=headers) as response:
-        start = time.time()
         response = await response.json()
         try:
             entry_datetime = response['log'][0]['entry_datetime']
-            print(f"Task entry_datetime-{i} : {timedelta(seconds=(time.time() - start))}")
             return entry_datetime
         except:
             return None
@@ -83,11 +81,10 @@ async def main_entry_datetime(cs_shop_user_no):
         return result
 
 async def user_no(session, url, i):
+    print(f"Task user_no-{i} run")
     async with session.get(url, headers=headers) as response:
-        start = time.time()
         response = await response.json()
         user_no = response['shop_users'][0]['user_no']
-        print(f"Task user_no-{i} : {timedelta(seconds=(time.time() - start))}")
         return user_no
 
 async def main_user_no(cs_phone):
@@ -100,18 +97,17 @@ async def main_user_no(cs_phone):
         return result
 
 async def visit_count(session, url, i):
+    print(f"Task visit_count-{i} run")
     async with session.get(url, headers=headers) as response:
-        start = time.time()
         response = await response.json()
         visit_count = response['visit_count']
-        print(f"Task visit_count-{i} : {timedelta(seconds=(time.time() - start))}")
         return visit_count
                                 
 async def main_visit_count(cs_user_no, cs_shop_user_no):
     async with aiohttp.ClientSession() as session:
         tasks = list()
         for i, cs_zip in enumerate(zip(cs_user_no, cs_shop_user_no)):
-            url = url = "https://osio-api.peoplcat.com/shop/user/summary/data?user_no=" + str(cs_zip[0]) + "&shop_user_no=" + str(cs_zip[1])
+            url = "https://osio-api.peoplcat.com/shop/user/summary/data?user_no=" + str(cs_zip[0]) + "&shop_user_no=" + str(cs_zip[1])
             tasks.append(visit_count(session, url, i))
         result = await asyncio.gather(*tasks)
         return result
@@ -131,7 +127,7 @@ if __name__ == "__main__":
 
     today = time.strftime('%Y%m%d', time.localtime())
     # df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str')
-    df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str', nrows = 10)
+    df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str', nrows = 5)
 
     cs_phone = df['전화번호'].values.tolist()
     cs_ticket_name = df['오시오명'].values.tolist()
@@ -154,8 +150,8 @@ if __name__ == "__main__":
             }
 
     driver.quit()
-    delta = time.time() - start
-    print(f"-> Elapsed time : {timedelta(seconds=delta)}")
+
+    print(f"-> Elapsed time : {time.time() - start}")
 
     [print(f"{key} : {len(value)}") for key, value in cs_data.items()]
 
@@ -163,7 +159,7 @@ if __name__ == "__main__":
     fdate = datetime.now().strftime("%Y%m%d%H%M")
     df.to_excel(f"{fdate}.xlsx", engine='openpyxl')
 
-    # [print(val) for val in cs_data.values()]
+    [print(val) for val in cs_data.values()]
 
 
 
