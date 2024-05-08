@@ -15,7 +15,7 @@ def get_driver():
     options = Options()
     options.add_experimental_option('detach', True)
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    options.add_argument("headless")
+    # options.add_argument("headless")
     options.add_argument("--start-maximized")
     driver = webdriver.Chrome(service=service, options=options)
     return driver
@@ -89,6 +89,7 @@ if __name__ == "__main__":
     credit = get_credit()
     page_login(credit[0], credit[1])
     token = get_token()
+    driver.quit()
 
     today = time.strftime('%Y%m%d', time.localtime())
     # df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str')
@@ -113,8 +114,7 @@ if __name__ == "__main__":
                 'user_no' : cs_user_no,
                 'visit_count' : cs_visit_count,
             }
-    driver.quit()
-          
+      
     [print(f"{key} : {len(value)}") for key, value in cs_data.items()]
 
     df = pd.DataFrame(cs_data)
