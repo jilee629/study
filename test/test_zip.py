@@ -46,7 +46,13 @@ def test_zip(i):
             # 2 B b
             # 3 C c
             # 4 D d
-            # 5 E e        
+            # 5 E e
+    
+    if i == 8:
+        [print(n, l) for n, l in zip(numbers, letters)]
+        # 1 A
+        # 2 B
+        # 3 C
    
 if __name__ == "__main__":
 

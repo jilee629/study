@@ -44,24 +44,42 @@ def get_token():
     print(f"-> Token: {token}")
     return token
 
-def get_shop_user_no(phone, headers):
-
-    url = "https://osio-api.peoplcat.com/shop/osio/user/search?type=phone&phone=" + phone
+def fetch(url):
+    time.sleep(0.5)
     http = urllib3.PoolManager()
+    headers = {
+        'Authorization': 'Bearer ' + token,
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0',
+    }
     response = http.request('GET', url, headers=headers)
+    return response
+
+def get_shop_user_no(phone):
+    url = "https://osio-api.peoplcat.com/shop/osio/user/search?type=phone&phone=" + phone
+    response = fetch(url)
     shop_user_no = response.json()['shop_users'][0]['shop_user_no']
     return str(shop_user_no)
 
-def get_entry_datetime(shop_user_no, headers):
-
+def get_entry_datetime(shop_user_no):
     url = "https://osio-api.peoplcat.com/shop/v2/user/entry/log?shop_user_no=" + shop_user_no
-    http = urllib3.PoolManager()
     try:
-        response = http.request('GET', url, headers=headers)
+        response = fetch(url)
         entry_datetime = response.json()['log'][0]['entry_datetime']
         return entry_datetime
     except:
         return None
+
+def get_user_no(phone):
+    url = "https://osio-api.peoplcat.com/shop/osio/user/search?type=phone&phone=" + phone
+    response = fetch(url)
+    user_no = response.json()['shop_users'][0]['user_no']
+    return str(user_no)
+
+def get_visit_count(user_no, shop_usre_no):
+    url = "https://osio-api.peoplcat.com/shop/user/summary/data?user_no=" + user_no + "&shop_user_no=" + shop_usre_no
+    response = fetch(url)
+    visit_count = response.json()['visit_count']
+    return str(visit_count)
 
 if __name__ == "__main__":
 
@@ -72,41 +90,39 @@ if __name__ == "__main__":
     page_login(credit[0], credit[1])
     token = get_token()
 
-    headers = {
-        'Authorization': 'Bearer ' + token,
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0',
-    }
-
     today = time.strftime('%Y%m%d', time.localtime())
     # df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str')
-    df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str', nrows = 5)
+    df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str', nrows = 10)
 
     cs_phone = df['전화번호'].values.tolist()
     cs_ticket_name = df['오시오명'].values.tolist()
     cs_ticket_count = df['오시오 잔여값'].values.tolist()
     cs_ticket_expired = df['오시오 만료일'].values.tolist()
-    cs_shop_user_no = [get_shop_user_no(phone, headers) for phone in tqdm(cs_phone)]
-    cs_entry_datatime = [get_entry_datetime(shop_user_no, headers) for shop_user_no in tqdm(cs_shop_user_no)]
- 
+    cs_shop_user_no = [get_shop_user_no(phone) for phone in tqdm(cs_phone, desc='shop_user_no')]
+    cs_entry_datatime = [get_entry_datetime(shop_user_no) for shop_user_no in tqdm(cs_shop_user_no, desc='entry_datatime')]
+    cs_user_no = [get_user_no(phone) for phone in tqdm(cs_phone, desc='user_no')]
+    cs_visit_count = [get_visit_count(user_no, shop_user_no) for user_no, shop_user_no in tqdm(zip(cs_user_no, cs_shop_user_no), total = len(cs_user_no), desc='visit_count')]
+
     cs_data = {
                 'phone' : cs_phone,
                 'osio_name' : cs_ticket_name,
                 'osio_count' : cs_ticket_count,
-                'osio_expired' : cs_ticket_expired,
-                'osio_shop_user_no' : cs_shop_user_no,
+                'expired' : cs_ticket_expired,
+                'shop_user_no' : cs_shop_user_no,
                 'entry_datetime' : cs_entry_datatime,
+                'user_no' : cs_user_no,
+                'visit_count' : cs_visit_count,
             }
-  
     driver.quit()
-
-    print(f"-> Elapsed time : {time.time() - start}")
           
     [print(f"{key} : {len(value)}") for key, value in cs_data.items()]
 
     df = pd.DataFrame(cs_data)
-    fdate = datetime.now().strftime("%Y%m%d%H%M")
+    fdate = datetime.now().strftime("%Y%m%d_%H%M")
     df.to_excel(f"{fdate}.xlsx", engine='openpyxl')
-    
-    [print(val) for val in cs_data.values()]
+
+    print(f"-> Elapsed time : {time.time() - start}")
+        
+    # [print(val) for val in cs_data.values()]
     
 
