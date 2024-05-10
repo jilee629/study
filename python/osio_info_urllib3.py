@@ -58,7 +58,8 @@ def get_shop_user_no(phone):
     url = "https://osio-api.peoplcat.com/shop/osio/user/search?type=phone&phone=" + phone
     response = fetch(url)
     shop_user_no = response.json()['shop_users'][0]['shop_user_no']
-    return str(shop_user_no)
+    user_no = response.json()['shop_users'][0]['user_no']
+    return str(shop_user_no), str(user_no)
 
 def get_entry_datetime(shop_user_no):
     url = "https://osio-api.peoplcat.com/shop/v2/user/entry/log?shop_user_no=" + shop_user_no
@@ -68,12 +69,6 @@ def get_entry_datetime(shop_user_no):
         return entry_datetime
     except:
         return None
-
-def get_user_no(phone):
-    url = "https://osio-api.peoplcat.com/shop/osio/user/search?type=phone&phone=" + phone
-    response = fetch(url)
-    user_no = response.json()['shop_users'][0]['user_no']
-    return str(user_no)
 
 def get_visit_count(user_no, shop_usre_no):
     url = "https://osio-api.peoplcat.com/shop/user/summary/data?user_no=" + user_no + "&shop_user_no=" + shop_usre_no
@@ -99,19 +94,30 @@ if __name__ == "__main__":
     cs_ticket_name = df['오시오명'].values.tolist()
     cs_ticket_count = df['오시오 잔여값'].values.tolist()
     cs_ticket_expired = df['오시오 만료일'].values.tolist()
-    cs_shop_user_no = [get_shop_user_no(phone) for phone in tqdm(cs_phone, desc='shop_user_no')]
-    cs_entry_datatime = [get_entry_datetime(shop_user_no) for shop_user_no in tqdm(cs_shop_user_no, desc='entry_datatime')]
-    cs_user_no = [get_user_no(phone) for phone in tqdm(cs_phone, desc='user_no')]
-    cs_visit_count = [get_visit_count(user_no, shop_user_no) for user_no, shop_user_no in tqdm(zip(cs_user_no, cs_shop_user_no), total = len(cs_user_no), desc='visit_count')]
-
+    
+    cs_shop_user_no = list()
+    cs_user_no = list()
+    for phone in tqdm(cs_phone, desc='user_no'):
+        result = get_shop_user_no(phone)
+        cs_shop_user_no.append(result[0])
+        cs_user_no.append(result[1])
+        
+    cs_entry_datatime = list()
+    for shop_user_no in tqdm(cs_shop_user_no, desc='entry_datatime'):
+        cs_entry_datatime.append(get_entry_datetime(shop_user_no))
+        
+    cs_visit_count = list()
+    for user_no, shop_user_no in tqdm(zip(cs_user_no, cs_shop_user_no), total = len(cs_user_no), desc='visit_count'):
+        cs_visit_count.append(get_visit_count(user_no, shop_user_no))
+        
     cs_data = {
                 'phone' : cs_phone,
                 'osio_name' : cs_ticket_name,
                 'osio_count' : cs_ticket_count,
                 'expired' : cs_ticket_expired,
                 'shop_user_no' : cs_shop_user_no,
-                'entry_datetime' : cs_entry_datatime,
                 'user_no' : cs_user_no,
+                'entry_datetime' : cs_entry_datatime,
                 'visit_count' : cs_visit_count,
             }
       
