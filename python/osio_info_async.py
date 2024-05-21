@@ -23,7 +23,7 @@ def get_driver():
 
 def get_credit():
     try:
-        with open('python/credit.toml', 'rb') as f:
+        with open('credit.toml', 'rb') as f:
             data = tomllib.load(f)
             username = data['osio']['username']
             password = data['osio']['password']
