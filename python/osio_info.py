@@ -13,16 +13,13 @@ import urllib3
 def get_driver():
     service = Service(ChromeDriverManager().install())
     options = Options()
-    options.add_experimental_option('detach', True)
-    options.add_experimental_option('excludeSwitches', ['enable-logging'])
     options.add_argument("headless")
-    options.add_argument("--start-maximized")
     driver = webdriver.Chrome(service=service, options=options)
     return driver
 
 def get_credit():
     try:
-        with open('credit.toml', 'rb') as f:
+        with open('./credit.toml', 'rb') as f:
             data = tomllib.load(f)
             username = data['osio']['username']
             password = data['osio']['password']
@@ -87,8 +84,8 @@ if __name__ == "__main__":
     driver.quit()
 
     today = time.strftime('%Y%m%d', time.localtime())
-    # df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str')
-    df = pd.read_excel(today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str', nrows = 10)
+    # df = pd.read_excel('../tmp/' + today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str')
+    df = pd.read_excel('../tmp/' + today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str', nrows = 5)
 
     cs_phone = df['전화번호'].values.tolist()
     cs_ticket_name = df['오시오명'].values.tolist()
@@ -125,7 +122,7 @@ if __name__ == "__main__":
 
     df = pd.DataFrame(cs_data)
     fdate = datetime.now().strftime("%Y%m%d_%H%M")
-    df.to_excel(f"{fdate}.xlsx", engine='openpyxl')
+    df.to_excel(f"../tmp/{fdate}.xlsx", engine='openpyxl')
 
     print(f"-> Elapsed time : {time.time() - start}")
         
