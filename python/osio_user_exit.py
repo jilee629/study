@@ -6,46 +6,44 @@ from selenium.webdriver.common.by import By
 import time
 import tomllib
 
-def get_driver():
-    service = Service(ChromeDriverManager().install())
-    options = Options()
-    options.add_argument("headless")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    driver = webdriver.Chrome(service=service, options=options)
-    return driver
+service = Service(ChromeDriverManager().install())
+options = Options()
+options.add_argument("--headless=new")
+# options.add_argument("--no-sandbox")
+# options.add_argument("--disable-dev-shm-usage")
 
-def get_credit():
-    try:
-        with open('credit.toml', 'rb') as f:
-            data = tomllib.load(f)
-            username = data['osio']['username']
-            password = data['osio']['password']
-    except:
-        username = input('Your ID: ')
-        password = input('Password: ')
-    return [username, password]
+driver = webdriver.Chrome(service=service, options=options)
 
-def page_login(id, passwd):
-    driver.get("https://osio-shop.peoplcat.com/login")
-    driver.find_element(By.CSS_SELECTOR, 'input[placeholder="아이디를 입력해 주세요."]').send_keys(id)
-    driver.find_element(By.CSS_SELECTOR, 'input[placeholder="비밀번호를 입력해 주세요."]').send_keys(passwd)
-    driver.find_element(By.CSS_SELECTOR, '.Button-sc-mznq07-0.LoginPage___StyledButton-sc-1ag2zbl-9.jVJpZh.hNBWCz').click()
-    time.sleep(1)
-    return
+with open('./credit.toml', 'rb') as f:
+    data = tomllib.load(f)
+    username = data['osio']['username']
+    password = data['osio']['password']
+driver.get("https://osio-shop.peoplcat.com/login")
+driver.find_element(By.CSS_SELECTOR, 'input[placeholder="아이디를 입력해 주세요."]').send_keys(username)
+driver.find_element(By.CSS_SELECTOR, 'input[placeholder="비밀번호를 입력해 주세요."]').send_keys(password)
+driver.find_element(By.CSS_SELECTOR, '.Button-sc-mznq07-0.LoginPage___StyledButton-sc-1ag2zbl-9.jVJpZh.hNBWCz').click()
+time.sleep(1)
 
-def get_token():
-    token = driver.execute_script("return localStorage.getItem('access_token')")
-    print(f"-> Token: {token}")
-    return token
+# 관리자 버튼
+driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div[2]/button[2]').click()
+time.sleep(1)
 
-if __name__ == "__main__":
+# 설정 페이지 이동
+driver.get("https://osio-shop.peoplcat.com/admin/settings")
+time.sleep(1)
 
-    driver = get_driver()
-    credit = get_credit()
-    page_login(credit[0], credit[1])
-    token = get_token()
-    driver.quit()
+# 전체퇴장 보튼
+driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div[1]/div[1]/div/div[1]/div[2]/button').click()
+time.sleep(1)
+
+# 확인 버튼
+time.sleep(1)
+driver.find_element(By.CSS_SELECTOR, '.DialogButton-sc-9053cn-0.Confirm___StyledDialogButton2-sc-11bhi3f-4.inVSwg.kgkuiB').click()
+
+
+driver.quit()
+
+
 
 
 
