@@ -12,6 +12,7 @@ from tqdm import tqdm
 import time
 from datetime import datetime
 import urllib3
+import os
 
 
 def fetch(url):
@@ -48,6 +49,7 @@ def get_visit_count(user_no, shop_usre_no):
 	visit_count = response.json()['visit_count']
 	return str(visit_count)
 
+print(f'-> {time.ctime()}')
 
 start = time.time()
 
@@ -65,7 +67,8 @@ options.add_experimental_option("prefs", prefs)
 driver = webdriver.Chrome(service=service, options=options)
 driver.implicitly_wait(10)
 
-with open('./credit.toml', 'rb') as f:
+credit = os.path.dirname(__file__) + '/credit.toml'
+with open(credit, 'rb') as f:
     data = tomllib.load(f)
     username = data['osio']['username']
     password = data['osio']['password']
@@ -133,7 +136,8 @@ cs_data = {
 
 df = pd.DataFrame(cs_data)
 fdate = datetime.now().strftime("%Y%m%d_%H%M")
-df.to_excel(f"../tmp/{fdate}.xlsx", engine='openpyxl')
+fname = os.path.dirname(__file__) + '/../tmp/' + fdate + '.xlsx'
+df.to_excel(fname, engine='openpyxl')
 
 print(f"-> Elapsed time : {time.time() - start}")
 

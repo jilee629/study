@@ -8,45 +8,49 @@ from selenium.webdriver.common.by import By
 from pyvirtualdisplay import Display
 import time
 import tomllib
+import os
 
-display = Display(visible=0, size=(800, 600))
+
+print(f'-> {time.ctime()}')
+
+display = Display(visible=0, size=(1024, 768))
 display.start()
 
 service = Service(ChromeDriverManager().install())
 options = Options()
+options.add_argument("--start-maximized")
 options.add_argument("--headless=new")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
-options.add_argument("--start-maximized")
-
 driver = webdriver.Chrome(service=service, options=options)
+driver.implicitly_wait(10)
 
-with open('./credit.toml', 'rb') as f:
+basepath = os.path.dirname(__file__) + '/'
+
+credit = basepath + '/credit.toml'
+with open(credit, 'rb') as f:
     data = tomllib.load(f)
     username = data['osio']['username']
     password = data['osio']['password']
+
+# login page
 driver.get("https://osio-shop.peoplcat.com/login")
-driver.find_element(By.CSS_SELECTOR, 'input[placeholder="아이디를 입력해 주세요."]').send_keys(username)
-driver.find_element(By.CSS_SELECTOR, 'input[placeholder="비밀번호를 입력해 주세요."]').send_keys(password)
-driver.find_element(By.CSS_SELECTOR, '.Button-sc-mznq07-0.LoginPage___StyledButton-sc-1ag2zbl-9.jVJpZh.hNBWCz').click()
-time.sleep(1)
+print(f'-> {driver.current_url}')
+driver.find_element(By.XPATH, '//*[@id="root"]/form/div/div[1]/input').send_keys(username)
+driver.find_element(By.XPATH, '//*[@id="root"]/form/div/div[2]/input').send_keys(password)
+driver.find_element(By.XPATH, '//*[@id="root"]/form/div/button').click()
 
-# 관리자 버튼
+# manager mode
 driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div[2]/button[2]').click()
-time.sleep(1)
+print(f'-> {driver.current_url}')
 
-# 설정 페이지 이동
+
+# setting page
 driver.get("https://osio-shop.peoplcat.com/admin/settings")
-time.sleep(1)
-
-# 전체퇴장 보튼
+print(f'-> {driver.current_url}')
 driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div[1]/div[1]/div/div[1]/div[2]/button').click()
-time.sleep(1)
-
-# 확인 버튼
-time.sleep(1)
-driver.find_element(By.CSS_SELECTOR, '.DialogButton-sc-9053cn-0.Confirm___StyledDialogButton2-sc-11bhi3f-4.inVSwg.kgkuiB').click()
-
+driver.find_element(By.XPATH, '//*[@id="overlays"]/div/div/div/div[2]/div/button[2]').click()
+time.sleep(2)
 
 driver.quit()
 display.stop()
