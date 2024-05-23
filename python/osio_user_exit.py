@@ -6,12 +6,13 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from pyvirtualdisplay import Display
+from datetime import datetime
 import time
 import tomllib
 import os
 
 
-print(f'-> {time.ctime()}')
+print(f'-> {datetime.now()}')
 
 display = Display(visible=0, size=(1024, 768))
 display.start()

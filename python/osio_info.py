@@ -10,7 +10,7 @@ import pandas as pd
 import tomllib
 from tqdm import tqdm
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 import urllib3
 import os
 
@@ -49,9 +49,9 @@ def get_visit_count(user_no, shop_usre_no):
 	visit_count = response.json()['visit_count']
 	return str(visit_count)
 
-print(f'-> {time.ctime()}')
+print(f'-> {datetime.now()}')
 
-start = time.time()
+start = datetime.now().timestamp()
 
 display = Display(visible=0, size=(1024, 768))
 display.start()
@@ -139,7 +139,7 @@ fdate = datetime.now().strftime("%Y%m%d_%H%M")
 fname = os.path.dirname(__file__) + '/../tmp/' + fdate + '.xlsx'
 df.to_excel(fname, engine='openpyxl')
 
-print(f"-> Elapsed time : {time.time() - start}")
+print(f"-> Elapsed time : {timedelta(seconds=datetime.now().timestamp() - start)}")
 
 driver.quit()
 display.stop()
