@@ -26,9 +26,7 @@ options.add_argument("--disable-dev-shm-usage")
 driver = webdriver.Chrome(service=service, options=options)
 driver.implicitly_wait(10)
 
-basepath = os.path.dirname(__file__) + '/'
-
-credit = basepath + '/credit.toml'
+credit = os.path.dirname(__file__) + '/credit.toml'
 with open(credit, 'rb') as f:
     data = tomllib.load(f)
     username = data['osio']['username']
@@ -44,7 +42,6 @@ driver.find_element(By.XPATH, '//*[@id="root"]/form/div/button').click()
 # manager mode
 driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div[2]/button[2]').click()
 print(f'-> {driver.current_url}')
-
 
 # setting page
 driver.get("https://osio-shop.peoplcat.com/admin/settings")
