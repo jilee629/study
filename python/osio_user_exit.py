@@ -12,7 +12,8 @@ import tomllib
 import os
 
 
-print(f'-> {datetime.now()}')
+now = datetime.now()
+print(f'-> {now}')
 
 display = Display(visible=0, size=(1024, 768))
 display.start()
@@ -48,7 +49,7 @@ driver.get("https://osio-shop.peoplcat.com/admin/settings")
 print(f'-> {driver.current_url}')
 driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div[1]/div[1]/div/div[1]/div[2]/button').click()
 driver.find_element(By.XPATH, '//*[@id="overlays"]/div/div/div/div[2]/div/button[2]').click()
-time.sleep(2)
+time.sleep(3)
 
 driver.quit()
 display.stop()

@@ -49,7 +49,8 @@ def get_visit_count(user_no, shop_usre_no):
 	visit_count = response.json()['visit_count']
 	return str(visit_count)
 
-print(f'-> {datetime.now()}')
+now = datetime.now()
+print(f'-> {now}')
 
 start = datetime.now().timestamp()
 
@@ -135,7 +136,7 @@ cs_data = {
 [print(f"{key} : {len(value)}") for key, value in cs_data.items()]
 
 df = pd.DataFrame(cs_data)
-fdate = datetime.now().strftime("%Y%m%d_%H%M")
+fdate = now.strftime("%Y%m%d_%H%M")
 fname = os.path.dirname(__file__) + '/../tmp/' + fdate + '.xlsx'
 df.to_excel(fname, engine='openpyxl')
 
