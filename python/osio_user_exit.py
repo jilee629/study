@@ -35,21 +35,30 @@ with open(credit, 'rb') as f:
 
 # login page
 driver.get("https://osio-shop.peoplcat.com/login")
-print(f'-> {driver.current_url}')
 driver.find_element(By.XPATH, '//*[@id="root"]/form/div/div[1]/input').send_keys(username)
 driver.find_element(By.XPATH, '//*[@id="root"]/form/div/div[2]/input').send_keys(password)
 driver.find_element(By.XPATH, '//*[@id="root"]/form/div/button').click()
 
 # manager mode
 driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div[2]/button[2]').click()
-print(f'-> {driver.current_url}')
+
+# get count
+driver.get("https://osio-shop.peoplcat.com/admin/entry")
+adult = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[2]').text
+child = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[4]').text
+print(f'-> Adult: {adult}, Child: {child}')
 
 # setting page
 driver.get("https://osio-shop.peoplcat.com/admin/settings")
-print(f'-> {driver.current_url}')
 driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div[1]/div[1]/div/div[1]/div[2]/button').click()
 driver.find_element(By.XPATH, '//*[@id="overlays"]/div/div/div/div[2]/div/button[2]').click()
 time.sleep(3)
+
+# get count
+driver.get("https://osio-shop.peoplcat.com/admin/entry")
+adult = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[2]').text
+child = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[4]').text
+print(f'-> Adult: {adult}, Child: {child}')
 
 driver.quit()
 display.stop()
