@@ -98,7 +98,8 @@ time.sleep(5)
 token = driver.execute_script("return localStorage.getItem('access_token')")
 print(f"-> Token: {token}")
 
-today = time.strftime('%Y%m%d', time.localtime())
+# download cs information
+today = now.strftime('%Y%m%d', time.localtime())
 # df = pd.read_excel('../tmp/' + today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str')
 df = pd.read_excel('../tmp/' + today + '_점핑몬스터 미사점_고객정보.xlsx', dtype = 'str', nrows = 5)
 
