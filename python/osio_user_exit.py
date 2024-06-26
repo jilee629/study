@@ -13,7 +13,7 @@ import os
 
 
 now = datetime.now()
-print(f'-> {now}')
+print(f'{now}')
 
 display = Display(visible=0, size=(1024, 768))
 display.start()
@@ -46,7 +46,7 @@ driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div[2]/button[2]').cl
 driver.get("https://osio-shop.peoplcat.com/admin/entry")
 adult = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[2]').text
 child = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[4]').text
-print(f'--> Adult: {adult}, Child: {child}')
+print(f'-> Adult: {adult}, Child: {child}')
 
 # setting page
 driver.get("https://osio-shop.peoplcat.com/admin/settings")
@@ -58,7 +58,7 @@ time.sleep(3)
 driver.get("https://osio-shop.peoplcat.com/admin/entry")
 adult = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[2]').text
 child = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[4]').text
-print(f'--> Adult: {adult}, Child: {child}')
+print(f'-> Adult: {adult}, Child: {child}')
 
 driver.quit()
 display.stop()
