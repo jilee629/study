@@ -50,7 +50,7 @@ def get_visit_count(user_no, shop_usre_no):
 	return str(visit_count)
 
 now = datetime.now()
-print(f'-> {now}')
+print(now.strftime("%Y-%m-%d %H:%M:%S %A"))
 
 start = datetime.now().timestamp()
 
