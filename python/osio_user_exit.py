@@ -11,57 +11,79 @@ import time
 import tomllib
 import os
 
+def get_driver():
+    service = Service(ChromeDriverManager().install())
+    options = Options()
+    options.add_argument("--start-maximized")
+    options.add_argument("--headless=new")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    driver = webdriver.Chrome(service=service, options=options)
+    driver.implicitly_wait(10)
+    return driver
 
-now = datetime.now()
-print(now.strftime("%Y-%m-%d %H:%M:%S %A"))
+def get_credit():
+    credit = os.path.dirname(__file__) + '/credit.toml'
+    with open(credit, 'rb') as f:
+        data = tomllib.load(f)
+        username = data['osio']['username']
+        password = data['osio']['password']
+    return username, password
 
-display = Display(visible=0, size=(1024, 768))
-display.start()
+def enter_login(username, password):
+    # login page
+    url = "https://osio-shop.peoplcat.com/login"
+    driver.get(url)
+    driver.find_element(By.XPATH, '//*[@id="root"]/form/div/div[1]/input').send_keys(username)
+    driver.find_element(By.XPATH, '//*[@id="root"]/form/div/div[2]/input').send_keys(password)
+    driver.find_element(By.XPATH, '//*[@id="root"]/form/div/button').click()
+    # manager mode
+    driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div[2]/button[2]').click()
+    return
 
-service = Service(ChromeDriverManager().install())
-options = Options()
-options.add_argument("--start-maximized")
-options.add_argument("--headless=new")
-options.add_argument("--no-sandbox")
-options.add_argument("--disable-dev-shm-usage")
-driver = webdriver.Chrome(service=service, options=options)
-driver.implicitly_wait(10)
+def user_exit():
+    # setting page
+    url = "https://osio-shop.peoplcat.com/admin/settings"
+    driver.get(url)
+    driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div[1]/div[1]/div/div[1]/div[2]/button').click()
+    driver.find_element(By.XPATH, '//*[@id="overlays"]/div/div/div/div[2]/div/button[2]').click()
+    time.sleep(3)
+    return
 
-credit = os.path.dirname(__file__) + '/credit.toml'
-with open(credit, 'rb') as f:
-    data = tomllib.load(f)
-    username = data['osio']['username']
-    password = data['osio']['password']
+def get_count():
+    driver.get("https://osio-shop.peoplcat.com/admin/entry")
+    adult = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[2]').text
+    child = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[4]').text
+    print(f'-> Adult: {adult}, Child: {child}')
 
-# login page
-driver.get("https://osio-shop.peoplcat.com/login")
-driver.find_element(By.XPATH, '//*[@id="root"]/form/div/div[1]/input').send_keys(username)
-driver.find_element(By.XPATH, '//*[@id="root"]/form/div/div[2]/input').send_keys(password)
-driver.find_element(By.XPATH, '//*[@id="root"]/form/div/button').click()
 
-# manager mode
-driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div[2]/button[2]').click()
+if __name__ == "__main__":
 
-# get count
-driver.get("https://osio-shop.peoplcat.com/admin/entry")
-adult = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[2]').text
-child = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[4]').text
-print(f'-> Adult: {adult}, Child: {child}')
+    now = datetime.now()
+    print(now.strftime("%Y-%m-%d %H:%M:%S %A"))
 
-# setting page
-driver.get("https://osio-shop.peoplcat.com/admin/settings")
-driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div[1]/div[1]/div/div[1]/div[2]/button').click()
-driver.find_element(By.XPATH, '//*[@id="overlays"]/div/div/div/div[2]/div/button[2]').click()
-time.sleep(3)
+    display = Display(visible=0, size=(1024, 768))
+    display.start()
 
-# get count
-driver.get("https://osio-shop.peoplcat.com/admin/entry")
-adult = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[2]').text
-child = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[4]').text
-print(f'-> Adult: {adult}, Child: {child}')
+    driver = get_driver()
+    username, password = get_credit()
+    enter_login(username, password)
+    get_count()
+    user_exit()
+    get_count()
 
-driver.quit()
-display.stop()
+    driver.quit()
+    display.stop()
+
+
+
+
+
+
+
+
+
+
 
 
 
