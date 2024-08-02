@@ -55,6 +55,7 @@ def get_count():
     adult = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[2]').text
     child = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[4]').text
     print(f'-> Adult: {adult}, Child: {child}')
+    return
 
 
 if __name__ == "__main__":
