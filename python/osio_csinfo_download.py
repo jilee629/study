@@ -17,10 +17,6 @@ def get_driver():
     options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    # path = os.path.dirname(__file__) + '/../../log'
-    # print(path)
-    # prefs = {"download.default_directory": path}
-    # options.add_experimental_option("prefs", prefs)
     options.add_experimental_option("prefs", {"download.default_directory": "/home/ubuntu/log"})
     driver = webdriver.Chrome(service=service, options=options)
     driver.implicitly_wait(10)
