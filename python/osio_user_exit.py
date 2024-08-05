@@ -60,12 +60,12 @@ def get_count():
 
 if __name__ == "__main__":
 
-    now = datetime.now()
-    print(now.strftime("%Y-%m-%d %H:%M:%S %A"))
-
     display = Display(visible=0, size=(1024, 768))
     display.start()
 
+    now = datetime.now()
+    print(now.strftime("%Y-%m-%d %H:%M:%S %A"))
+    
     driver = get_driver()
     username, password = get_credit()
     enter_login(username, password)

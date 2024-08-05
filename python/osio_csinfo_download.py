@@ -6,7 +6,6 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from pyvirtualdisplay import Display
-from datetime import datetime
 import time
 import tomllib
 import os
@@ -18,9 +17,11 @@ def get_driver():
     options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    path = os.path.dirname(__file__) + '../../log'
-    prefs = {"download.default_directory": path}
-    options.add_experimental_option("prefs", prefs)
+    # path = os.path.dirname(__file__) + '/../../log'
+    # print(path)
+    # prefs = {"download.default_directory": path}
+    # options.add_experimental_option("prefs", prefs)
+    options.add_experimental_option("prefs", {"download.default_directory": "/home/ubuntu/log"})
     driver = webdriver.Chrome(service=service, options=options)
     driver.implicitly_wait(10)
     return driver
@@ -61,3 +62,6 @@ if __name__ == "__main__":
     username, password = get_credit()
     enter_login(username, password)
     download_csinfo()
+
+    driver.quit()
+    display.stop()
