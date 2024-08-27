@@ -95,16 +95,16 @@ def fetch(url):
     return response
 
 def get_shop_user_no(phone):
-	curl = "https://osio-api.peoplcat.com/shop/osio/user/search?type=phone&phone="
-	url = curl + phone
+	curl = "https://osio-api.peoplcat.com/shop/osio/user/search?"
+	url = curl + "type=phone&phone=" + phone
 	response = fetch(url)
 	shop_user_no = response.json()['shop_users'][0]['shop_user_no']
 	user_no = response.json()['shop_users'][0]['user_no']
 	return str(shop_user_no), str(user_no)
 
 def get_entry_datetime(shop_user_no):
-	curl = "https://osio-api.peoplcat.com/shop/v2/user/entry/log?shop_user_no="
-	url = curl + shop_user_no
+	curl = "https://osio-api.peoplcat.com/shop/v2/user/entry/log?"
+	url = curl + "shop_user_no=" + shop_user_no
 	try:
 		response = fetch(url)
 		entry_datetime = response.json()['log'][0]['entry_datetime']
@@ -113,8 +113,8 @@ def get_entry_datetime(shop_user_no):
 		return None
 
 def get_visit_count(user_no, shop_usre_no):
-	curl = "https://osio-api.peoplcat.com/shop/user/summary/data?user_no="
-	url = curl + user_no + "&shop_user_no=" + shop_usre_no
+	curl = "https://osio-api.peoplcat.com/shop/user/summary/data?"
+	url = curl + "user_no=" + user_no + "&shop_user_no=" + shop_usre_no
 	response = fetch(url)
 	visit_count = response.json()['visit_count']
 	return str(visit_count)
