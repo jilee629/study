@@ -67,6 +67,12 @@ def get_cs_user_shop_no(cs_phone):
         cs_user_no.append(result[1])
     return cs_shop_user_no, cs_user_no
 
+def get_cs_phone_len(cs_phone, ):
+    cs_phone_len = list()
+    for phone in tqdm(cs_phone, desc='phone_len'):
+        cs_phone_len.append(len(phone))
+    return cs_phone_len
+
 def get_cs_entry_datetime(cs_shop_user_no):
     cs_entry_datatime = list()
     for shop_user_no in tqdm(cs_shop_user_no, desc='entry_datatime'):
@@ -137,9 +143,10 @@ if __name__ == "__main__":
 
     csfile = '/home/ubuntu/log/' + now.strftime('%Y%m%d') + '_점핑몬스터 미사점_고객정보.xlsx'
     # df = pd.read_excel(csfile, dtype = 'str')
-    df = pd.read_excel(csfile, dtype = 'str', nrows = 10)
+    df = pd.read_excel(csfile, dtype = 'str', nrows = 100)
 
     cs_phone = df['전화번호'].values.tolist()
+    cs_phone_len = get_cs_phone_len(cs_phone)
     cs_ticket_name = df['오시오명'].values.tolist()
     cs_ticket_count = df['오시오 잔여값'].values.tolist()
     cs_ticket_expired = df['오시오 만료일'].values.tolist()
@@ -148,11 +155,12 @@ if __name__ == "__main__":
     cs_visit_count = get_cs_visit_count(cs_user_no, cs_shop_user_no)
     cs_data = {
                 'phone' : cs_phone,
+                'phone_len' : cs_phone_len,
                 'osio' : cs_ticket_name,
                 'count' : cs_ticket_count,
                 'expired' : cs_ticket_expired,
-                'shop_user_no' : cs_shop_user_no,
-                'user_no' : cs_user_no,
+                # 'shop_user_no' : cs_shop_user_no,
+                # 'user_no' : cs_user_no,
                 'entry' : cs_entry_datatime,
                 'visit' : cs_visit_count,
             } 
