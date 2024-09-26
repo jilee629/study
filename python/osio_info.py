@@ -142,8 +142,8 @@ if __name__ == "__main__":
     token = get_token()
 
     csfile = '/home/ubuntu/log/' + now.strftime('%Y%m%d') + '_점핑몬스터 미사점_고객정보.xlsx'
-    # df = pd.read_excel(csfile, dtype = 'str')
-    df = pd.read_excel(csfile, dtype = 'str', nrows = 100)
+    df = pd.read_excel(csfile, dtype = 'str')
+    # df = pd.read_excel(csfile, dtype = 'str', nrows = 100)
 
     cs_phone = df['전화번호'].values.tolist()
     cs_phone_len = get_cs_phone_len(cs_phone)
@@ -159,8 +159,6 @@ if __name__ == "__main__":
                 'osio' : cs_ticket_name,
                 'count' : cs_ticket_count,
                 'expired' : cs_ticket_expired,
-                # 'shop_user_no' : cs_shop_user_no,
-                # 'user_no' : cs_user_no,
                 'entry' : cs_entry_datatime,
                 'visit' : cs_visit_count,
             } 
