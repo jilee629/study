@@ -58,32 +58,11 @@ def get_token():
     print(f"-> Token: {token}")
     return token
 
-def get_cs_user_shop_no(cs_phone):
-    cs_shop_user_no = list()
-    cs_user_no = list()   
-    for phone in tqdm(cs_phone, desc='user_no'):
-        result = get_shop_user_no(phone)
-        cs_shop_user_no.append(result[0])
-        cs_user_no.append(result[1])
-    return cs_shop_user_no, cs_user_no
-
 def get_cs_phone_len(cs_phone, ):
     cs_phone_len = list()
     for phone in tqdm(cs_phone, desc='phone_len'):
         cs_phone_len.append(len(phone))
     return cs_phone_len
-
-def get_cs_entry_datetime(cs_shop_user_no):
-    cs_entry_datatime = list()
-    for shop_user_no in tqdm(cs_shop_user_no, desc='entry_datatime'):
-        cs_entry_datatime.append(get_entry_datetime(shop_user_no))
-    return cs_entry_datatime
-
-def get_cs_visit_count(cs_user_no, cs_shop_user_no):
-    cs_visit_count = list()
-    for user_no, shop_user_no in tqdm(zip(cs_user_no, cs_shop_user_no), total = len(cs_user_no), desc='visit_count'):
-        cs_visit_count.append(get_visit_count(user_no, shop_user_no))
-    return cs_visit_count
 
 def save_data(cs_data):
     df = pd.DataFrame(cs_data)
@@ -100,30 +79,72 @@ def fetch(url):
     response = http.request('GET', url, headers=headers)
     return response
 
-def get_shop_user_no(phone):
-	curl = "https://osio-api.peoplcat.com/shop/osio/user/search?"
-	url = curl + "type=phone&phone=" + phone
+
+def get_cs_user_info(phone):
+    # 고객정보 - 검색
+	curl = "https://osio-api.peoplcat.com/shop/osio/user/"
+	url = curl + "search?type=phone&phone=" + phone
 	response = fetch(url)
 	shop_user_no = response.json()['shop_users'][0]['shop_user_no']
 	user_no = response.json()['shop_users'][0]['user_no']
 	return str(shop_user_no), str(user_no)
 
-def get_entry_datetime(shop_user_no):
-	curl = "https://osio-api.peoplcat.com/shop/v2/user/entry/log?"
-	url = curl + "shop_user_no=" + shop_user_no
-	try:
+def get_user_no(cs_phone):
+    cs_shop_user_no = list()
+    cs_user_no = list()   
+    for phone in tqdm(cs_phone, desc='user_no'):
+        result = get_cs_user_info(phone)
+        cs_shop_user_no.append(result[0])
+        cs_user_no.append(result[1])
+    return cs_shop_user_no, cs_user_no
+
+
+def get_cs_entry(shop_user_no):
+	# 고객정보 - 입/퇴장
+    curl = "https://osio-api.peoplcat.com/shop/v2/user/entry/"
+    url = curl + "log?shop_user_no=" + shop_user_no
+    record = response.json()['log'][0]['record']
+    try:
 		response = fetch(url)
 		entry_datetime = response.json()['log'][0]['entry_datetime']
-		return entry_datetime
+		return record, entry_datetime
 	except:
-		return None
+		return record, None
+
+def get_cs_manage(cs_shop_user_no):
+    cs_record = list()
+    cs_entry_datatime = list()
+    for shop_user_no in tqdm(cs_shop_user_no, desc='entry_datatime'):
+        # cs_entry_datatime.append(get_cs_entry(shop_user_no))
+        record, entry_datetime = get_cs_entry(shop_user_no)
+        cs_record.append(record)
+        cs_entry_datatime(entry_datetime)
+    return cs_record, cs_entry_datatime
+
+
+    
 
 def get_visit_count(user_no, shop_usre_no):
-	curl = "https://osio-api.peoplcat.com/shop/user/summary/data?"
-	url = curl + "user_no=" + user_no + "&shop_user_no=" + shop_usre_no
+	# 고객관리 - 고객정보
+    curl = "https://osio-api.peoplcat.com/shop/user/summary/"
+	url = curl + "data?user_no=" + user_no + "&shop_user_no=" + shop_usre_no
 	response = fetch(url)
 	visit_count = response.json()['visit_count']
 	return str(visit_count)
+
+def get_cs_visit_count(cs_user_no, cs_shop_user_no):
+    cs_visit_count = list()
+    for user_no, shop_user_no in tqdm(zip(cs_user_no, cs_shop_user_no), total = len(cs_user_no), desc='visit_count'):
+        cs_visit_count.append(get_visit_count(user_no, shop_user_no))
+    return cs_visit_count
+
+
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
@@ -142,16 +163,16 @@ if __name__ == "__main__":
     token = get_token()
 
     csfile = '/home/ubuntu/log/' + now.strftime('%Y%m%d') + '_점핑몬스터 미사점_고객정보.xlsx'
-    df = pd.read_excel(csfile, dtype = 'str')
-    # df = pd.read_excel(csfile, dtype = 'str', nrows = 100)
+    # df = pd.read_excel(csfile, dtype = 'str')
+    df = pd.read_excel(csfile, dtype = 'str', nrows = 100)
 
     cs_phone = df['전화번호'].values.tolist()
     cs_phone_len = get_cs_phone_len(cs_phone)
     cs_ticket_name = df['오시오명'].values.tolist()
     cs_ticket_count = df['오시오 잔여값'].values.tolist()
     cs_ticket_expired = df['오시오 만료일'].values.tolist()
-    cs_shop_user_no, cs_user_no = get_cs_user_shop_no(cs_phone)
-    cs_entry_datatime = get_cs_entry_datetime(cs_shop_user_no)
+    cs_shop_user_no, cs_user_no = get_user_no(cs_phone)
+    cs_record, cs_entry_datatime = get_cs_entry(cs_shop_user_no)
     cs_visit_count = get_cs_visit_count(cs_user_no, cs_shop_user_no)
     cs_data = {
                 'phone' : cs_phone,
@@ -159,12 +180,13 @@ if __name__ == "__main__":
                 'osio' : cs_ticket_name,
                 'count' : cs_ticket_count,
                 'expired' : cs_ticket_expired,
+                'record' : cs_record,
                 'entry' : cs_entry_datatime,
                 'visit' : cs_visit_count,
             } 
 
     [print(f"{key} : {len(value)}") for key, value in cs_data.items()]
-    save_data(cs_data)
+    # save_data(cs_data)
     print(f"-> Elapsed time : {timedelta(seconds=datetime.now().timestamp() - start)}")
 
     driver.quit()
