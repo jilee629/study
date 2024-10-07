@@ -65,7 +65,6 @@ def save_data(cs_info, columns):
     return
 
 def fetch(url):
-    time.sleep(0.5)
     http = urllib3.PoolManager()
     headers = {
         'Authorization': 'Bearer ' + token,
@@ -117,32 +116,43 @@ if __name__ == "__main__":
     # download_csinfo()
     csfile = '/home/ubuntu/log/' + now.strftime('%Y%m%d') + '_점핑몬스터 미사점_고객정보.xlsx'
     
-    # df = pd.read_excel(csfile, dtype = 'str')
-    df = pd.read_excel(csfile, dtype = 'str', nrows = 2)
+    df = pd.read_excel(csfile, dtype = 'str')
+    # df = pd.read_excel(csfile, dtype = 'str', nrows = 10)
 
     cs_info = df.values.tolist()
-    for cs in cs_info:
+    for cs in tqdm(cs_info):
+        phone = cs[1]
+
         # 전화번호 길이
-        cs.append(len(cs[1]))
+        cs.append(len(phone))
+        
         # shop_user_no, user_no
-        shop_user_no, user_no = get_sid_uid(cs[1])
+        shop_user_no, user_no = get_sid_uid(phone)
+
         # 마지막 방문일
         lastvisit = get_lastvisit(shop_user_no)
         cs.append(lastvisit)
+
         # 방문 회수
         visitcount = get_visitcount(user_no, shop_user_no)
         cs.append(visitcount)
-        # 확인
-        print(cs)
 
+        time.sleep(1)
+
+    # test
+    #[print(cs) for cs in cs_info]
+
+    # 저장
     columns = [
                 '이름','전화번호','생일','기록',
                 '오시오명','오티켓','오티켓개수','오티켓만료일',
                 '전화번호길이','방문일','방문회수'
                 ]
     save_data(cs_info, columns)
-    print(f"-> Elapsed time : {timedelta(seconds=datetime.now().timestamp() - start)}")
 
+    print(f"-> Elapsed time : {timedelta(seconds=datetime.now().timestamp() - start)}")
     driver.quit()
     display.stop()
+
+
 
