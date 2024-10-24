@@ -6,6 +6,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from pyvirtualdisplay import Display
+from datetime import datetime
 import time
 import tomllib
 import os
@@ -44,8 +45,8 @@ def enter_login(username, password):
 def download_csinfo():
     driver.get("https://osio-shop.peoplcat.com/admin/users")
     driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/div/div[1]/div[1]/button').click()
-    driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/div[2]/div/div/div[2]/div[2]/button').click()
-    driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/div[2]/div/div/div[2]/div[3]/div/button[2]').click()
+    driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/div[2]/div/div/div/div/div/button').click()
+    driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/div[2]/div/div/footer/button[2]').click()
     time.sleep(5)
     return
 
@@ -54,6 +55,9 @@ if __name__ == "__main__":
     display = Display(visible=0, size=(1024, 768))
     display.start()
 
+    now = datetime.now()
+    print(now.strftime("%Y-%m-%d %H:%M:%S %A"))
+    
     driver = get_driver()
     username, password = get_credit()
     enter_login(username, password)

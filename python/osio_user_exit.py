@@ -45,8 +45,8 @@ def user_exit():
     # setting page
     url = "https://osio-shop.peoplcat.com/admin/settings"
     driver.get(url)
-    driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div[1]/div[1]/div/div[1]/div[2]/button').click()
-    driver.find_element(By.XPATH, '//*[@id="overlays"]/div/div/div/div[2]/div/button[2]').click()
+    driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div[1]/div[1]/div/div[1]/button').click()
+    driver.find_element(By.XPATH, '//*[@id="root"]/div[2]/div/div/footer/button[2]').click()
     time.sleep(3)
     return
 
