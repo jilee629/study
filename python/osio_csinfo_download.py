@@ -62,6 +62,7 @@ if __name__ == "__main__":
     username, password = get_credit()
     enter_login(username, password)
     download_csinfo()
+    print('OK')
 
     driver.quit()
     display.stop()

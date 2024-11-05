@@ -70,6 +70,7 @@ def fetch(url):
         'Authorization': 'Bearer ' + token,
     }
     response = http.request('GET', url, headers=headers)
+    time.sleep(0.5)
     return response
 
 def get_sid_uid(phone):
@@ -116,8 +117,8 @@ if __name__ == "__main__":
     # download_csinfo()
     csfile = '/home/ubuntu/log/' + now.strftime('%Y%m%d') + '_점핑몬스터 미사점_고객정보.xlsx'
     
-    df = pd.read_excel(csfile, dtype = 'str')
-    # df = pd.read_excel(csfile, dtype = 'str', nrows = 10)
+    # df = pd.read_excel(csfile, dtype = 'str')
+    df = pd.read_excel(csfile, dtype = 'str', nrows = 3)
 
     cs_info = df.values.tolist()
     for cs in tqdm(cs_info):
@@ -136,8 +137,6 @@ if __name__ == "__main__":
         # 방문 회수
         visitcount = get_visitcount(user_no, shop_user_no)
         cs.append(visitcount)
-
-        time.sleep(1)
 
     # test
     #[print(cs) for cs in cs_info]
