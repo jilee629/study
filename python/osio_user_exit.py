@@ -64,7 +64,7 @@ if __name__ == "__main__":
     display.start()
 
     now = datetime.now()
-    print(now.strftime("%Y-%m-%d %H:%M:%S %A"))
+    print("\n", now.strftime("%Y-%m-%d %H:%M:%S %A"))
     
     driver = get_driver()
     username, password = get_credit()
