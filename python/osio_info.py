@@ -50,7 +50,7 @@ def download_csinfo():
     driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/div/div[1]/div[1]/button').click()
     driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/div[2]/div/div/div[2]/div[2]/button').click()
     driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/div[2]/div/div/div[2]/div[3]/div/button[2]').click()
-    time.sleep(5)
+    time.sleep(10)
     return
 
 def get_token():
