@@ -11,6 +11,7 @@ $ sudo vi /etc/fstab
 /swapfile              none            swap    sw              0       0
 $ sudo shutdown -r now
 
+
 GIT 설치
 
 $ git clone https://github.com/jilee629/study.git
@@ -27,6 +28,7 @@ pip install 시 에러발생하면
 $ python3 -m pip config set global.break-system-packages true
 pip install 시 path 에러발생하면
 ~/.bashrc 에 pip path 추가하기
+
 
 Chromium 설치
 
