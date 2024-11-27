@@ -1,20 +1,23 @@
 from selenium import webdriver
-# from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.service import Service as ChromiumService
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.core.os_manager import ChromeType
 from pyvirtualdisplay import Display
+import tomllib
+import os
+import time
 
 def get_driver():
-    service = ChromiumService(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
+    # service = Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
     options = Options()
     options.add_argument("--start-maximized")
     options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_experimental_option("prefs", {"download.default_directory": "/home/ubuntu/log"})
-    driver = webdriver.Chrome(service=service, options=options)
+    # driver = webdriver.Chrome(service=service, options=options)
+    driver = webdriver.Chrome(options=options)
     driver.implicitly_wait(10)
     return driver
 
