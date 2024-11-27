@@ -31,10 +31,11 @@ ctrl + f : 한화면 아래로 이동
 :sh         쉘로 잠시 빠져나가기
 :!COMMAND   쉐로 빠져나가지 않고 명령 실행시키
 
-set hlsearch        "hl,
-set number          "nu,
-set autoindent      "ai, 자동 들여쓰기
-set shiftwidth=4    "sw, 자동 들여쓰기 너비 설정
-set expandtab       "et, 탭을 스페이스수로 입력
-set tabstop=4       "ts, tab을 몇개의 스페이스로 대체
-set showmatch       "sm, 괄호 짝 하이라이팅
+~/.vimrc
+set hlsearch
+set number
+set autoindent
+set shiftwidth=4
+set expandtab
+set tabstop=4
+set showmatch
