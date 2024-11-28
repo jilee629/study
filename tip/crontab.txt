@@ -1,1 +1,0 @@
-0 23 * * * /home/ubuntu/study/python/osio_user_exit.py >> /home/ubuntu/log/userexit.log 2>&1

@@ -1,14 +1,15 @@
 # 터미널 단축키
 
-Ctrl + A : 입력 라인의 처음으로 이동
-Ctrl + E : 입력 라인의 끝으로 이동
 Alt + F : 다음 단어로 이동
 Alt + B : 이전 단어로 이동
+Ctrl + A : 입력 라인의 처음으로 이동
+Ctrl + E : 입력 라인의 끝으로 이동
 
 Ctrl + U : 커서 왼쪽 문자열 저장 후 삭제
 Ctrl + K : 커서 오른쪽 문자열 저장 후 삭제
 Ctrl + Y : 버퍼의 내용 붙여넣기
-
+ALT + D : 현재 커서 위치에서 해당 단어 앞부분까지 텍스트를 지운다.
+ALT + BackSpace : 현재 커서 위치에서 그 단어 앞부분까지 텍스트를 지운다.
 
 # vim 단축키
 
@@ -31,10 +32,11 @@ ctrl + f : 한화면 아래로 이동
 :sh         쉘로 잠시 빠져나가기
 :!COMMAND   쉐로 빠져나가지 않고 명령 실행시키
 
-set hlsearch        "hl,
-set number          "nu,
-set autoindent      "ai, 자동 들여쓰기
-set shiftwidth=4    "sw, 자동 들여쓰기 너비 설정
-set expandtab       "et, 탭을 스페이스수로 입력
-set tabstop=4       "ts, tab을 몇개의 스페이스로 대체
-set showmatch       "sm, 괄호 짝 하이라이팅
+~/.vimrc
+set hlsearch
+set number
+set autoindent
+set shiftwidth=4
+set expandtab
+set tabstop=4
+set showmatch
