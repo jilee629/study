@@ -1,45 +1,8 @@
-screen -R NeverIdle
+screen -ls              update-alternatives --list python
 
-이후 screen의 세션의 분리 및 재시작은 아래 명령어로 할 수 있습니다.
+screen -S <sockname>
+screen -R <sockname>    Reattach if possible, otherwise start a new session
 
-- 분리 : Ctrl + a + d
-
-- 재연결 : screen -r
-
-
-screen -S 세션명
-유저가 지정한 '세션명'으로 screen을 시작한다.
-
-screen -R 세션명
-이미 존재하는 '세션명'을 포어그라운드로 들고와 작업을 진행한다.
-
-Ctrl + a + d
-스크린 attach이후 스크린을 detach하는 단축키
-
-screen -ls
-백그라운드에 있는 세션 리스트를 가져온다.
+Ctrl + a + d            sreen을 종료하지 않고, detach
 
 
-screen -D -R 세션명
-이전 세션이 attach 된 상태라면 detach 하고 세션을 복원한다.
-
-screen -r -d
-세션 강제로 detach
-
-screen -X 세션명
-동시에 여러 사용자가 한 화면을 공유하면서 작업을 진행한다.
-
-screen -X -S 세션명 kill
-해당 '세션'을 삭제한다.
-
-Ctrl + a + k
-스크린 attach이후 스크린을 종료하면서 빠져나옴
-
-Ctrl + a + esc
-위 명령을 사용하면서 방향키를 사용하면 스크롤 가능
-
-Ctrl + a + |
-세로로 화면 분할
-
-Ctrl + a + ?
-키보드 단축키 보기
