@@ -32,14 +32,18 @@ def get_credit():
     return username, password
 
 def enter_login(username, password):
-    # login page
     url = "https://osio-shop.peoplcat.com/login"
     driver.get(url)
+
+    # notice window
+    driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div/div/div[3]/button').click()
+
     print("login :", driver.current_url)
-    driver.find_element(By.XPATH, '//*[@id="root"]/form/div/div[1]/input').send_keys(username)
-    driver.find_element(By.XPATH, '//*[@id="root"]/form/div/div[2]/input').send_keys(password)
-    driver.find_element(By.XPATH, '//*[@id="root"]/form/div/button').click()
+    driver.find_element(By.XPATH, '//*[@id="root"]/form/div[2]/div[1]/input').send_keys(username)
+    driver.find_element(By.XPATH, '//*[@id="root"]/form/div[2]/div[2]/input').send_keys(password)
+    driver.find_element(By.XPATH, '//*[@id="root"]/form/div[2]/button').click()
     print("select:", driver.current_url)
+
     # manager mode
     driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div[2]/button[2]').click()
     print("entry :", driver.current_url)
