@@ -8,13 +8,16 @@ import os
 import time
 
 def get_driver():
-    service = Service(ChromeDriverManager().install())
     options = Options()
     options.add_argument("--start-maximized")
-    options.add_argument("--headless=new")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_experimental_option("prefs", {"download.default_directory": "/home/ubuntu/log"})
+    if os.name != 'nt':
+        options.add_argument("--headless=new")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_experimental_option("prefs", {"download.default_directory": "/home/ubuntu/log"})
+        service = Service(ChromeDriverManager().install())
+    else:
+        service = Service()
     driver = webdriver.Chrome(service=service, options=options)
     driver.implicitly_wait(10)
     return driver
