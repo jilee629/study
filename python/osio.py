@@ -37,18 +37,18 @@ def enter_login(driver, username, password):
         notice_btn = driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div/div/div[3]/button').click()
 
     # login
-    uname_box = driver.find_element(By.XPATH, '//*[@id="root"]/form/div[2]/div[1]/input').send_keys(username)
-    passwd_box = driver.find_element(By.XPATH, '//*[@id="root"]/form/div[2]/div[2]/input').send_keys(password)
-    submit_btn = driver.find_element(By.XPATH, '//*[@id="root"]/form/div[2]/button').click()
+    uname = driver.find_element(By.CSS_SELECTOR, 'input[placeholder="아이디를 입력해 주세요."]').send_keys(username)
+    passwd = driver.find_element(By.CSS_SELECTOR, 'input[placeholder="비밀번호를 입력해 주세요."]').send_keys(password)
+    submit_btn = driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]').click()
     print("Login success" )
     # select admin or user
-    admin_btn = driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div[2]/button[2]').click()
+    manager_btn = driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div[2]/button[2]').click()
     return
 
 def quit_user(driver):
     driver.get("https://osio-shop.peoplcat.com/admin/settings")
     quit_btn = driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/div[1]/div[1]/div/div[1]/button').click()
-    confirm_btn = driver.find_element(By.XPATH, '//*[@id="root"]/div[2]/div/div/footer/button[2]').click()
+    confirm_btn = driver.find_element(By.XPATH, '//button[text()="확인"]').click()
     time.sleep(3)
     return
 
@@ -61,9 +61,9 @@ def get_count(driver):
 
 def download_csinfo(driver):
     driver.get("https://osio-shop.peoplcat.com/admin/users")
-    csinfo_btn = driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/div/div[1]/div[1]/button').click()
-    agree_chk = driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/div[2]/div/div/div/div/div/button').click()
-    download_btn = driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/div[2]/div/div/footer/button[2]').click()
+    csinfo_btn =  driver.find_element(By.XPATH, '//button[text()="고객 다운로드"]').click()
+    agree_btn = driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/div[2]/div/div/div/div/div/button').click()
+    download_btn = driver.find_element(By.XPATH, '//button[text()="다운로드"]').click()
     print("Starting download")
     time.sleep(10)
     return
