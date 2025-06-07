@@ -1,0 +1,8 @@
+screen -ls              update-alternatives --list python
+
+screen -S <sockname>
+screen -R <sockname>    Reattach if possible, otherwise start a new session
+
+Ctrl + a + d            sreen을 종료하지 않고, detach
+
+./NeverIdle -n 6h -cp 0.21

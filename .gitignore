@@ -131,3 +131,4 @@ dmypy.json
 # user defined
 *.xlsx
 credit.toml
+*.swp
