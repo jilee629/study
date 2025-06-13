@@ -46,12 +46,12 @@ def enter_login(driver, username, password):
     driver.find_element(By.XPATH, '//*[@type="submit"]').click()
     print("Login success" )
     # select manager
-    driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div[2]/button[2]').click()
+    driver.find_element(By.XPATH, '//button[contains(., "manager")]').click()
     return
 
 def quit_user(driver):
     driver.get("https://osio-shop.peoplcat.com/admin/settings")
-    driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/div[1]/div[1]/div/div[1]/button').click()
+    driver.find_element(By.XPATH, '//button[contains(., "고객 전체 퇴장")]').click()
     driver.find_element(By.XPATH, '//button[text()="확인"]').click()
     time.sleep(3)
     return
@@ -66,9 +66,7 @@ def get_count(driver):
 def download_csinfo(driver):
     driver.get("https://osio-shop.peoplcat.com/admin/users")
     driver.find_element(By.XPATH, '//button[text()="고객 다운로드"]').click()
-    # checkbox
-    driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/div[2]/div/div/div/div/div/button').click()
-    # driver.find_element(By.XPATH, '//*[@type="checkbox"]').click()
+    driver.find_element(By.XPATH, '//button[contains(., "위 내용에 동의합니다")]').click()
     driver.find_element(By.XPATH, '//button[text()="다운로드"]').click()
     print("Starting download")
     time.sleep(10)
