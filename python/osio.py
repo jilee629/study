@@ -3,9 +3,12 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+import pandas as pd
 import tomllib
 import os
 import time
+
+log_dir = "/home/ubuntu/log/"
 
 def get_driver():
     options = Options()
@@ -14,7 +17,7 @@ def get_driver():
         options.add_argument("--headless=new")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
-        options.add_experimental_option("prefs", {"download.default_directory": "/home/ubuntu/study/log"})
+        options.add_experimental_option("prefs", {"download.default_directory": log_dir})
         service = Service(ChromeDriverManager().install())
     else:
         service = Service()
@@ -71,3 +74,10 @@ def download_csinfo(driver):
     print("Starting download")
     time.sleep(10)
     return
+
+def get_phone_len(csfile):
+    csfile_loc = log_dir + csfile
+    df = pd.read_excel(csfile_loc, dtype = 'str')
+    df['전화번호길이'] = df['전화번호'].str.len()
+    df.to_excel(csfile_loc, engine='openpyxl')
+

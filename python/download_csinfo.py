@@ -25,3 +25,6 @@ if __name__ == "__main__":
     driver.quit()
     if os.name != 'nt':
         display.stop()
+
+    csfile = now.strftime("%Y%m%d") + "_점핑몬스터 미사점_고객정보.xlsx"
+    osio.get_phone_len(csfile)
