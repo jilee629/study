@@ -14,7 +14,7 @@ def get_driver():
         options.add_argument("--headless=new")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
-        options.add_experimental_option("prefs", {"download.default_directory": "/home/ubuntu/log"})
+        options.add_experimental_option("prefs", {"download.default_directory": "/home/ubuntu/study/log"})
         service = Service(ChromeDriverManager().install())
     else:
         service = Service()
