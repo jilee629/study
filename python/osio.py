@@ -75,9 +75,10 @@ def download_csinfo(driver):
     time.sleep(10)
     return
 
-def get_phone_len(csfile):
-    csfile_loc = log_dir + csfile
+def get_phone_len(fdate):
+    csfile = log_dir + fdate + "_점핑몬스터 미사점_고객정보.xlsx"
     df = pd.read_excel(csfile_loc, dtype = 'str')
     df['전화번호길이'] = df['전화번호'].str.len()
-    df.to_excel(csfile_loc, engine='openpyxl')
+    newfile = log_dir + fdate + "_len_점핑몬스터 미사점_고객정보.xlsx"
+    df.to_excel(newfile, engine='openpyxl')
 
