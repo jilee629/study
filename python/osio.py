@@ -24,7 +24,7 @@ def get_driver():
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--window-size=1280,1024")
-        options.add_argument("--remote-debugging-pipe")
+        # options.add_argument("--remote-debugging-pipe")
         options.add_experimental_option("prefs", {"download.default_directory": log_dir})
         service = Service(ChromeDriverManager().install())
     else:
@@ -59,10 +59,9 @@ def enter_login(driver, username, password):
     password_input = driver.find_element(By.XPATH, '//*[@placeholder="비밀번호를 입력해 주세요."]')
     password_input.send_keys(password)
     submit_button = driver.find_element(By.XPATH, '//*[@type="submit"]')
-#    submit_button = driver.find_element(By.XPATH, '//*[@id="root"]/form/div[2]/button')
-#    submit_button = WebDriverWait(driver, 10).until(
-#        EC.element_to_be_clickable((By.XPATH, '//*[@type="submit"]'))
-#    )
+    # submit_button = WebDriverWait(driver, 10).until(
+    #     EC.element_to_be_clickable((By.XPATH, '//*[@type="submit"]'))
+    # )
     submit_button.click()
 
     # select manager
