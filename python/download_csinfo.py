@@ -9,21 +9,24 @@ import os
 if __name__ == "__main__":
 
     if os.name != 'nt':
-        display = Display(visible=0, size=(1024, 768))
+        display = Display(visible=0, size=(1280, 1024))
         display.start()
 
     now = datetime.now()
     print("\n", now.strftime("%Y-%m-%d %H:%M:%S %A"))
 
     driver = osio.get_driver()
-    username, password = osio.get_credit()
+    username, password = osio.get_credential()
     osio.enter_login(driver, username, password)
     
     osio.download_csinfo(driver)
-    print('OK')
 
     driver.quit()
+
     if os.name != 'nt':
         display.stop()
 
-    osio.get_phone_len(now.strftime("%Y%m%d"))
+        osio.write_phone_len(now.strftime("%Y%m%d"))
+        osio.upload_excel_file(now.strftime("%Y%m%d"))
+
+
