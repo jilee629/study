@@ -35,7 +35,7 @@ def get_driver():
     return driver
 
 def get_credential():
-    credential = 'credentials.toml'
+    credential = os.path.dirname(__file__) + '/credentials.toml'
     with open(credential, 'rb') as f:
         data = tomllib.load(f)
         username = data['osio']['username']
@@ -117,7 +117,9 @@ def authenticate_google_drive():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+            credentials_file = os.path.dirname(__file__) + '/credentials.json'
+            # flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file(credentials_file, SCOPES)
             creds = flow.run_local_server(port=0)
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
