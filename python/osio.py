@@ -28,7 +28,7 @@ def get_driver():
         options.add_experimental_option("prefs", {"download.default_directory": log_dir})
         service = Service(ChromeDriverManager().install())
     else:
-        # options.add_argument("--start-maximized")
+        options.add_argument("--start-maximized")
         service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
     driver.implicitly_wait(10)
@@ -42,16 +42,24 @@ def get_credential():
         password = data['osio']['password']
     return username, password
 
+def popup_close(driver, cnt):
+    for i in range(cnt, 0, -1):
+        print(f'{i} Popup is opened')
+        driver.find_element(By.XPATH, f'//*[@id="root"]/div[{i}]/div/div/div/div/div[3]/div').click()
+        driver.find_element(By.XPATH, f'//*[@id="root"]/div[{i}]/div/div/div/div/div[3]/button').click()
+    return
+
 def enter_login(driver, username, password):
     driver.get("https://osio-shop.peoplcat.com/login")
 
     # popup window
-    popup = driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div')
-    if popup:
-        print('popup open')
-        driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div/div/div/div[3]/div').click()
-        driver.find_element(By.XPATH, '//button[text()="닫기"]').click()
-        print('popup closed')
+    try:
+        if driver.find_element(By.XPATH, '//*[@id="root"]/div[2]/div/div'):
+            popup_close(driver, 2)
+        elif driver.find_element(By.XPATH, '//*[@id="root"]/div[1]/div/div'):
+            popup_close(driver, 1)
+    except:
+        print('popup is not existed')
 
     # login
     username_input = driver.find_element(By.XPATH, '//*[@placeholder="아이디를 입력해 주세요."]')
@@ -110,18 +118,19 @@ def authenticate_google_drive():
     SCOPES = ['https://www.googleapis.com/auth/drive.file']
     creds = None
 
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    token_file = os.path.dirname(__file__) + '/token.json'
+    credentials_file = os.path.dirname(__file__) + '/credentials.json'
+
+    if os.path.exists(token_file):
+        creds = Credentials.from_authorized_user_file(token_file, SCOPES)
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            credentials_file = os.path.dirname(__file__) + '/credentials.json'
-            # flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
             flow = InstalledAppFlow.from_client_secrets_file(credentials_file, SCOPES)
             creds = flow.run_local_server(port=0)
-        with open('token.json', 'w') as token:
+        with open(token_file, 'w') as token:
             token.write(creds.to_json())
     return creds
 
