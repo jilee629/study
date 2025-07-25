@@ -58,8 +58,10 @@ def enter_login(driver, username, password):
             popup_close(driver, 2)
         elif driver.find_element(By.XPATH, '//*[@id="root"]/div[1]/div/div'):
             popup_close(driver, 1)
+        else:
+            print('popup is not existed')
     except:
-        print('popup is not existed')
+        pass
 
     # login
     username_input = driver.find_element(By.XPATH, '//*[@placeholder="아이디를 입력해 주세요."]')
