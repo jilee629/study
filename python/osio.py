@@ -59,7 +59,7 @@ def enter_login(driver, username, password):
         elif driver.find_element(By.XPATH, '//*[@id="root"]/div[1]/div/div'):
             popup_close(driver, 1)
         else:
-            print('popup is not existed')
+            print('popup is not opened')
     except:
         pass
 
@@ -108,14 +108,6 @@ def download_csinfo(driver):
     print('download_csinfo is OK.')
     return
 
-def write_phone_len(fdate):
-    csfile = log_dir + fdate + "_점핑몬스터 미사점_고객정보.xlsx"
-    df = pd.read_excel(csfile, dtype = 'str')
-    df['전화번호길이'] = df['전화번호'].str.len()
-    newfile = log_dir + "len_" + fdate + "_점핑몬스터 미사점_고객정보.xlsx"
-    df.to_excel(newfile, engine='openpyxl')
-    print('write_phone_len is OK.')
-
 def authenticate_google_drive():
     SCOPES = ['https://www.googleapis.com/auth/drive.file']
     creds = None
@@ -136,21 +128,31 @@ def authenticate_google_drive():
             token.write(creds.to_json())
     return creds
 
-def upload_excel_file(fdate):
+def write_phone_len(file_name):
+    old_file = log_dir + file_name
+    df = pd.read_excel(old_file, dtype = 'str')
+    df['전화번호길이'] = df['전화번호'].str.len()
+    new_file = log_dir + "len_" + file_name
+    df.to_excel(new_file, engine='openpyxl')
+    print(f'writing {new_file} is OK.')
+
+def upload_file(file_name, mtype = None):
     creds = authenticate_google_drive()
     service = build('drive', 'v3', credentials=creds)
 
-    local_file_path = log_dir + "len_" + fdate + "_점핑몬스터 미사점_고객정보.xlsx"
-    media = MediaFileUpload(local_file_path,
-                            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                            resumable=True)
+    local_file_path = log_dir + file_name
+    if mtype == "xlsx":
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    else:
+        mimetype='text/plain'
 
-    drive_file_name = "len_" + fdate + "_점핑몬스터 미사점_고객정보.xlsx"
+    media = MediaFileUpload(local_file_path, mimetype=mimetype, resumable=True)
+    drive_file_name = file_name
     file_metadata = {'name': drive_file_name,
-                    'parents': ['1Wwb3CYQ7OnCp5hWboVXELPxbxtAbXP9R']}
+                    'parents': ['1Wwb3CYQ7OnCp5hWboVXELPxbxtAbXP9R']
+                    }
     file = service.files().create(body=file_metadata, media_body=media, fields='id, name').execute()
-
     file.get('id')
-    print('upload_excel_file is OK.')
+    print(f'uploading {file_name} is OK.')
     return 
 

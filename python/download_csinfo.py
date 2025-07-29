@@ -26,7 +26,3 @@ if __name__ == "__main__":
     if os.name != 'nt':
         display.stop()
 
-        osio.write_phone_len(now.strftime("%Y%m%d"))
-        osio.upload_excel_file(now.strftime("%Y%m%d"))
-
-
