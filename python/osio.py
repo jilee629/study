@@ -136,7 +136,21 @@ def write_phone_len(file_name):
     df.to_excel(new_file, engine='openpyxl')
     print(f'writing {new_file} is OK.')
 
-def upload_file(file_name, mtype = None):
+def create_drive_folder(fdate):
+    creds = authenticate_google_drive()
+    service = build('drive', 'v3', credentials=creds)
+    
+    file_metadata = {
+                    'name': fdate,
+                    "mimeType": "application/vnd.google-apps.folder",
+                    'parents': ['1Wwb3CYQ7OnCp5hWboVXELPxbxtAbXP9R']
+                    }
+
+    file = service.files().create(body=file_metadata, fields="id").execute()
+    folder_id = file.get("id")
+    return folder_id
+
+def upload_file(folder_id, file_name, mtype=None):
     creds = authenticate_google_drive()
     service = build('drive', 'v3', credentials=creds)
 
@@ -147,10 +161,13 @@ def upload_file(file_name, mtype = None):
         mimetype='text/plain'
 
     media = MediaFileUpload(local_file_path, mimetype=mimetype, resumable=True)
+
     drive_file_name = file_name
-    file_metadata = {'name': drive_file_name,
-                    'parents': ['1Wwb3CYQ7OnCp5hWboVXELPxbxtAbXP9R']
+    file_metadata = {
+                    'name': drive_file_name,
+                    'parents': [folder_id]
                     }
+
     file = service.files().create(body=file_metadata, media_body=media, fields='id, name').execute()
     file.get('id')
     print(f'uploading {file_name} is OK.')
