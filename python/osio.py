@@ -12,8 +12,11 @@ from googleapiclient.discovery import build
 
 import pandas as pd
 import os, time, tomllib
+import requests
+
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
 
 log_dir = "/home/ubuntu/log/"
 
@@ -106,7 +109,7 @@ def download_csinfo(driver):
     download_button.click()
     time.sleep(10)
     print('download_csinfo is OK.')
-    return
+    return True
 
 def authenticate_google_drive():
     SCOPES = ['https://www.googleapis.com/auth/drive.file']
@@ -171,5 +174,33 @@ def upload_file(folder_id, file_name, mtype=None):
     file = service.files().create(body=file_metadata, media_body=media, fields='id, name').execute()
     file.get('id')
     print(f'uploading {file_name} is OK.')
-    return 
+    return True
+
+def get_token(driver):
+    token = driver.execute_script("return localStorage.getItem('access_token')")
+    return token
+
+def fetch(url, token):
+    headers = {
+        'Authorization': 'Bearer ' + token,
+    }
+    response = requests.get(url, headers=headers)
+    return response
+
+def get_sid_uid(phone, token):
+    url = "https://osio-api.peoplcat.com/shop/v2/user/search?type=phone&phone=" + phone
+    response = fetch(url, token)
+    shop_user_no = response.json()['shop_users'][0]['shop_user_no']
+    user_no = response.json()['shop_users'][0]['user_no']
+    return str(shop_user_no), str(user_no)
+
+def get_lastvisit(shop_user_no, token):
+    url = "https://osio-api.peoplcat.com/shop/v2/user/entry/log?shop_user_no=" + shop_user_no
+    response = fetch(url, token)
+    try:
+        entry = response.json()['log'][0]['entry_datetime']
+    except:
+        entry = None
+    print(entry)
+    return entry
 
