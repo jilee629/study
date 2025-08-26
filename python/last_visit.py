@@ -22,26 +22,33 @@ if __name__ == "__main__":
     print(f"-> Token: {token}")
 
     log_dir = "/home/ubuntu/log/"
-    file_name = "len_20250803_점핑몬스터 미사점_고객정보.xlsx"
+    file_name = "len_20250806_점핑몬스터 미사점_고객정보.xlsx"
     file_path = log_dir + file_name
-    # df = pd.read_excel(file_path, dtype = 'str')
-    df = pd.read_excel(file_path, dtype = 'str', nrows = 10)
+    df = pd.read_excel(file_path, dtype = 'str')
+    # df = pd.read_excel(file_path, dtype = 'str', nrows = 10)
 
     ls_phone = df['전화번호'].values.tolist()
     ls_visit = list()
+    ls_vcount = list()
     i = 1
 
     for phone in ls_phone:
-        print(f"{i}/{len(ls_phone)} {phone}")
+        print(f"-> {i}/{len(ls_phone)} {phone}")
+        
         shop_user_no, user_no = osio.get_sid_uid(phone, token)
-        ls_visit.append(osio.get_lastvisit(shop_user_no, token))
-        rtime = random.randrange(5,10)
-        print(rtime)
+        last_visit = osio.get_lastvisit(shop_user_no, token)
+        ls_visit.append(last_visit)
+        
+        visit_count = osio.get_visitcount(user_no, shop_user_no, token)
+        ls_vcount.append(visit_count)
+        
+        rtime = random.randrange(10,15)
+        print(f"{last_visit} {visit_count} {rtime}")
         time.sleep(rtime)
         i += 1
 
-
-    df['마지막방문'] = pd.DataFrame(ls_visit, columns=['마지막방문'])
+    df['마지막방문'] = ls_visit
+    df['방문회수'] = ls_vcount
 
     df.to_excel("visit_" + file_name, engine='openpyxl')
 

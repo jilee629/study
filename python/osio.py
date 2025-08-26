@@ -45,37 +45,27 @@ def get_credential():
         password = data['osio']['password']
     return username, password
 
-def popup_close(driver, cnt):
-    for i in range(cnt, 0, -1):
-        print(f'{i} Popup is opened')
-        driver.find_element(By.XPATH, f'//*[@id="root"]/div[{i}]/div/div/div/div/div[3]/div').click()
-        driver.find_element(By.XPATH, f'//*[@id="root"]/div[{i}]/div/div/div/div/div[3]/button').click()
-    return
-
 def enter_login(driver, username, password):
     driver.get("https://osio-shop.peoplcat.com/login")
 
     # popup window
     try:
-        if driver.find_element(By.XPATH, '//*[@id="root"]/div[2]/div/div'):
-            popup_close(driver, 2)
-        elif driver.find_element(By.XPATH, '//*[@id="root"]/div[1]/div/div'):
-            popup_close(driver, 1)
-        else:
-            print('popup is not opened')
+        for i in range(2):
+            checkbox = driver.find_element(By.XPATH, '//p[text()="일주일간 보지 않기"]/ancestor::div[3]')
+            checkbox.click()
+            close_button = driver.find_element(By.XPATH, '//button[text()="닫기"]')
+            close_button.click()
+            print("POPUP CLOSED.")
     except:
-        pass
-
+        print("POPUP PASS.")
+        
     # login
     username_input = driver.find_element(By.XPATH, '//*[@placeholder="아이디를 입력해 주세요."]')
     username_input.send_keys(username)
     password_input = driver.find_element(By.XPATH, '//*[@placeholder="비밀번호를 입력해 주세요."]')
     password_input.send_keys(password)
-    submit_button = driver.find_element(By.XPATH, '//*[@type="submit"]')
-    # submit_button = WebDriverWait(driver, 10).until(
-    #     EC.element_to_be_clickable((By.XPATH, '//*[@type="submit"]'))
-    # )
-    submit_button.click()
+    login_button = driver.find_element(By.XPATH, '//button[text()="로그인"]')
+    login_button.click()
 
     # select manager
     manager_button = driver.find_element(By.XPATH, '//button[contains(., "manager")]')
@@ -89,7 +79,7 @@ def exit_user(driver):
     confirm_button = driver.find_element(By.XPATH, '//button[text()="확인"]')
     confirm_button.click()
     time.sleep(3)
-    print('exit_user is OK.')
+    print('EXIT_USER IS OK.')
     return
 
 def get_count(driver):
@@ -108,7 +98,7 @@ def download_csinfo(driver):
     download_button = driver.find_element(By.XPATH, '//button[text()="다운로드"]')
     download_button.click()
     time.sleep(10)
-    print('download_csinfo is OK.')
+    print('DOWNDLOAD_CSINFO IS OK.')
     return True
 
 def authenticate_google_drive():
@@ -173,7 +163,7 @@ def upload_file(folder_id, file_name, mtype=None):
 
     file = service.files().create(body=file_metadata, media_body=media, fields='id, name').execute()
     file.get('id')
-    print(f'uploading {file_name} is OK.')
+    print(f'UPLOADING {file_name} IS OK.')
     return True
 
 def get_token(driver):
@@ -201,6 +191,10 @@ def get_lastvisit(shop_user_no, token):
         entry = response.json()['log'][0]['entry_datetime']
     except:
         entry = None
-    print(entry)
     return entry
 
+def get_visitcount(user_no, shop_user_no, token):
+    url = "https://osio-api.peoplcat.com/shop/user/summary/data?user_no=" + user_no + "&shop_user_no=" + shop_user_no
+    response = fetch(url, token)
+    visit_count = response.json()['visit_count']
+    return str(visit_count)
