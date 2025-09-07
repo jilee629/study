@@ -7,6 +7,7 @@ import pandas as pd
 import time
 import random
 
+
 if os.name != 'nt':
     display = Display(visible=0, size=(1280, 1024))
     display.start()

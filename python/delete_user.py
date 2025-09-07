@@ -6,39 +6,25 @@ import osio
 import os
 import pandas as pd
 
-phone = '''0104170026
-0103425487
-0109298105
-0109382813
-0105345979
-0106687545
-0106768874
-0103742874
-'''
+
+log_dir = "/home/ubuntu/log/"
 
 if os.name != 'nt':
     display = Display(visible=0, size=(1920,1080))
     display.start()
 
-    log_dir = "/home/ubuntu/log/"
-    yesterday = datetime.now() - timedelta(days = 1)
-    fdate = yesterday.strftime("%Y%m%d")
-    file_name = "len_" + fdate + "_점핑몬스터 미사점_고객정보.xlsx"
-    file_path = log_dir + file_name
-    df = pd.read_excel(file_path, dtype = 'str')
-    phone_list = df.loc[df['전화번호길이'] == '10'].values.tolist()
-    print(phone_list)
-else:
-    # 데이타를 입력
-    # phone_list = phone.splitlines()
-    # print(pd.Series(phone_list))
+# # 특정파일
+# file_path = os.path.dirname(__file__) + '/len_20250905_점핑몬스터 미사점_고객정보.xlsx'
+# df = pd.read_excel(file_path, dtype = 'str')
+# df_filter = df.loc[df['전화번호길이'] == '10']
+# phone_list = df_filter["전화번호"].values.tolist()
+# print(phone_list)
 
-    # 엑셀 파일을 입력
-    file_path = os.path.dirname(__file__) + '/len_20250905_점핑몬스터 미사점_고객정보.xlsx'
-    df = pd.read_excel(file_path, dtype = 'str')
-    df_filter = df.loc[df['전화번호길이'] == '10']
-    phone_list = df_filter["전화번호"].values.tolist()
-    print(phone_list)
+# 데이타를 입력
+phone = '''01035917425
+'''
+phone_list = phone.splitlines()
+print(pd.Series(phone_list))
 
 driver = osio.get_driver()
 username, password = osio.get_credential()

@@ -4,6 +4,7 @@ from pyvirtualdisplay import Display
 import osio
 import os
 
+
 osio.print_datetime()
 if os.name != 'nt':
     display = Display(visible=0, size=(1920,1080))
