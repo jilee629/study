@@ -14,11 +14,13 @@ import pandas as pd
 import os, time, tomllib
 import requests
 
+from datetime import datetime
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-
 log_dir = "/home/ubuntu/log/"
+
+# webdriver
 
 def get_driver():
     options = Options()
@@ -26,15 +28,16 @@ def get_driver():
         options.add_argument("--headless=new")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--window-size=1280,1024")
-        # options.add_argument("--remote-debugging-pipe")
         options.add_experimental_option("prefs", {"download.default_directory": log_dir})
-        service = Service(ChromeDriverManager().install())
     else:
-        options.add_argument("--start-maximized")
-        service = Service(ChromeDriverManager().install())
+        options.add_argument("--headless=new")
+        pass
+    options.add_argument("--window-size=1920,1080")
+    options.add_argument("--remote-debugging-pipe")
+
+    service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(3)
     return driver
 
 def get_credential():
@@ -47,6 +50,7 @@ def get_credential():
 
 def enter_login(driver, username, password):
     driver.get("https://osio-shop.peoplcat.com/login")
+    time.sleep(1)
 
     # popup window
     try:
@@ -55,9 +59,10 @@ def enter_login(driver, username, password):
             checkbox.click()
             close_button = driver.find_element(By.XPATH, '//button[text()="닫기"]')
             close_button.click()
+            time.sleep(1)
             print("POPUP CLOSED.")
     except:
-        print("POPUP PASS.")
+        print("NO POPUP.")
         
     # login
     username_input = driver.find_element(By.XPATH, '//*[@placeholder="아이디를 입력해 주세요."]')
@@ -66,16 +71,20 @@ def enter_login(driver, username, password):
     password_input.send_keys(password)
     login_button = driver.find_element(By.XPATH, '//button[text()="로그인"]')
     login_button.click()
+    time.sleep(1)
 
     # select manager
     manager_button = driver.find_element(By.XPATH, '//button[contains(., "manager")]')
     manager_button.click()
+    time.sleep(1)
     return
 
 def exit_user(driver):
     driver.get("https://osio-shop.peoplcat.com/admin/settings")
+    time.sleep(1)
     exit_button = driver.find_element(By.XPATH, '//button[contains(., "고객 전체 퇴장")]')
     exit_button.click()
+    time.sleep(1)
     confirm_button = driver.find_element(By.XPATH, '//button[text()="확인"]')
     confirm_button.click()
     time.sleep(3)
@@ -84,6 +93,7 @@ def exit_user(driver):
 
 def get_count(driver):
     driver.get("https://osio-shop.peoplcat.com/admin/entry")
+    time.sleep(1)
     adult = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[2]').text
     child = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[4]').text
     print(f'-> Adult: {adult}, Child: {child}')
@@ -91,8 +101,10 @@ def get_count(driver):
 
 def download_csinfo(driver):
     driver.get("https://osio-shop.peoplcat.com/admin/users")
+    time.sleep(1)
     cs_download_button = driver.find_element(By.XPATH, '//button[text()="고객 다운로드"]')
     cs_download_button.click()
+    time.sleep(1)
     agree_button = driver.find_element(By.XPATH, '//button[contains(., "위 내용에 동의합니다")]')
     agree_button.click()
     download_button = driver.find_element(By.XPATH, '//button[text()="다운로드"]')
@@ -100,6 +112,78 @@ def download_csinfo(driver):
     time.sleep(10)
     print('DOWNDLOAD_CSINFO IS OK.')
     return True
+
+def delete_user(driver, phone):
+    driver.get("https://osio-shop.peoplcat.com/admin/osio/search")
+    time.sleep(1)
+    phone_input = driver.find_element(By.XPATH, '//*[@placeholder="전화번호 입력 후 검색버튼을 눌러주세요."]')
+    phone_input.send_keys(phone)
+    search_button = driver.find_element(By.XPATH, '//button[contains(., "검색")]')
+    search_button.click()
+    time.sleep(1)
+    delete_button = driver.find_element(By.XPATH, '//button[text()="회원탈퇴"]')
+    delete_button.click()
+    time.sleep(1)
+    message_switch = driver.find_element(By.XPATH, '//span[text()="ON"]/ancestor::div[1]')
+    message_switch.click()
+    time.sleep(1)
+    confirm_button = driver.find_element(By.XPATH, '//button[text()="확인"]')
+    confirm_button.click()
+    time.sleep(1)
+    print(f"{phone} USER DELETED.")
+    return
+
+
+# request
+
+def get_token(driver):
+    token = driver.execute_script("return localStorage.getItem('access_token')")
+    return token
+
+def fetch(url, token):
+    headers = {
+        'Authorization': 'Bearer ' + token,
+    }
+    response = requests.get(url, headers=headers)
+    return response
+
+def write_phone_len(file_name):
+    old_file = log_dir + file_name
+    df = pd.read_excel(old_file, dtype = 'str')
+    df['전화번호길이'] = df['전화번호'].str.len()
+    new_file = log_dir + "len_" + file_name
+    df.to_excel(new_file, engine='openpyxl')
+    print(f'writing {new_file} is OK.')
+
+def get_user_data(phone, token):
+    url = "https://osio-api.peoplcat.com/shop/v2/user/search?type=phone&phone=" + phone
+    response = fetch(url, token)
+    shop_user_no = response.json()['shop_users'][0]['shop_user_no']
+    user_no = response.json()['shop_users'][0]['user_no']
+    return str(shop_user_no), str(user_no)
+
+def get_user_summary(user_no, shop_user_no, token):
+    url = "https://osio-api.peoplcat.com/shop/user/summary/data?user_no=" + user_no + "&shop_user_no=" + shop_user_no
+    response = fetch(url, token)
+    visit_count = response.json()['visit_count']
+    len_osiodata = len(response.json()['user_osio_data'])
+    if len_osiodata == 0:
+        oticket = 0
+    else:
+        oticket = response.json()['user_osio_data'][0]['value']
+    return str(visit_count), str(oticket)
+
+def get_user_log(shop_user_no, token):
+    url = "https://osio-api.peoplcat.com/shop/v2/user/entry/log?shop_user_no=" + shop_user_no
+    response = fetch(url, token)
+    try:
+        entry = response.json()['log'][0]['entry_datetime']
+    except:
+        entry = None
+    return entry
+
+
+# google drive
 
 def authenticate_google_drive():
     SCOPES = ['https://www.googleapis.com/auth/drive.file']
@@ -121,20 +205,12 @@ def authenticate_google_drive():
             token.write(creds.to_json())
     return creds
 
-def write_phone_len(file_name):
-    old_file = log_dir + file_name
-    df = pd.read_excel(old_file, dtype = 'str')
-    df['전화번호길이'] = df['전화번호'].str.len()
-    new_file = log_dir + "len_" + file_name
-    df.to_excel(new_file, engine='openpyxl')
-    print(f'writing {new_file} is OK.')
-
-def create_drive_folder(fdate):
+def create_drive_folder(folder_name):
     creds = authenticate_google_drive()
     service = build('drive', 'v3', credentials=creds)
     
     file_metadata = {
-                    'name': fdate,
+                    'name': folder_name,
                     "mimeType": "application/vnd.google-apps.folder",
                     'parents': ['1Wwb3CYQ7OnCp5hWboVXELPxbxtAbXP9R']
                     }
@@ -166,35 +242,9 @@ def upload_file(folder_id, file_name, mtype=None):
     print(f'UPLOADING {file_name} IS OK.')
     return True
 
-def get_token(driver):
-    token = driver.execute_script("return localStorage.getItem('access_token')")
-    return token
 
-def fetch(url, token):
-    headers = {
-        'Authorization': 'Bearer ' + token,
-    }
-    response = requests.get(url, headers=headers)
-    return response
-
-def get_sid_uid(phone, token):
-    url = "https://osio-api.peoplcat.com/shop/v2/user/search?type=phone&phone=" + phone
-    response = fetch(url, token)
-    shop_user_no = response.json()['shop_users'][0]['shop_user_no']
-    user_no = response.json()['shop_users'][0]['user_no']
-    return str(shop_user_no), str(user_no)
-
-def get_lastvisit(shop_user_no, token):
-    url = "https://osio-api.peoplcat.com/shop/v2/user/entry/log?shop_user_no=" + shop_user_no
-    response = fetch(url, token)
-    try:
-        entry = response.json()['log'][0]['entry_datetime']
-    except:
-        entry = None
-    return entry
-
-def get_visitcount(user_no, shop_user_no, token):
-    url = "https://osio-api.peoplcat.com/shop/user/summary/data?user_no=" + user_no + "&shop_user_no=" + shop_user_no
-    response = fetch(url, token)
-    visit_count = response.json()['visit_count']
-    return str(visit_count)
+# 
+def print_datetime():
+    now = datetime.now()
+    print(f"\n{now.strftime('%Y-%m-%d %H:%M:%S %A')}")
+    return

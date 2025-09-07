@@ -17,3 +17,6 @@ print(now.date())
 
 print(timedelta(datetime.now().timestamp() - now.timestamp()))
 # 0:00:09.249115
+
+yesterday = now - timedelta(days = 1)
+print(yesterday.strftime("%Y%m%d"))
