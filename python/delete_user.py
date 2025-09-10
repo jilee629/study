@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from pyvirtualdisplay import Display
-from datetime import datetime, timedelta
 import osio
 import os
 import pandas as pd
