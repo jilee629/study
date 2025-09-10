@@ -18,20 +18,20 @@ if __name__ == "__main__":
 
     # 직접 입력
     # phone_list = phone.splitlines()
-    # print(pd.Series(phone_list))
+    # print(pd.Series(phone_list))y
 
     # 파일로 입력
-    file_path = '../../log/len_20250908_점핑몬스터 미사점_고객정보.xlsx'
+    file_path = os.path.dirname(__file__) + '/../../log/len_20250909_점핑몬스터 미사점_고객정보.xlsx'
     df = pd.read_excel(file_path, dtype = 'str')
     df_filter = df.loc[df['전화번호길이'] == '10']
     print(df_filter)
     phone_list = df_filter["전화번호"].values.tolist()
 
+    driver = osio.get_driver()
     username, password = osio.get_credential()
     osio.enter_login(driver, username, password)
     token = osio.get_token(driver)
-    driver = osio.get_driver()
-
+    
     data =[]
     for phone in phone_list:
         shop_user_no, user_no = osio.get_user_data(phone, token)
@@ -49,7 +49,6 @@ if __name__ == "__main__":
     user_input = input("\nDelete user (y/n)")
     if user_input == "y":
         for val in no_visit_list:
-            print(val[0])
             osio.delete_user(driver, val[0])
     else:
         print("Programe closed.")
