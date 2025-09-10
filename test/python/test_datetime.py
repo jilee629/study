@@ -3,20 +3,18 @@ import time
 
 now = datetime.now()
 
-print(now)
-# 2024-07-22 13:31:47.496295
+print(f"now : {now}")
 
-print(now.strftime("%Y-%m-%d %H:%M:%S %A"))
-# 2024-07-22 13:31:47 Monday
+print(f"date : {now.date()}")
 
-print(now.time())
-# 13:31:47.496295
+print(f"time : {now.time()}")
 
-print(now.date())
-# 2024-07-22
+print(f"strftime : {now.strftime('%Y-%m-%d %H:%M:%S %A')}")
 
-print(timedelta(datetime.now().timestamp() - now.timestamp()))
-# 0:00:09.249115
+timestamp = now.timestamp()
+print(f"timestamp: {timestamp}")
 
-yesterday = now - timedelta(days = 1)
-print(yesterday.strftime("%Y%m%d"))
+yesterday = now - timedelta(days=-1)
+print(f"timedelta: {yesterday}")
+
+

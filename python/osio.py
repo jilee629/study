@@ -11,12 +11,8 @@ from googleapiclient.http import MediaFileUpload
 from googleapiclient.discovery import build
 
 import pandas as pd
-import os, time, tomllib
-import requests
-
+import os, time, tomllib, requests
 from datetime import datetime
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 log_dir = "/home/ubuntu/log/"
 

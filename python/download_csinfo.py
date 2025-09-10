@@ -4,19 +4,20 @@ from pyvirtualdisplay import Display
 import osio
 import os
 
+if __name__ == "__main__":
+    
+    osio.print_datetime()
+    if os.name != 'nt':
+        display = Display(visible=0, size=(1920,1080))
+        display.start()
 
-osio.print_datetime()
-if os.name != 'nt':
-    display = Display(visible=0, size=(1920,1080))
-    display.start()
+    driver = osio.get_driver()
+    username, password = osio.get_credential()
+    osio.enter_login(driver, username, password)
 
-driver = osio.get_driver()
-username, password = osio.get_credential()
-osio.enter_login(driver, username, password)
+    osio.download_csinfo(driver)
 
-osio.download_csinfo(driver)
-
-driver.quit()
-if os.name != 'nt':
-    display.stop()
-osio.print_datetime()
+    driver.quit()
+    if os.name != 'nt':
+        display.stop()
+    osio.print_datetime()
