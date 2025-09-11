@@ -1,29 +1,15 @@
-#!/usr/bin/env python3
-
 from pyvirtualdisplay import Display
 from datetime import datetime, timedelta
 import osio
-import os
+import os, random, time
 import pandas as pd
-import random
-
-# 데이타로 입력
-phone = '''01035917425
-'''
 
 if __name__ == "__main__":
-    
-    # 직접 입력
-    # phone_list = phone.splitlines()
-    # print(pd.Series(phone_list))y
 
-    # lenth가 10인 파일로 입력
-    file_path = os.path.dirname(__file__) + '/../../log/len_20250909_점핑몬스터 미사점_고객정보.xlsx'
+    file_path = os.path.dirname(__file__) + '/../../log/20250910_점핑몬스터 미사점_고객정보.xlsx'
     df = pd.read_excel(file_path, dtype = 'str')
-    df_filter = df.loc[df['전화번호길이'] == '10']
-    print(df_filter)
-    phone_list = df_filter["전화번호"].values.tolist()
-
+    df_noticket = df.loc[df['오시오 잔여값'].isna()]
+    phone_list = random.sample(df_noticket["전화번호"].values.tolist(), 20)
 
     if os.name != 'nt':
         display = Display(visible=0, size=(1920,1080))
@@ -36,24 +22,15 @@ if __name__ == "__main__":
     
     data =[]
     for phone in phone_list:
+        print(phone)
         shop_user_no, user_no = osio.get_user_data(phone, token)
         visit_count, oticket = osio.get_user_summary(user_no, shop_user_no, token)
         last_entry = osio.get_user_log(shop_user_no, token)
         data.append([phone, visit_count, oticket, last_entry])
+        time.sleep(5)
     columns = ['phone', 'visit', 'oticket', 'entry']
     df = pd.DataFrame(data, columns=columns)
     print(df)
-
-    no_visit = df.loc[(df['visit'] == '0') & (df['oticket'] == '0')]
-    print(no_visit)
-    no_visit_list = no_visit.values.tolist()
-
-    user_input = input("\nDelete user? (y/n)")
-    if user_input == "y":
-        for val in no_visit_list:
-            osio.delete_user(driver, val[0])
-    else:
-        print("Programe closed.")
 
     driver.quit()
     if os.name != 'nt':
