@@ -9,3 +9,7 @@ print(f"현재 파일의 디렉토리: {os.path.dirname(__file__)}")
 print(f"현재 파일의 경로:     {__file__}")
 # 현재 파일의 경로:     e:\home\study\test\python\test_path.py
 
+cur_dir = os.path.dirname(__file__)
+print(f"경로 합치기 : {os.path.join(cur_dir, 'credit.toml')}")
+# 경로 합치기 : /home/ubuntu/study/test/python/credit.toml
+
