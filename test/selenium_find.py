@@ -16,6 +16,10 @@ find_element(By.XPATH, '//[@id="root"]/div[2]/div/div')
 # [@id="root"]: id 속성이 "root"인 요소
 # /: 현재 요소의 자식 요소를 나타냅니다.
 
+    adult_count_element = driver.find_element(By.XPATH, "//span[text()='어른']/following-sibling::span")
+    adult_count = adult_count_element.text
+    print(f"'어른' 다음 숫자: {adult_count}") # 예: '어른' 다음 숫자: 39
+
 find_element(By.XPATH, '//button[text()="확인"]')
 # "확인" 이라는 버튼 요소를 찾고자 할 때
 

@@ -26,7 +26,7 @@ def get_driver():
         options.add_argument("--disable-dev-shm-usage")
         options.add_experimental_option("prefs", {"download.default_directory": log_dir})
     else:
-        options.add_argument("--headless=new")
+        # options.add_argument("--headless=new")
         pass
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--remote-debugging-pipe")
@@ -152,14 +152,16 @@ def write_phone_len(file_name):
     print(f'writing {new_file} is OK.')
 
 def get_user_data(phone, token):
-    url = "https://osio-api.peoplcat.com/shop/v2/user/search?type=phone&phone=" + phone
+    curl = "https://osio-api.peoplcat.com/shop/v2/user/search?type=phone"
+    url = curl + "&phone=" + phone
     response = fetch(url, token)
     shop_user_no = response.json()['shop_users'][0]['shop_user_no']
     user_no = response.json()['shop_users'][0]['user_no']
-    return str(shop_user_no), str(user_no)
+    return shop_user_no, user_no
 
 def get_user_summary(user_no, shop_user_no, token):
-    url = "https://osio-api.peoplcat.com/shop/user/summary/data?user_no=" + user_no + "&shop_user_no=" + shop_user_no
+    curl = "https://osio-api.peoplcat.com/shop/user/summary/data"
+    url = curl + "?user_no=" + str(user_no) + "&shop_user_no=" + str(shop_user_no)
     response = fetch(url, token)
     visit_count = response.json()['visit_count']
     len_osiodata = len(response.json()['user_osio_data'])
@@ -167,10 +169,11 @@ def get_user_summary(user_no, shop_user_no, token):
         oticket = 0
     else:
         oticket = response.json()['user_osio_data'][0]['value']
-    return str(visit_count), str(oticket)
+    return visit_count, oticket
 
 def get_user_log(shop_user_no, token):
-    url = "https://osio-api.peoplcat.com/shop/v2/user/entry/log?shop_user_no=" + shop_user_no
+    curl = "https://osio-api.peoplcat.com/shop/v2/user/entry/log"
+    url = curl + "?shop_user_no=" + str(shop_user_no)
     response = fetch(url, token)
     try:
         entry = response.json()['log'][0]['entry_datetime']
