@@ -26,7 +26,7 @@ def get_driver():
         options.add_argument("--disable-dev-shm-usage")
         options.add_experimental_option("prefs", {"download.default_directory": log_dir})
     else:
-        # options.add_argument("--headless=new")
+        options.add_argument("--headless=new")
         pass
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--remote-debugging-pipe")
@@ -90,8 +90,8 @@ def exit_user(driver):
 def get_count(driver):
     driver.get("https://osio-shop.peoplcat.com/admin/entry")
     time.sleep(1)
-    adult = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[2]').text
-    child = driver.find_element(By.XPATH,'//*[@id="root"]/div/div/header/div[2]/div/span[4]').text
+    adult = driver.find_element(By.XPATH, "//span[text()='어른']/following-sibling::span").text
+    child = driver.find_element(By.XPATH, "//span[text()='어린이']/following-sibling::span").text
     print(f'-> Adult: {adult}, Child: {child}')
     return
 
