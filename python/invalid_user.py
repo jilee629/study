@@ -6,10 +6,10 @@ import pandas as pd
 
 if __name__ == "__main__":
 
-    log_dir = os.path.dirname(__file__) + '/../../log/'
+    log_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'log')
     yesterday = datetime.now() - timedelta(days=1)
     file_name = yesterday.strftime('%Y%m%d') + '_점핑몬스터 미사점_고객정보.xlsx'
-    file_path = log_dir + file_name
+    file_path = os.path.join(log_dir, file_name)
     df = pd.read_excel(file_path, dtype = 'str')
     df_noticket = df.loc[df['오시오 잔여값'].isna()]
     phone_list = random.sample(df_noticket["전화번호"].values.tolist(), 500)
@@ -24,16 +24,19 @@ if __name__ == "__main__":
     token = osio.get_token(driver)
     
     data =[]
-    for phone in phone_list:
+    for i, phone in enumerate(phone_list):
+        print(i, end=',', flush=True)
+        lenth = len(phone)
         shop_user_no, user_no = osio.get_user_data(phone, token)
         visit_count, oticket = osio.get_user_summary(user_no, shop_user_no, token)
         last_entry = osio.get_user_log(shop_user_no, token)
-        data.append([phone, visit_count, oticket, last_entry])
+        user = [lenth, phone, visit_count, oticket, last_entry]
+        data.append(user)
         if last_entry is None:
-            print(phone, visit_count, oticket, last_entry)
+            print(user, end=',', flush=True)
         time.sleep(30)
 
-    columns = ['phone', 'visit', 'oticket', 'entry']
+    columns = ['lenth', 'phone', 'visit', 'oticket', 'entry']
     df = pd.DataFrame(data, columns=columns)
     new_file = log_dir + "unkown_" + file_name
     df.to_excel(new_file, engine='openpyxl')

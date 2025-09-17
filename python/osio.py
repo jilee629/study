@@ -14,7 +14,7 @@ import pandas as pd
 import os, time, tomllib, requests
 from datetime import datetime
 
-log_dir = "/home/ubuntu/log/"
+log_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'log')
 
 # webdriver
 
@@ -26,7 +26,7 @@ def get_driver():
         options.add_argument("--disable-dev-shm-usage")
         options.add_experimental_option("prefs", {"download.default_directory": log_dir})
     else:
-        options.add_argument("--headless=new")
+        # options.add_argument("--headless=new")
         pass
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--remote-debugging-pipe")
@@ -144,12 +144,13 @@ def fetch(url, token):
     return response
 
 def write_phone_len(file_name):
-    old_file = log_dir + file_name
-    df = pd.read_excel(old_file, dtype = 'str')
+    file_path = os.path.join(log_dir, file_name)
+    df = pd.read_excel(file_path, dtype = 'str')
     df['전화번호길이'] = df['전화번호'].str.len()
-    new_file = log_dir + "len_" + file_name
-    df.to_excel(new_file, engine='openpyxl')
-    print(f'writing {new_file} is OK.')
+    len_file_name = "len_" + file_name
+    len_file_path = os.path.join(log_dir, len_file_name)
+    df.to_excel(len_file_path, engine='openpyxl')
+    print(f'writing {len_file_name} is OK.')
 
 def get_user_data(phone, token):
     curl = "https://osio-api.peoplcat.com/shop/v2/user/search?type=phone"
@@ -222,7 +223,7 @@ def upload_file(folder_id, file_name, mtype=None):
     creds = authenticate_google_drive()
     service = build('drive', 'v3', credentials=creds)
 
-    local_file_path = log_dir + file_name
+    local_file_path = os.path.join(log_dir, file_name)
     if mtype == "xlsx":
         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     else:

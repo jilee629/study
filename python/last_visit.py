@@ -21,9 +21,9 @@ if __name__ == "__main__":
     token = osio.get_token(driver)
     print(f"-> Token: {token}")
 
-    log_dir = "/home/ubuntu/log/"
+    log_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'log')
     file_name = "len_20250806_점핑몬스터 미사점_고객정보.xlsx"
-    file_path = log_dir + file_name
+    file_path = os.path.join(log_dir, file_name)
     df = pd.read_excel(file_path, dtype = 'str')
     # df = pd.read_excel(file_path, dtype = 'str', nrows = 10)
 

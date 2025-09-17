@@ -18,7 +18,9 @@ if __name__ == "__main__":
     # print(pd.Series(phone_list))y
 
     # lenth가 10인 파일로 입력
-    file_path = os.path.dirname(__file__) + '/../../log/len_20250909_점핑몬스터 미사점_고객정보.xlsx'
+    log_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'log')
+    file_name = 'len_20250909_점핑몬스터 미사점_고객정보.xlsx'
+    file_path = os.path.join(log_dir, file_name)
     df = pd.read_excel(file_path, dtype = 'str')
     df_filter = df.loc[df['전화번호길이'] == '10']
     print(df_filter)
