@@ -6,7 +6,7 @@ import pandas as pd
 
 if __name__ == "__main__":
 
-    log_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'log')
+    log_dir = "/home/ubuntu/log"
     yesterday = datetime.now() - timedelta(days=1)
     file_name = yesterday.strftime('%Y%m%d') + '_점핑몬스터 미사점_고객정보.xlsx'
     file_path = os.path.join(log_dir, file_name)
@@ -36,10 +36,10 @@ if __name__ == "__main__":
             print(user, end=',', flush=True)
         time.sleep(30)
 
-    columns = ['lenth', 'phone', 'visit', 'oticket', 'entry']
-    df = pd.DataFrame(data, columns=columns)
-    new_file = log_dir + "unkown_" + file_name
-    df.to_excel(new_file, engine='openpyxl')
+    # columns = ['lenth', 'phone', 'visit', 'oticket', 'entry']
+    # df = pd.DataFrame(data, columns=columns)
+    # new_file = log_dir + "unknown_" + file_name
+    # df.to_excel(new_file, engine='openpyxl')
     
     # pd.set_option('display.max_rows', None)
     # print(df)

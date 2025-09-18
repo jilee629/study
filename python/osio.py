@@ -14,7 +14,7 @@ import pandas as pd
 import os, time, tomllib, requests
 from datetime import datetime
 
-log_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'log')
+log_dir = "/home/ubuntu/log"
 
 # webdriver
 

@@ -18,7 +18,7 @@ if __name__ == "__main__":
     # print(pd.Series(phone_list))y
 
     # lenth가 10인 파일로 입력
-    log_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'log')
+    log_dir = "/home/ubuntu/log"
     file_name = 'len_20250909_점핑몬스터 미사점_고객정보.xlsx'
     file_path = os.path.join(log_dir, file_name)
     df = pd.read_excel(file_path, dtype = 'str')
