@@ -6,9 +6,6 @@ import pandas as pd
 
 log_dir = "/home/ubuntu/log"
 
-<<<<<<< HEAD
-    log_dir = "/home/ubuntu/log"
-=======
 def write_user(user):
     file_path = os.path.join(os.path.dirname(__file__), "unknown.txt")
     with open(file_path, "w") as f:
@@ -16,7 +13,6 @@ def write_user(user):
 
 if __name__ == "__main__":
     
->>>>>>> f490a7b (update)
     yesterday = datetime.now() - timedelta(days=1)
     file_name = yesterday.strftime('%Y%m%d') + '_점핑몬스터 미사점_고객정보.xlsx'
     file_path = os.path.join(log_dir, file_name)
@@ -47,7 +43,6 @@ if __name__ == "__main__":
             write_user(user)
         time.sleep(30)
 
-<<<<<<< HEAD
     # columns = ['lenth', 'phone', 'visit', 'oticket', 'entry']
     # df = pd.DataFrame(data, columns=columns)
     # new_file = log_dir + "unknown_" + file_name
@@ -56,8 +51,6 @@ if __name__ == "__main__":
     # pd.set_option('display.max_rows', None)
     # print(df)
 
-=======
->>>>>>> f490a7b (update)
     driver.quit()
     if os.name != 'nt':
         display.stop()

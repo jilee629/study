@@ -9,8 +9,8 @@ if __name__ == "__main__":
     folder_id = osio.create_drive_folder(fdate)
 
     filelist = [
-        ['exit_user.log', 'text'],
-        ['download_csinfo.log', 'text'],
+        ['0_exit_user.log', 'text'],
+        ['0_download_csinfo.log', 'text'],
     ]
     for file in filelist:
         osio.upload_file(folder_id, file[0])
