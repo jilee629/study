@@ -11,6 +11,7 @@ if __name__ == "__main__":
     filelist = [
         ['0_exit_user.log', 'text'],
         ['0_download_csinfo.log', 'text'],
+        ['0_unknown_user.log', 'text'],
     ]
     for file in filelist:
         osio.upload_file(folder_id, file[0])

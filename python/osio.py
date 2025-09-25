@@ -77,7 +77,7 @@ def enter_login(driver, username, password):
 
 def exit_user(driver):
     driver.get("https://osio-shop.peoplcat.com/admin/settings")
-    time.sleep(1)
+    time.sleep(3)
     exit_button = driver.find_element(By.XPATH, '//button[contains(., "고객 전체 퇴장")]')
     exit_button.click()
     time.sleep(1)
@@ -89,7 +89,7 @@ def exit_user(driver):
 
 def get_count(driver):
     driver.get("https://osio-shop.peoplcat.com/admin/entry")
-    time.sleep(1)
+    time.sleep(3)
     adult = driver.find_element(By.XPATH, "//span[text()='어른']/following-sibling::span").text
     child = driver.find_element(By.XPATH, "//span[text()='어린이']/following-sibling::span").text
     print(f'-> Adult: {adult}, Child: {child}')
@@ -97,7 +97,7 @@ def get_count(driver):
 
 def download_csinfo(driver):
     driver.get("https://osio-shop.peoplcat.com/admin/users")
-    time.sleep(1)
+    time.sleep(3)
     cs_download_button = driver.find_element(By.XPATH, '//button[text()="고객 다운로드"]')
     cs_download_button.click()
     time.sleep(1)
@@ -111,7 +111,7 @@ def download_csinfo(driver):
 
 def delete_user(driver, phone):
     driver.get("https://osio-shop.peoplcat.com/admin/osio/search")
-    time.sleep(1)
+    time.sleep(3)
     phone_input = driver.find_element(By.XPATH, '//*[@placeholder="전화번호 입력 후 검색버튼을 눌러주세요."]')
     phone_input.send_keys(phone)
     search_button = driver.find_element(By.XPATH, '//button[contains(., "검색")]')
@@ -158,7 +158,7 @@ def get_user_data(phone, token):
     response = fetch(url, token)
     shop_user_no = response.json()['shop_users'][0]['shop_user_no']
     user_no = response.json()['shop_users'][0]['user_no']
-    return shop_user_no, user_no
+    return str(shop_user_no), str(user_no)
 
 def get_user_summary(user_no, shop_user_no, token):
     curl = "https://osio-api.peoplcat.com/shop/user/summary/data"
@@ -170,7 +170,7 @@ def get_user_summary(user_no, shop_user_no, token):
         oticket = 0
     else:
         oticket = response.json()['user_osio_data'][0]['value']
-    return visit_count, oticket
+    return str(visit_count), str(oticket)
 
 def get_user_log(shop_user_no, token):
     curl = "https://osio-api.peoplcat.com/shop/v2/user/entry/log"
