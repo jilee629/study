@@ -9,8 +9,8 @@ log_dir = "/home/ubuntu/log"
 if __name__ == "__main__":
     
     yesterday = datetime.now() - timedelta(days=1)
-    # file_name = yesterday.strftime('%Y%m%d') + '_점핑몬스터 미사점_고객정보.xlsx'
-    file_name = "20250923_점핑몬스터 미사점_고객정보.xlsx"
+    file_name = yesterday.strftime('%Y%m%d') + '_점핑몬스터 미사점_고객정보.xlsx'
+    # file_name = "20250923_점핑몬스터 미사점_고객정보.xlsx"
     file_path = os.path.join(log_dir, file_name)
     df = pd.read_excel(file_path, dtype = 'str')
     df_noticket = df.loc[df['오시오 잔여값'].isna()]
