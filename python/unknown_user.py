@@ -2,6 +2,7 @@
 
 from pyvirtualdisplay import Display
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 import osio
 import os, random, time
 import pandas as pd
@@ -37,13 +38,14 @@ if __name__ == "__main__":
         last_entry = osio.get_user_log(shop_user_no, token)
 
         entry_date = datetime.fromisoformat(last_entry).replace(tzinfo=None)
-        diff_time = now - entry_date
+        ref_date = now - relativedelta(years=2)
+        diff_date = entry_date - ref_date
 
         user = [lenth, phone, visit_count, oticket, last_entry, diff_time.days]
 
         if last_entry is None:
             print("\n", user)
-        elif diff_time.days > 600:
+        elif diff_date.days < 0:
             print("\n", user)
 
         time.sleep(30)

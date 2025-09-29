@@ -34,3 +34,12 @@ $ origin  https://github.com/jilee629/study.git (push)
 $ git branch --remote
 $ origin/HEAD -> origin/main
 $ origin/main
+
+# conflict 났을때 강제로 pull 하기
+git fetch --all
+git reset --hard origin/master
+git pull origin master
+
+제가 수정한 파일이 conflict되면 fetch로 파일들을 remote 저장소에서 이전 fetch들을 받은 다음
+local에서 다시 reset hard를 사용하여 제 상태를 컨플릭트 나기전인 수정하기 전으로 되돌립니다.
+이후 pull 하면 remote에서 loacal로 정상적으로 다운받아집니다.
