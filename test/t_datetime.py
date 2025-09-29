@@ -27,9 +27,11 @@ timedelta = now - timedelta(days=2)
 #timedelta : 2025-09-24 15:56:16.858232
 
 # timedelta와 다르게 음력까지 계산해서 정확하게 계산
-# relativedelta = now - relativedelta(years=2)
-print("relativedelta :", relativedelta)
-# relativedelta : 2023-09-26 15:56:16.858232
+two_years_ago = now - relativedelta(years=2)
+# print("now :", now)
+# print("two_years_ago :", two_years_ago)
+# now : 2025-09-29 11:44:27.612079
+# two_years_ago : 2023-09-29 11:44:27.612079
 
 # 비표준 날짜 형식을 datetime 객체로
 time_string = "2025-09-12 15:53:22.269899"
@@ -49,6 +51,6 @@ native_time = fromisoformat.replace(tzinfo=None)
 # print("native_time :", native_time)
 # native_time : 2023-10-27 07:14:20
 
-two_years_ago = now - relativedelta(years=2)
-diff_time = native_time - two_years_ago
-print(diff_time.days)
+diff_time = now - native_time
+print("diff_time.days :", diff_time.days)
+# diff_time.days : 703

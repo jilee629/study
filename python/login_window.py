@@ -1,4 +1,5 @@
 from pyvirtualdisplay import Display
+from datetime import datetime
 import osio
 import os
 
@@ -13,14 +14,20 @@ if __name__ == "__main__":
     osio.enter_login(driver, username, password)
     token = osio.get_token(driver)
 
-
     phone = "01035917425"
     shop_user_no, user_no = osio.get_user_data(phone, token)
     last_entry = osio.get_user_log(shop_user_no, token)
     print(last_entry)
 
+    now = datetime.now()
+    entry_date = datetime.fromisoformat(last_entry).replace(tzinfo=None)
+    diff_time = now - entry_date
 
-    # osio.get_count(driver)
+    if diff_time.days > 365:
+        print("more than 1 year")
+    else:
+        print("less than 1 year")
+
 
     driver.quit()
     if os.name != 'nt':

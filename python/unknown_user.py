@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from pyvirtualdisplay import Display
 from datetime import datetime, timedelta
 import osio
@@ -8,13 +10,14 @@ log_dir = "/home/ubuntu/log"
 
 if __name__ == "__main__":
     
-    yesterday = datetime.now() - timedelta(days=1)
+    now = datetime.now()
+    yesterday = now - timedelta(days=1)
     file_name = yesterday.strftime('%Y%m%d') + '_점핑몬스터 미사점_고객정보.xlsx'
-    # file_name = "20250923_점핑몬스터 미사점_고객정보.xlsx"
+    print("FILE :", file_name)
     file_path = os.path.join(log_dir, file_name)
     df = pd.read_excel(file_path, dtype = 'str')
     df_noticket = df.loc[df['오시오 잔여값'].isna()]
-    phone_list = random.sample(df_noticket["전화번호"].values.tolist(), 300)
+    phone_list = random.sample(df_noticket["전화번호"].values.tolist(), 500)
 
     if os.name != 'nt':
         display = Display(visible=0, size=(1920,1080))
@@ -27,13 +30,22 @@ if __name__ == "__main__":
     
     for i, phone in enumerate(phone_list):
         print(i, end=',', flush=True)
+
         lenth = len(phone)
         shop_user_no, user_no = osio.get_user_data(phone, token)
         visit_count, oticket = osio.get_user_summary(user_no, shop_user_no, token)
         last_entry = osio.get_user_log(shop_user_no, token)
-        user = [lenth, phone, visit_count, oticket, last_entry]
+
+        entry_date = datetime.fromisoformat(last_entry).replace(tzinfo=None)
+        diff_time = now - entry_date
+
+        user = [lenth, phone, visit_count, oticket, last_entry, diff_time.days]
+
         if last_entry is None:
-            print(user, end=',', flush=True)
+            print("\n", user)
+        elif diff_time.days > 600:
+            print("\n", user)
+
         time.sleep(30)
 
     driver.quit()

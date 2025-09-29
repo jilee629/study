@@ -26,7 +26,7 @@ def get_driver():
         options.add_argument("--disable-dev-shm-usage")
         options.add_experimental_option("prefs", {"download.default_directory": log_dir})
     else:
-        # options.add_argument("--headless=new")
+        options.add_argument("--headless=new")
         pass
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--remote-debugging-pipe")
