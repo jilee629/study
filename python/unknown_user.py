@@ -18,7 +18,7 @@ if __name__ == "__main__":
     file_path = os.path.join(log_dir, file_name)
     df = pd.read_excel(file_path, dtype = 'str')
     df_noticket = df.loc[df['오시오 잔여값'].isna()]
-    phone_list = random.sample(df_noticket["전화번호"].values.tolist(), 500)
+    phone_list = random.sample(df_noticket["전화번호"].values.tolist(), 300)
 
     if os.name != 'nt':
         display = Display(visible=0, size=(1920,1080))
@@ -37,15 +37,16 @@ if __name__ == "__main__":
         visit_count, oticket = osio.get_user_summary(user_no, shop_user_no, token)
         last_entry = osio.get_user_log(shop_user_no, token)
 
-        entry_date = datetime.fromisoformat(last_entry).replace(tzinfo=None)
-        ref_date = now - relativedelta(years=2)
-        diff_date = entry_date - ref_date
-
-        user = [lenth, phone, visit_count, oticket, last_entry, diff_date.days]
-
         if last_entry is None:
-            print("\n", user)
-        elif diff_date.days < 0:
+            diff_date = -10000
+        else:
+            ref_date = now - relativedelta(years=2)
+            entry_date = datetime.fromisoformat(last_entry).replace(tzinfo=None)
+            diff_date = entry_date - ref_date
+
+        user = [lenth, phone, visit_count, oticket, last_entry, diff_date]
+
+        if diff_date.days < 0:
             print("\n", user)
 
         time.sleep(30)
