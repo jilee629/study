@@ -177,10 +177,10 @@ def get_user_log(shop_user_no, token):
     url = curl + "?shop_user_no=" + str(shop_user_no)
     response = fetch(url, token)
     try:
-        entry = response.json()['log'][0]['entry_datetime']
+        entry_date = response.json()['log'][0]['entry_datetime']
     except:
-        entry = None
-    return entry
+        entry_date = None
+    return entry_date
 
 
 # google drive

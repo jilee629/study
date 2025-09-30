@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from pyvirtualdisplay import Display
-from datetime import datetime, timedelta
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import osio
 import os, random, time
@@ -12,7 +12,7 @@ log_dir = "/home/ubuntu/log"
 if __name__ == "__main__":
     
     now = datetime.now()
-    yesterday = now - timedelta(days=1)
+    yesterday = now - relativedelta(days=1)
     file_name = yesterday.strftime('%Y%m%d') + '_점핑몬스터 미사점_고객정보.xlsx'
     print("FILE :", file_name)
     file_path = os.path.join(log_dir, file_name)
@@ -41,7 +41,7 @@ if __name__ == "__main__":
         ref_date = now - relativedelta(years=2)
         diff_date = entry_date - ref_date
 
-        user = [lenth, phone, visit_count, oticket, last_entry, diff_time.days]
+        user = [lenth, phone, visit_count, oticket, last_entry, diff_date.days]
 
         if last_entry is None:
             print("\n", user)
