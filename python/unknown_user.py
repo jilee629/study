@@ -7,7 +7,7 @@ import osio
 import os, random, time
 import pandas as pd
 
-log_dir = "/home/ubuntu/log"
+log_dir = os.path.join(os.path.dirname(__file__), "log")
 
 if __name__ == "__main__":
     
