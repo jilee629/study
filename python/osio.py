@@ -14,7 +14,8 @@ import pandas as pd
 import os, time, tomllib, requests
 from datetime import datetime
 
-log_dir = "/home/ubuntu/log"
+log_dir = os.path.join(os.path.dirname(__file__), "log")
+credentials_dir = os.path.join(os.path.dirname(__file__), "credentials")
 
 # webdriver
 
@@ -37,8 +38,8 @@ def get_driver():
     return driver
 
 def get_credential():
-    credential = os.path.dirname(__file__) + '/credentials.toml'
-    with open(credential, 'rb') as f:
+    credentials_file = credentials_dir + '/credentials.toml'
+    with open(credentials_file, 'rb') as f:
         data = tomllib.load(f)
         username = data['osio']['username']
         password = data['osio']['password']
@@ -189,8 +190,8 @@ def authenticate_google_drive():
     SCOPES = ['https://www.googleapis.com/auth/drive.file']
     creds = None
 
-    token_file = os.path.dirname(__file__) + '/token.json'
-    credentials_file = os.path.dirname(__file__) + '/credentials.json'
+    token_file = credentials_dir + '/token.json'
+    credentials_file = credentials_dir + '/credentials.json'
 
     if os.path.exists(token_file):
         creds = Credentials.from_authorized_user_file(token_file, SCOPES)

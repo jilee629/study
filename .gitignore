@@ -130,8 +130,6 @@ dmypy.json
 
 # user defined
 *.xlsx
-credentials.toml
-credentials.json
-token.json
 *.swp
 log/
+credentials/

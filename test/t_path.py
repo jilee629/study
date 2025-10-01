@@ -1,15 +1,16 @@
 import os
 
-print(f"현재 작업 디렉토리:   {os.getcwd()}")
-# 현재 작업 디렉토리: E:\home
+# 현재 작업 디렉토리
+getcwd = os.getcwd()
+# print(getcwd)
+# /home/ubuntu/study/test
 
-print(f"현재 파일의 디렉토리: {os.path.dirname(__file__)}")
-# 현재 파일의 디렉토리: e:\home\study\test\python
+# 현재 파일의 디렉토리
+dirname_file = os.path.dirname(__file__)
+# print(dirname_file)
+# /home/ubuntu/study/test
 
-print(f"현재 파일의 경로:     {__file__}")
-# 현재 파일의 경로:     e:\home\study\test\python\test_path.py
-
-cur_dir = os.path.dirname(__file__)
-print(f"경로 합치기 : {os.path.join(cur_dir, '..', '..', 'log', 'upload.py')}")
-# 경로 합치기 : e:\home\study\test\..\..\log\upload.py
-# 경로 합치기 : /home/ubuntu/study/test/../../log/upload.py
+# 경로 합치기
+log_dir = os.path.join(os.path.dirname(__file__), "log")
+# print(log_dir)
+# /home/ubuntu/study/test/log
