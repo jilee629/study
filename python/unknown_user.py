@@ -38,7 +38,7 @@ if __name__ == "__main__":
         visit_count, oticket = osio.get_user_summary(user_no, shop_user_no, token)
         last_entry = osio.get_user_log(shop_user_no, token)
 
-        if last_entry is None:
+        if lenth == 10 or last_entry is None:
             diff_date = -10000
         else:
             ref_date = now - relativedelta(years=2)

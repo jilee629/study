@@ -159,7 +159,7 @@ def get_user_data(phone, token):
     response = fetch(url, token)
     shop_user_no = response.json()['shop_users'][0]['shop_user_no']
     user_no = response.json()['shop_users'][0]['user_no']
-    return str(shop_user_no), str(user_no)
+    return shop_user_no, user_no
 
 def get_user_summary(user_no, shop_user_no, token):
     curl = "https://osio-api.peoplcat.com/shop/user/summary/data"
@@ -171,7 +171,7 @@ def get_user_summary(user_no, shop_user_no, token):
         oticket = 0
     else:
         oticket = response.json()['user_osio_data'][0]['value']
-    return str(visit_count), str(oticket)
+    return visit_count, oticket
 
 def get_user_log(shop_user_no, token):
     curl = "https://osio-api.peoplcat.com/shop/v2/user/entry/log"
