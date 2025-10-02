@@ -8,23 +8,18 @@ if __name__ == "__main__":
     fdate = datetime.now().strftime("%Y%m%d")
     folder_id = osio.create_drive_folder(fdate)
 
-    filelist = [
-        ['0_exit_user.log', 'text'],
-        ['0_download_csinfo.log', 'text'],
-        ['0_unknown_user.log', 'text'],
-    ]
-    for file in filelist:
-        osio.upload_file(folder_id, file[0])
+    osio.upload_file('0_exit_user.log')
 
+    osio.upload_file('0_download_csinfo.log')
 
     csinfo_file = fdate + "_점핑몬스터 미사점_고객정보.xlsx"
-    osio.write_phone_len(csinfo_file)
-    len_csinfo_file = "len_" + fdate + "_점핑몬스터 미사점_고객정보.xlsx"
+    osio.upload_file(csinfo_file, 'xlsx')
 
-    filelist = [
-        [csinfo_file, 'xlsx'],
-        [len_csinfo_file, 'xlsx'],
-    ]
-    for file in filelist:
-        osio.upload_file(folder_id, file[0], file[1])
+    osio.write_phone_len(csinfo_file)
+    len_csinfo_file = "len_" + fdate + "_점핑몬스터 미사점_고객정보.xlsx"    
+    osio.upload_file(len_csinfo_file, 'xlsx')
+
+    osio.upload_file('0_unknown_user.log')
+
+
 
