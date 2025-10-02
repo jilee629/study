@@ -12,7 +12,6 @@ from googleapiclient.discovery import build
 
 import pandas as pd
 import os, time, tomllib, requests
-from datetime import datetime
 
 log_dir = os.path.join(os.path.dirname(__file__), "log")
 credentials_dir = os.path.join(os.path.dirname(__file__), "credentials")
@@ -243,9 +242,3 @@ def upload_file(folder_id, file_name, mtype=None):
     print(f'UPLOADING {file_name} IS OK.')
     return True
 
-
-# 
-def print_datetime():
-    now = datetime.now()
-    print(f"\n{now.strftime('%Y-%m-%d %H:%M:%S %A')}")
-    return

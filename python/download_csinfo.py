@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 from pyvirtualdisplay import Display
+from datetime import datetime
 import osio
 import os
 
 if __name__ == "__main__":
     
-    osio.print_datetime()
+    print('\n', datetime.now(), '\n')
     if os.name != 'nt':
         display = Display(visible=0, size=(1920,1080))
         display.start()
@@ -20,4 +21,4 @@ if __name__ == "__main__":
     driver.quit()
     if os.name != 'nt':
         display.stop()
-    osio.print_datetime()
+    print('\n', datetime.now(), '\n')
