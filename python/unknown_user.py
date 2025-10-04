@@ -11,7 +11,7 @@ log_dir = os.path.join(os.path.dirname(__file__), "log")
 
 if __name__ == "__main__":
     
-    print('\n', datetime.now(), '\n')
+    print(datetime.now(),'\n')
     if os.name != 'nt':
         display = Display(visible=0, size=(1920,1080))
         display.start()
@@ -55,4 +55,4 @@ if __name__ == "__main__":
     driver.quit()
     if os.name != 'nt':
         display.stop()
-    print('\n', datetime.now(), '\n')
+    print('\n\n', datetime.now())
