@@ -48,11 +48,11 @@ if __name__ == "__main__":
         user = [lenth, phone, visit_count, oticket, last_entry, diff_date]
 
         if diff_date < 0:
-            print("\n", user)
+            print("\n\n", user)
 
         time.sleep(30)
     
     driver.quit()
     if os.name != 'nt':
         display.stop()
-    print('\n\n', datetime.now())
+    print('\n\n', datetime.now(), '\n\n')
