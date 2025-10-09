@@ -11,7 +11,7 @@ log_dir = os.path.join(os.path.dirname(__file__), "log")
 
 if __name__ == "__main__":
     
-    print(datetime.now(),'\n')
+    print('\n', datetime.now())
     if os.name != 'nt':
         display = Display(visible=0, size=(1920,1080))
         display.start()
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     token = osio.get_token(driver)
     
     for i, phone in enumerate(phone_list):
-        print(i, end=',', flush=True)
+        # print(i, end=',', flush=True)
 
         lenth = len(phone)
         shop_user_no, user_no = osio.get_user_data(phone, token)
@@ -48,11 +48,11 @@ if __name__ == "__main__":
         user = [lenth, phone, visit_count, oticket, last_entry, diff_date]
 
         if diff_date < 0:
-            print("\n\n", user)
+            print(user)
 
         time.sleep(30)
     
     driver.quit()
     if os.name != 'nt':
         display.stop()
-    print('\n\n', datetime.now(), '\n\n')
+    print(datetime.now())

@@ -7,7 +7,7 @@ import os
 
 if __name__ == "__main__":
 
-    print(datetime.now(), '\n')
+    print('\n', datetime.now())
     if os.name != 'nt':
         display = Display(visible=0, size=(1920,1080))
         display.start()
@@ -23,4 +23,4 @@ if __name__ == "__main__":
     driver.quit()
     if os.name != 'nt':
         display.stop()
-    print('\n', datetime.now())
+    print(datetime.now())
