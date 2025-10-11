@@ -8,7 +8,6 @@ if __name__ == "__main__":
 
     fdate = datetime.now().strftime("%Y%m%d")
     folder_id = osio.create_drive_folder(fdate)
-
     log_date = datetime.now().strftime("%Y-%m")
 
     exit_log = log_date + "_exit_user.log"
