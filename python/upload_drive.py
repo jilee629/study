@@ -20,7 +20,7 @@ if __name__ == "__main__":
     osio.upload_file(folder_id, csinfo_file, 'xlsx')
 
     osio.write_phone_len(csinfo_file)
-    len_csinfo_file = "len_" + fdate + "_점핑몬스터 미사점_고객정보.xlsx"    
+    len_csinfo_file = fdate + "len_" + "_점핑몬스터 미사점_고객정보.xlsx"    
     osio.upload_file(folder_id, len_csinfo_file, 'xlsx')
 
     unknown_log = log_date + "_unknown_user.log"
