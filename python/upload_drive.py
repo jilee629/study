@@ -6,26 +6,27 @@ import osio
 if __name__ == "__main__":
     print('\n', datetime.now())
 
-    fdate = datetime.now().strftime("%Y%m%d")
-    folder_id = osio.create_drive_folder(fdate)
+    file_date = datetime.now().strftime("%Y%m%d")
+    folder_id = osio.create_drive_folder(file_date)
     log_date = datetime.now().strftime("%Y%m")
 
-    exit_log = log_date + "_exit_user.log"
-    osio.upload_file(folder_id, exit_log)
+    file_name = log_date + "_exit_user.log"
+    osio.upload_file(folder_id, file_name)
 
-    download_log = log_date + "_download_csinfo.log"
-    osio.upload_file(folder_id, download_log)
+    file_name = log_date + "_download_csinfo.log"
+    osio.upload_file(folder_id, file_name)
 
-    csinfo_file = fdate + "_점핑몬스터 미사점_고객정보.xlsx"
-    osio.upload_file(folder_id, csinfo_file, 'xlsx')
+    file_name = log_date + "_unknown_user.log"
+    osio.upload_file(folder_id, file_name)
 
-    # osio.write_phone_len(csinfo_file)
-    osio.write_phone_len(fdate, "_점핑몬스터 미사점_고객정보.xlsx")
-    len_csinfo_file = fdate + "_len_점핑몬스터 미사점_고객정보.xlsx"    
-    osio.upload_file(folder_id, len_csinfo_file, 'xlsx')
+    file_name = file_date + "_점핑몬스터 미사점_고객정보.xlsx"
+    osio.upload_file(folder_id, file_name, 'xlsx')
 
-    unknown_log = log_date + "_unknown_user.log"
-    osio.upload_file(folder_id, unknown_log)
+    osio.write_phone_len(file_date)
+    file_name = file_date + "_len_점핑몬스터 미사점_고객정보.xlsx"    
+    osio.upload_file(folder_id, file_name, 'xlsx')
+
+    
 
 
 

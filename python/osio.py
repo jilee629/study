@@ -143,12 +143,12 @@ def fetch(url, token):
     response = requests.get(url, headers=headers)
     return response
 
-# def write_phone_len(file_name):
-def write_phone_len(fdate, file_name):
-    file_path = os.path.join(log_dir, fdate + file_name)
+def write_phone_len(file_date):
+    file_name = file_date + "_점핑몬스터 미사점_고객정보.xlsx"
+    file_path = os.path.join(log_dir, file_name)
     df = pd.read_excel(file_path, dtype = 'str')
     df['전화번호길이'] = df['전화번호'].str.len()
-    len_file_name = fdate + "_len" + file_name
+    len_file_name = file_date + "_len_점핑몬스터 미사점_고객정보.xlsx"
     len_file_path = os.path.join(log_dir, len_file_name)
     df.to_excel(len_file_path, engine='openpyxl')
     print(f'writing {len_file_name} is OK.')
