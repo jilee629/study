@@ -19,6 +19,9 @@ if __name__ == "__main__":
     file_name = log_date + "_unknown_user.log"
     osio.upload_file(folder_id, file_name)
 
+    file_name = "0_unknown_user.log"
+    osio.upload_file(folder_id, file_name)
+
     file_name = file_date + "_점핑몬스터 미사점_고객정보.xlsx"
     osio.upload_file(folder_id, file_name, 'xlsx')
 

@@ -45,10 +45,13 @@ if __name__ == "__main__":
             entry_date = datetime.fromisoformat(last_entry).replace(tzinfo=None)
             diff_date = (entry_date - ref_date).days
 
-        user = [lenth, phone, visit_count, oticket, last_entry, diff_date]
+        user = list(map(str, [lenth, phone, visit_count, oticket, last_entry, diff_date]))
 
         if diff_date < 0:
-            print(user)
+            # print(user)
+            file_path = os.path.join(log_dir, '0_unknown_user.log')
+            with open(file_path, "a") as f:
+                 f.write('\n' + ' '.join(user))
 
         time.sleep(30)
     

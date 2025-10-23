@@ -19,3 +19,13 @@ with open(file_path, "a") as f:
 aa 00
 bb 11
 """
+
+# join() 함수를 사용하기 위해 map()을 이용해 모두 string으로 변환
+data3 = list(map(str, ['cc', 22]))
+with open(file_path, "a") as f:
+    f.write('\n' + ' '.join(data3))
+"""
+aa 00
+bb 11
+cc 22
+"""
