@@ -5,27 +5,71 @@ df = pd.DataFrame({
     'name' : ['lee', 'kim', 'park'],
     'color' : ['yellow', 'green', 'red'],
     })
-print(f"데이터 프레임\n{df}")
 
 ## iloc는 정수 기반의 인덱싱을 사용한다.
+
+# iloc, 2행 출력
+# print(df.iloc[1])
+"""
+phone     2222
+name       kim
+color    green
+Name: 1, dtype: object
+"""
+
+# iloc, 2열 출력
+# print(df.iloc[:, 1])
+"""
+0     lee
+1     kim
+2    park
+Name: name, dtype: object
+"""
+
+
 ## loc는 라벨 기반의 인덱싱을 사용한다.
 
-print("\n 두번째 행 출력")
-print(f"-> iloc\n{df.iloc[1]}")
-print(f"-> loc\n{df.loc[1]}\n")
+# loc, 2행 출력
+# print(df.loc[1])
+"""
+phone     2222
+name       kim
+color    green
+Name: 1, dtype: object
+"""
 
-print("\n 두번째 열 출력")
-print(f"-> iloc\n{df.iloc[:, 1]}")
-print(f"-> loc\n{df.loc[:, 'name']}\n")
+# loc, 2행에서 3열 출력
+# print(df.iloc[1, 2])
+"""
+green
+"""
 
-print("\n 두번재 행에서 3번재 열 출력")
-print(f"-> iloc : {df.iloc[1, 2]}")
-print(f"-> loc : {df.loc[1, 'color']}")
+# loc, 'name'열 출력
+# print(df.loc[:, 'name'])
+"""
+0     lee
+1     kim
+2    park
+Name: name, dtype: object
+"""
 
-# 값이 일치하는 행 출력
-print("\n name이 'kim'인 행 출력")
-print(df.loc[df['name'] == 'kim'])
+# loc, 2행에서 'color'열 출력
+# print(df.loc[1, 'color'])
+"""
+green
+"""
 
-# 값이 일치하는 행의 열값
-print("\n name이 'kim'인 행의 color 열 춮력")
+# 'name'열에서 값이 'kim'인 행 출력
+# print(df.loc[df['name'] == 'kim'])
+"""
+  phone name  color
+1  2222  kim  green
+"""
+
+# # 값이 일치하는 행의 열값
+# 'name'에서 'kim'인 행의 'color' 열 춮력")
 print(df.loc[df['name'] == 'kim', 'color'])
+"""
+1    green
+Name: color, dtype: object
+"""

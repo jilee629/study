@@ -9,10 +9,13 @@ password = "passwd1"
 
 # loads()는 문자열을 인수로 받는다.
 data = tomllib.loads(credit)
-print(f"loads() : {data['site1']['username']}")
+id1 = data['site1']['username']
+# print(id1)
+# user1
 
 # load()는 파일을 인수로 받는다.
 with open(os.path.join(os.path.dirname(__file__), 'credit.toml'), "rb") as f:
     data = tomllib.load(f)
-    print(f"load() : {data['site2']['username']}")
-
+    id2 = data['site2']['username']
+    # print(id2)
+# user2
