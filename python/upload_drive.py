@@ -10,13 +10,7 @@ if __name__ == "__main__":
     folder_id = osio.create_drive_folder(file_date)
     log_date = datetime.now().strftime("%Y%m")
 
-    file_name = log_date + "_exit_user.log"
-    osio.upload_file(folder_id, file_name)
-
-    file_name = log_date + "_download_csinfo.log"
-    osio.upload_file(folder_id, file_name)
-
-    file_name = log_date + "_unknown_user.log"
+    file_name = log_date + "_daily.log"
     osio.upload_file(folder_id, file_name)
 
     file_name = "0_unknown_user.log"
