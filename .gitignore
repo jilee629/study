@@ -129,8 +129,10 @@ dmypy.json
 .pyre/
 
 # user defined
-*.xlsx
 *.swp
-*.txt
-log/
-credentials/
+python/credentials/*.json
+python/credentials/*.toml
+python/log/*.log
+python/log/*.xlsx
+python/test/*.xlsx
+python/test/*.txt
