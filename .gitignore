@@ -134,5 +134,5 @@ python/credentials/*.json
 python/credentials/*.toml
 python/log/*.log
 python/log/*.xlsx
-python/test/*.xlsx
-python/test/*.txt
+test/*.xlsx
+test/*.txt
