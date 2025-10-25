@@ -17,7 +17,8 @@ if __name__ == "__main__":
     osio.enter_login(driver, username, password)
 
     osio.download_csinfo(driver)
-
+    print('DOWNDLOAD_CSINFO IS OK.')
+    
     driver.quit()
     if os.name != 'nt':
         display.stop()

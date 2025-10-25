@@ -51,10 +51,11 @@ if __name__ == "__main__":
             print(user)
             file_path = os.path.join(log_dir, '0_unknown_user.log')
             with open(file_path, "a") as f:
-                 f.write('\n' + ' '.join(user))
+                 f.write('\n' + '\t'.join(user))
 
         time.sleep(30)
-    
+    print('CHECKING UNKNOWN USER IS OK.')
+
     driver.quit()
     if os.name != 'nt':
         display.stop()

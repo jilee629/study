@@ -18,6 +18,7 @@ if __name__ == "__main__":
 
     osio.get_count(driver)
     osio.exit_user(driver)
+    print('EXIT_USER IS OK.')
     osio.get_count(driver)
 
     driver.quit()

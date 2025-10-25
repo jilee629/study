@@ -84,7 +84,6 @@ def exit_user(driver):
     confirm_button = driver.find_element(By.XPATH, '//button[text()="확인"]')
     confirm_button.click()
     time.sleep(3)
-    print('EXIT_USER IS OK.')
     return
 
 def get_count(driver):
@@ -106,7 +105,6 @@ def download_csinfo(driver):
     download_button = driver.find_element(By.XPATH, '//button[text()="다운로드"]')
     download_button.click()
     time.sleep(10)
-    print('DOWNDLOAD_CSINFO IS OK.')
     return True
 
 def delete_user(driver, phone):
