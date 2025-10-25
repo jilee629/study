@@ -14,7 +14,7 @@ id1 = data['site1']['username']
 # user1
 
 # load()는 파일을 인수로 받는다.
-with open(os.path.join(os.path.dirname(__file__), 'credit.toml'), "rb") as f:
+with open(os.path.join(os.path.dirname(__file__), 'test.toml'), "rb") as f:
     data = tomllib.load(f)
     id2 = data['site2']['username']
     # print(id2)
