@@ -20,15 +20,6 @@ if __name__ == "__main__":
     entry_date = osio.get_user_log(shop_user_no, token)
     print(type(entry_date))
 
-    entry_date = datetime.fromisoformat(entry_date).replace(tzinfo=None)
-    ref_date = datetime.now() - relativedelta(years=2)
-    diff_date = entry_date - ref_date
-
-    if diff_date.days < 0:
-        print("more than 2 year ago")
-    else:
-        print("less than 2 year ago")
-
 
     driver.quit()
     if os.name != 'nt':
