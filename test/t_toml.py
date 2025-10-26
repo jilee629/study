@@ -5,6 +5,9 @@ credit = '''
 [site1]
 username = "user1"
 password = "passwd1"
+[site2]
+username = "user2"
+password = "passwd2"
 '''
 
 # loads()는 문자열을 인수로 받는다.

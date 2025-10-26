@@ -1,0 +1,7 @@
+[site1]
+username = "user1"
+password = "passwd1"
+
+[site2]
+username = "user2"
+password = "passwd2"
