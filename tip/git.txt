@@ -34,8 +34,8 @@ $ git push -f origin main
 
 # remote 저장소 alias와 url
 $ git remote -v
-$ origin  https://github.com/jilee629/study.git (fetch)
-$ origin  https://github.com/jilee629/study.git (push)
+origin  https://github.com/jilee629/study.git (fetch)
+origin  https://github.com/jilee629/study.git (push)
 
 
 # remote branch 확인
