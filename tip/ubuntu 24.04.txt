@@ -1,16 +1,8 @@
-GIT 설치
-$ git clone https://github.com/jilee629/study.git
-$ git config --global user.name "jilee629"
-$ git config --global user.email "jilee629@gmail.com"
-token을 저장
-$ git config --global credential.helper store
-
-
-Timezone 변경
+# Timezone 변경
 $ sudo timedatectl set-timezone Asia/Seoul
 
 
-swapfile 만들기
+# swapfile 만들기
 $ free -m   확인해서 swap이 0이면 생성해야 함
 $ sudo swapoff -v /swapfile
 $ sudo rm /swapfile
@@ -23,31 +15,19 @@ $ sudo vi /etc/fstab
 $ sudo shutdown -r now
 
 
-PIP 설치
-$ sudo apt-get install -y python3-pip
-pip install 시 에러발생하면
-$ python3 -m pip config set global.break-system-packages true
-pip install 시 path 에러발생하면
-~/.bashrc 에 pip path 추가하기
-export PATH="$PATH:/home/ubuntu/.local/bin"
-
-
-pip 업그레이드
-$ pip install pandas openpyxl selenium pipupgrade webdriver-manager
-$ pipupgrade --yes --latest --verbose --ignore PyGObject
-
-
-Chrome 설치
+# amd용 Chrome 설치
 $ wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 $ sudo apt install -y ./google-chrome-stable_current_amd64.deb
 $ google-chrome --version
 
-Chromium 설치
-$ sudo apt install snapd
-$ sudo snap install chromium
+
+# arm용 chromium 설치
+$ sudo apt install chromium-browser chromium-chromedriver -y
+chromium-browser: ARM64용 Chromium 웹 브라우저
+chromium-chromedriver: chromium-browser와 호환되는 ARM64용 Selenium 드라이버
 
 
-가상화면 설치
+# 가상화면 설치
 $ sudo apt install -y xvfb
 $ pip install xlrd pyvirtualdisplay
 

@@ -1,18 +1,28 @@
-# 재설치 후
-sudo apt-get install -y python3-pip
+# PIP 설치
+$ sudo apt-get install -y python3-pip
 
-# packet upgrade
-pip install --upgrade <package>
-pip lnstall -U <package>
+
+# pip install 시 에러발생하면
+$ python3 -m pip config set global.break-system-packages true
+
+
+# pip install 시 path 에러발생하면 ~/.bashrc 에 pip path 추가하기
+export PATH="$PATH:/home/ubuntu/.local/bin"
+
+
+# package 설치
+$ pip install --upgrade(-U) <package>
+
 
 # 설치된 package에서 업데이트된 리스트 확인
-pip list --outdated
-pip list -o
+pip list --outdated(-o)
 
-# 설치된 모든 package 업그레이드
-pipupgrade --yes --latest --verbose
-pipupgrade --ignore <package>
-pipupgrade -y -l -V --ignore dbus-python --ignore PyGObject
+
+# pipupgrade
+$ pip install pipupgrade 
+$ pipupgrade --yes --latest --verbose
+$ pipupgrade --yes --latest --verbose --ignore dbus-python --ignore PyGObject
+
 
 # pip error 발생시
 python3 -m pip config set global.break-system-packages true

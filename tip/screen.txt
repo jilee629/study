@@ -1,13 +1,14 @@
-screen -ls              update-alternatives --list python
 
+screen -ls              update-alternatives --list python
 screen -S <sockname>
 screen -R <sockname>    Reattach if possible, otherwise start a new session
-
 Ctrl + a + d            sreen을 종료하지 않고, detach
 
-./NeverIdle -n 6h -cp 0.21
 
-
-세션명을 변경하는 방법은 다음의 두가지가 있었다.
+# 세션명을 변경하는 방법은 다음의 두가지가 있었다.
 1. 해당 세션으로 접속하여 ctrl a 를 누른 후   :sessionname 세션명
 2. screen -ls 를 하여 해당 세션번호를 알아낸 후 screen -S 세션번호 -X sessionname 세션명
+
+
+# nerveridle 실행
+./NeverIdle -n 6h -cp 0.21
