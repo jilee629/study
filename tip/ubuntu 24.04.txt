@@ -15,19 +15,19 @@ $ sudo vi /etc/fstab
 $ sudo shutdown -r now
 
 
-# amd용 Chrome 설치
+# amd 용 Chrome 설치
 $ wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 $ sudo apt install -y ./google-chrome-stable_current_amd64.deb
 $ google-chrome --version
 
 
-# arm용 chromium 설치
+# arm 용 chromium 설치
 $ sudo apt install chromium-browser chromium-chromedriver -y
 chromium-browser: ARM64용 Chromium 웹 브라우저
 chromium-chromedriver: chromium-browser와 호환되는 ARM64용 Selenium 드라이버
 
 
-# 가상화면 설치
+# pyvirtualdisplay 설치
 $ sudo apt install -y xvfb
 $ pip install xlrd pyvirtualdisplay
 
