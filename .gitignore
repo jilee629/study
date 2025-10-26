@@ -135,4 +135,3 @@ python/credentials/*.toml
 python/log/*.log
 python/log/*.xlsx
 test/*.xlsx
-test/*.txt

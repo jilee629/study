@@ -1,53 +1,44 @@
-# 초기 설정
+초기 설정
 $ git clone https://github.com/jilee629/study.git
 $ git config --global user.name "jilee629"
 $ git config --global user.email "jilee629@gmail.com"
 $ git config --list
 
-
-# token을 저장
+token을 저장
 $ git config --global credential.helper store
 
-
-# git log 형식 지정하기
+git log 형식 지정하기
 $ git log --pretty=oneline
 
-
-# git log 한줄로 보기
+git log 한줄로 보기
 $ git log --oneline
 
-
-# git log diff 보기
+git log diff 보기
 $ git log -p
 $ git log -p 2 (최근 2개)
 
-
-# commit 취소하기
+commit 취소하기
 $ git reset --hard 9e0b40864a8b79fa93a1423cb28237deca3d0c3a
 $ git reset --hard HEAD^  (가장 최근)
 
-
-# remote main에 push 하기
+remote main에 push 하기
 $ git push origin main
 $ git push -f origin main
 
-
 # remote 저장소 alias와 url
 $ git remote -v
-origin  https://github.com/jilee629/study.git (fetch)
-origin  https://github.com/jilee629/study.git (push)
-
+$ origin  https://github.com/jilee629/study.git (fetch)
+$ origin  https://github.com/jilee629/study.git (push)
 
 # remote branch 확인
 $ git branch --remote
 $ origin/HEAD -> origin/main
 $ origin/main
 
-
 # conflict 났을때 강제로 pull 하기
 git fetch --all
-git reset --hard origin/master
-git pull origin master
+git reset --hard origin/main
+git pull origin main
 
 제가 수정한 파일이 conflict되면 fetch로 파일들을 remote 저장소에서 이전 fetch들을 받은 다음
 local에서 다시 reset hard를 사용하여 제 상태를 컨플릭트 나기전인 수정하기 전으로 되돌립니다.
