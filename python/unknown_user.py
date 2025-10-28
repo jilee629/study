@@ -54,7 +54,7 @@ if __name__ == "__main__":
                  f.write('\n' + ' '.join(user))
 
         time.sleep(30)
-    print('CHECKING UNKNOWN USER IS OK.')
+    print('UNKNOWN_USER IS OK.')
 
     driver.quit()
     if os.name != 'nt':
