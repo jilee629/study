@@ -182,6 +182,16 @@ def get_user_log(shop_user_no, token):
         entry_date = None
     return entry_date
 
+def get_osio_log(shop_user_no, token):
+    curl = "https://osio-api.peoplcat.com/shop/v2/osio/log"
+    url = curl + "?shop_user_no=" + str(shop_user_no)
+    response = fetch(url, token)
+    # print(response.json())
+    try:
+        osio_date = response.json()['logs'][0]['create_datetime']
+    except:
+        osio_date = None
+    return osio_date
 
 # google drive
 

@@ -17,6 +17,7 @@ if __name__ == "__main__":
         display.start()
 
     now = datetime.now()
+
     yesterday = now - relativedelta(days=1)
     file_name = yesterday.strftime('%Y%m%d') + '_점핑몬스터 미사점_고객정보.xlsx'
     print("FILE :", file_name)
@@ -31,12 +32,11 @@ if __name__ == "__main__":
     token = osio.get_token(driver)
     
     for i, phone in enumerate(phone_list):
-        # print(i, end=',', flush=True)
-
         lenth = len(phone)
         shop_user_no, user_no = osio.get_user_data(phone, token)
         visit_count, oticket = osio.get_user_summary(user_no, shop_user_no, token)
         last_entry = osio.get_user_log(shop_user_no, token)
+        osio_date = osio.get_osio_log(shop_user_no, token)
 
         if lenth < 11 or last_entry is None:
             diff_date = -10000
@@ -45,7 +45,7 @@ if __name__ == "__main__":
             entry_date = datetime.fromisoformat(last_entry).replace(tzinfo=None)
             diff_date = (entry_date - ref_date).days
 
-        user = list(map(str, [lenth, phone, visit_count, oticket, last_entry, diff_date]))
+        user = list(map(str, [lenth, phone, visit_count, oticket, last_entry, osio_date, diff_date]))
 
         if diff_date < 0:
             print(user)
