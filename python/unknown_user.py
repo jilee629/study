@@ -24,7 +24,7 @@ if __name__ == "__main__":
     file_path = os.path.join(log_dir, file_name)
     df = pd.read_excel(file_path, dtype = 'str')
     df_noticket = df.loc[df['오시오 잔여값'].isna()]
-    phone_list = random.sample(df_noticket["전화번호"].values.tolist(), 500)
+    phone_list = random.sample(df_noticket["전화번호"].values.tolist(), 300)
 
     driver = osio.get_driver()
     username, password = osio.get_credential()
