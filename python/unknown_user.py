@@ -35,17 +35,17 @@ if __name__ == "__main__":
         lenth = len(phone)
         shop_user_no, user_no = osio.get_user_data(phone, token)
         visit_count, oticket = osio.get_user_summary(user_no, shop_user_no, token)
-        last_entry = osio.get_user_log(shop_user_no, token)
+        entry_date = osio.get_user_log(shop_user_no, token)
         osio_date = osio.get_osio_log(shop_user_no, token)
 
-        if lenth < 11 or last_entry is None:
+        if lenth < 11 or visit_count == 0:
             diff_date = -10000
         else:
             ref_date = now - relativedelta(years=2)
-            entry_date = datetime.fromisoformat(last_entry).replace(tzinfo=None)
-            diff_date = (entry_date - ref_date).days
+            format_date = datetime.fromisoformat(last_entry).replace(tzinfo=None)
+            diff_date = (format_date - ref_date).days
 
-        user = list(map(str, [lenth, phone, visit_count, oticket, last_entry, osio_date, diff_date]))
+        user = list(map(str, [lenth, phone, visit_count, entry_date, oticket, osio_date, diff_date]))
 
         if diff_date < 0:
             print(user)
