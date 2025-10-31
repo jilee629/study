@@ -42,7 +42,7 @@ if __name__ == "__main__":
             diff_date = -10000
         else:
             ref_date = now - relativedelta(years=2)
-            format_date = datetime.fromisoformat(last_entry).replace(tzinfo=None)
+            format_date = datetime.fromisoformat(entry_date).replace(tzinfo=None)
             diff_date = (format_date - ref_date).days
 
         user = list(map(str, [lenth, phone, visit_count, entry_date, oticket, osio_date, diff_date]))
