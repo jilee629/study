@@ -132,6 +132,7 @@ dmypy.json
 *.swp
 python/credentials/*.json
 python/credentials/*.toml
+python/log/
 python/log/*.log
 python/log/*.xlsx
 test/*.xlsx
