@@ -179,7 +179,8 @@ def get_user_log(shop_user_no, token):
     try:
         entry_date = response.json()['log'][0]['entry_datetime']
     except:
-        entry_date = None
+        # entry_date = None
+        entry_date = '2023-12-29 07:14:20+00:00'
     return entry_date
 
 def get_osio_log(shop_user_no, token):
