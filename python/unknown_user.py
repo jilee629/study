@@ -37,14 +37,11 @@ if __name__ == "__main__":
         visit_count, oticket = osio.get_user_summary(user_no, shop_user_no, token)
         entry_date = osio.get_user_log(shop_user_no, token)
         osio_date = osio.get_osio_log(shop_user_no, token)
-
-        format_date = datetime.fromisoformat(entry_date).replace(tzinfo=None)
-        ref_date = now - relativedelta(years=2)
-        diff_date = (format_date - ref_date).days
+        diff_date = (now - datetime.fromisoformat(entry_date).replace(tzinfo=None)).days
         
         user = list(map(str, [lenth, phone, visit_count, entry_date, oticket, osio_date, diff_date]))
 
-        if lenth < 11 or diff_date < 0:
+        if lenth < 11 or diff_date < 730:
             print(user)
             file_path = os.path.join(log_dir, '0_unknown_user.log')
             with open(file_path, "a") as f:
