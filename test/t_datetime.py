@@ -58,3 +58,9 @@ diff_time = (now - native_time)
 # diff_time_days = (now - native_time).days
 # print(diff_time_days)
 # 706
+
+time_string = "2025-09-12 15:53:22.269899"
+time_format = "%Y-%m-%d %H:%M:%S.%f"
+date1 = datetime.strptime(time_string, time_format)
+diff =  now - date1
+# print(diff.days)

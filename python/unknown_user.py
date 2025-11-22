@@ -24,7 +24,7 @@ if __name__ == "__main__":
     file_path = os.path.join(log_dir, file_name)
     df = pd.read_excel(file_path, dtype = 'str')
     df_noticket = df.loc[df['오시오 잔여값'].isna()]
-    phone_list = random.sample(df_noticket["전화번호"].values.tolist(), 300)
+    phone_list = random.sample(df_noticket["전화번호"].values.tolist(), 500)
 
     driver = osio.get_driver()
     username, password = osio.get_credential()
@@ -37,7 +37,13 @@ if __name__ == "__main__":
         visit_count, oticket = osio.get_user_summary(user_no, shop_user_no, token)
         entry_date = osio.get_user_log(shop_user_no, token)
         osio_date = osio.get_osio_log(shop_user_no, token)
-        diff_date = (now - datetime.fromisoformat(entry_date).replace(tzinfo=None)).days
+
+        if entry_date == None:
+            time_string = "2024-01-01 01:01:01.269899"
+            time_format = "%Y-%m-%d %H:%M:%S.%f"
+            diff_date = (now - datetime.strptime(time_string, time_format)).days
+        else:    
+            diff_date = (now - datetime.fromisoformat(entry_date).replace(tzinfo=None)).days
         
         user = list(map(str, [lenth, phone, visit_count, entry_date, oticket, osio_date, diff_date]))
 
