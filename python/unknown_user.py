@@ -47,7 +47,7 @@ if __name__ == "__main__":
         
         user = list(map(str, [lenth, phone, visit_count, entry_date, oticket, osio_date, diff_date]))
 
-        if lenth < 11 or diff_date > 730:
+        if lenth < 11 or (oticket != 0 and diff_date > 730):
             print(user)
             file_path = os.path.join(log_dir, '0_unknown_user.log')
             with open(file_path, "a") as f:
