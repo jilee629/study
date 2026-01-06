@@ -150,7 +150,7 @@ def write_phone_len(file_date):
     len_file_name = file_date + "_len_점핑몬스터 미사점_고객정보.xlsx"
     len_file_path = os.path.join(log_dir, len_file_name)
     df.to_excel(len_file_path, engine='openpyxl')
-    print(f'writing {len_file_name} is OK.')
+    print(f'WRITING {len_file_name} is OK.')
 
 def get_user_data(phone, token):
     curl = "https://osio-api.peoplcat.com/shop/v2/user/search?type=phone"
