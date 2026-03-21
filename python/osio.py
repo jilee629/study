@@ -196,10 +196,7 @@ def get_osio_log(shop_user_no, token):
 def get_child_count(date, token):
     url = "https://osio-api.peoplcat.com/shop/statistic?start_date=" + date + "&end_date=" + date
     response = fetch(url, token)
-    try:
-        child_count = response.json()['product_rank'][0]['count']
-    except:
-        child_count = None
+    child_count = response.json()['product_rank'][0]['count']
     return child_count
 
 # google drive
