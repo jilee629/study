@@ -199,7 +199,7 @@ def get_child_count(date, token):
     try:
         child_count = response.json()['product_rank'][0]['count']
     except:
-        child_count = 0
+        child_count = None
     return child_count
 
 # google drive

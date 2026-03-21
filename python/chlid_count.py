@@ -16,14 +16,19 @@ if __name__ == "__main__":
     osio.enter_login(driver, username, password)
     token = osio.get_token(driver)
     
-    year = '2025'
-    month = '12'
-    end_date = 31
-    for d in range(1, end_date + 1):
+    year = '2026'
+    month = '3'
+    start_date = 19
+    end_date = 20
+    
+    print(year, month, start_date)
+
+    for d in range(start_date, end_date + 1):
         date = year + month + f"{d:02d}"
         child_count = osio.get_child_count(date, token)
         print(child_count)
-    print(date)
+    
+    print(year, month, end_date)
 
     driver.quit()
     if os.name != 'nt':
