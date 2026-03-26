@@ -49,66 +49,32 @@ def get_credential():
 
 def enter_login(driver, username, password):
     driver.get("https://osio-shop.peoplcat.com/login")
-    # try:
-    #     wait = WebDriverWait(driver, 5)
-    #     checkbox_wrapper = wait.until(EC.element_to_be_clickable((By.XPATH, "//p[contains(text(), '일주일간 보지 않기')]/ancestor::div[contains(@class, 'VirtualButton__Container')]")))
-    #     checkbox_wrapper.click()
-    #     print("CHECKBOX CLICKED.")
-    #     close_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(@class, 'VersionAlertPopup__RefreshButton') and text()='닫기']")))
-    #     close_button.click()
-    #     print("1 POPUP CLOSED.")
-    # except Exception as e:
-    #     print("NO POPUP or ERROR:", e)
     
     try:
-        wait = WebDriverWait(driver, 5)
-        checkbox_wrapper = wait.until(EC.element_to_be_clickable((By.XPATH, "//p[contains(text(), '일주일간 보지 않기')]/ancestor::div[2]")))
-        checkbox_wrapper.click()
-        print("CHECKBOX CLICKED.")
-        close_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(@class, 'VersionAlertPopup__RefreshButton') and text()='닫기']")))
-        close_button.click()
-        time.sleep(1)
-        print("1 POPUP CLOSED.")
+        for i in range(2)
+            wait = WebDriverWait(driver, 5)
+            checkbox_wrapper = wait.until(EC.element_to_be_clickable((By.XPATH, "//p[contains(text(), '일주일간 보지 않기')]/ancestor::div[2]")))
+            checkbox_wrapper.click()
+            print("CHECKBOX CLICKED.")
+            close_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(@class, 'VersionAlertPopup__RefreshButton') and text()='닫기']")))
+            close_button.click()
+            time.sleep(1)
+            print("1 POPUP CLOSED.")
     except Exception as e:
         print("NO POPUP or ERROR:", e)
 
     try:
-        for i in range(3):
+        for i in range(4):
             wait = WebDriverWait(driver, 5)
             checkbox_wrapper = wait.until(EC.element_to_be_clickable((By.XPATH, "//p[text()='24시간 동안 보지 않기']/ancestor::div[2]")))
             checkbox_wrapper.click()
-            print("2 CHECKBOX CLICKED.")
+            print("CHECKBOX CLICKED.")
             close_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[text()='닫기']")))
             close_button.click()
             time.sleep(1)
             print("2 POPUP CLOSED.")
     except Exception as e:
         print("NO POPUP or ERROR:", e)
-
-    # time.sleep(5)
-    # try:
-    #     checkbox = driver.find_element(By.XPATH, "//p[contains(text(), '일주일간 보지 않기')]/ancestor::div[2]")
-    #     checkbox.click()
-    #     print("1 CHECKBOX CLICKED.")
-    #     close_button = driver.find_element(By.XPATH, "//button[contains(@class, 'VersionAlertPopup__RefreshButton') and text()='닫기']")
-    #     close_button.click()
-    #     time.sleep(1)
-    #     print("1 POPUP CLOSED.")
-    # except Exception as e:
-    #     print("NO POPUP or ERROR:", e)
-
-    # try:
-    #     for i in range(3):
-    #         checkbox = driver.find_element(By.XPATH, '//p[text()="24시간 동안 보지 않기"]/ancestor::div[2]')
-    #         # checkbox = driver.find_element(By.XPATH, '//p[contains(text(), "24시간 동안 보지 않기")]/ancestor::div[2]')
-    #         checkbox.click()
-    #         print("2 CHECKBOX CLICKED.")
-    #         close_button = driver.find_element(By.XPATH, '//button[text()="닫기"]')
-    #         close_button.click()
-    #         time.sleep(1)
-    #         print("2 POPUP CLOSED.")
-    # except Exception as e:
-    #     print("NO POPUP or ERROR:", e)
 
     # login
     username_input = driver.find_element(By.XPATH, '//*[@placeholder="아이디를 입력해 주세요."]')
