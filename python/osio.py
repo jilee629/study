@@ -3,6 +3,8 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 # pip install google-auth-oauthlib google-api-python-client google-auth
 from google.oauth2.credentials import Credentials
@@ -47,20 +49,67 @@ def get_credential():
 
 def enter_login(driver, username, password):
     driver.get("https://osio-shop.peoplcat.com/login")
-    time.sleep(1)
-
-    # popup window
+    # try:
+    #     wait = WebDriverWait(driver, 5)
+    #     checkbox_wrapper = wait.until(EC.element_to_be_clickable((By.XPATH, "//p[contains(text(), '일주일간 보지 않기')]/ancestor::div[contains(@class, 'VirtualButton__Container')]")))
+    #     checkbox_wrapper.click()
+    #     print("CHECKBOX CLICKED.")
+    #     close_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(@class, 'VersionAlertPopup__RefreshButton') and text()='닫기']")))
+    #     close_button.click()
+    #     print("1 POPUP CLOSED.")
+    # except Exception as e:
+    #     print("NO POPUP or ERROR:", e)
+    
     try:
-        for i in range(2):
-            checkbox = driver.find_element(By.XPATH, '//p[text()="일주일간 보지 않기"]/ancestor::div[3]')
-            checkbox.click()
-            close_button = driver.find_element(By.XPATH, '//button[text()="닫기"]')
+        wait = WebDriverWait(driver, 5)
+        checkbox_wrapper = wait.until(EC.element_to_be_clickable((By.XPATH, "//p[contains(text(), '일주일간 보지 않기')]/ancestor::div[2]")))
+        checkbox_wrapper.click()
+        print("CHECKBOX CLICKED.")
+        close_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(@class, 'VersionAlertPopup__RefreshButton') and text()='닫기']")))
+        close_button.click()
+        time.sleep(1)
+        print("1 POPUP CLOSED.")
+    except Exception as e:
+        print("NO POPUP or ERROR:", e)
+
+    try:
+        for i in range(3):
+            wait = WebDriverWait(driver, 5)
+            checkbox_wrapper = wait.until(EC.element_to_be_clickable((By.XPATH, "//p[text()='24시간 동안 보지 않기']/ancestor::div[2]")))
+            checkbox_wrapper.click()
+            print("2 CHECKBOX CLICKED.")
+            close_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[text()='닫기']")))
             close_button.click()
             time.sleep(1)
-            print("POPUP CLOSED.")
-    except:
-        print("NO POPUP.")
-        
+            print("2 POPUP CLOSED.")
+    except Exception as e:
+        print("NO POPUP or ERROR:", e)
+
+    # time.sleep(5)
+    # try:
+    #     checkbox = driver.find_element(By.XPATH, "//p[contains(text(), '일주일간 보지 않기')]/ancestor::div[2]")
+    #     checkbox.click()
+    #     print("1 CHECKBOX CLICKED.")
+    #     close_button = driver.find_element(By.XPATH, "//button[contains(@class, 'VersionAlertPopup__RefreshButton') and text()='닫기']")
+    #     close_button.click()
+    #     time.sleep(1)
+    #     print("1 POPUP CLOSED.")
+    # except Exception as e:
+    #     print("NO POPUP or ERROR:", e)
+
+    # try:
+    #     for i in range(3):
+    #         checkbox = driver.find_element(By.XPATH, '//p[text()="24시간 동안 보지 않기"]/ancestor::div[2]')
+    #         # checkbox = driver.find_element(By.XPATH, '//p[contains(text(), "24시간 동안 보지 않기")]/ancestor::div[2]')
+    #         checkbox.click()
+    #         print("2 CHECKBOX CLICKED.")
+    #         close_button = driver.find_element(By.XPATH, '//button[text()="닫기"]')
+    #         close_button.click()
+    #         time.sleep(1)
+    #         print("2 POPUP CLOSED.")
+    # except Exception as e:
+    #     print("NO POPUP or ERROR:", e)
+
     # login
     username_input = driver.find_element(By.XPATH, '//*[@placeholder="아이디를 입력해 주세요."]')
     username_input.send_keys(username)
@@ -196,7 +245,10 @@ def get_osio_log(shop_user_no, token):
 def get_child_count(date, token):
     url = "https://osio-api.peoplcat.com/shop/statistic?start_date=" + date + "&end_date=" + date
     response = fetch(url, token)
-    child_count = response.json()['product_rank'][0]['count']
+    try:
+        child_count = response.json()['product_rank'][0]['count']
+    except:
+        child_count = None
     return child_count
 
 # google drive
