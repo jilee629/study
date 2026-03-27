@@ -55,10 +55,9 @@ def enter_login(driver, username, password):
             wait = WebDriverWait(driver, 5)
             checkbox_wrapper = wait.until(EC.element_to_be_clickable((By.XPATH, "//p[contains(text(), '일주일간 보지 않기')]/ancestor::div[2]")))
             checkbox_wrapper.click()
-            print("CHECKBOX CLICKED.")
+            print("1 CHECKBOX CLICKED.")
             close_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(@class, 'VersionAlertPopup__RefreshButton') and text()='닫기']")))
             close_button.click()
-            time.sleep(1)
             print("1 POPUP CLOSED.")
     except Exception as e:
         print("NO POPUP or ERROR:", e)
@@ -68,10 +67,9 @@ def enter_login(driver, username, password):
             wait = WebDriverWait(driver, 5)
             checkbox_wrapper = wait.until(EC.element_to_be_clickable((By.XPATH, "//p[text()='24시간 동안 보지 않기']/ancestor::div[2]")))
             checkbox_wrapper.click()
-            print("CHECKBOX CLICKED.")
+            print("2 CHECKBOX CLICKED.")
             close_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[text()='닫기']")))
             close_button.click()
-            time.sleep(1)
             print("2 POPUP CLOSED.")
     except Exception as e:
         print("NO POPUP or ERROR:", e)
