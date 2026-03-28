@@ -51,7 +51,7 @@ def enter_login(driver, username, password):
     driver.get("https://osio-shop.peoplcat.com/login")
     
     try:
-        for i in range(2)
+        for i in range(2):
             wait = WebDriverWait(driver, 5)
             checkbox_wrapper = wait.until(EC.element_to_be_clickable((By.XPATH, "//p[contains(text(), '일주일간 보지 않기')]/ancestor::div[2]")))
             checkbox_wrapper.click()
