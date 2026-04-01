@@ -60,7 +60,7 @@ def enter_login(driver, username, password):
             close_button.click()
             print("1 POPUP CLOSED.")
     except Exception as e:
-        print("NO POPUP or ERROR:", e)
+        print("NO POPUP or ERROR:")
 
     try:
         for i in range(4):
@@ -72,7 +72,8 @@ def enter_login(driver, username, password):
             close_button.click()
             print("2 POPUP CLOSED.")
     except Exception as e:
-        print("NO POPUP or ERROR:", e)
+        # print("NO POPUP or ERROR:", e)
+        print("NO POPUP or ERROR:")
 
     # login
     username_input = driver.find_element(By.XPATH, '//*[@placeholder="아이디를 입력해 주세요."]')
