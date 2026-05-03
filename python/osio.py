@@ -42,7 +42,7 @@ def get_driver():
     return driver
 
 def get_credential():
-    credentials_file = credentials_dir + '/credentials.toml'
+    credentials_file = credentials_dir / 'credentials.toml'
     with open(credentials_file, 'rb') as f:
         data = tomllib.load(f)
         username = data['osio']['username']
@@ -160,11 +160,11 @@ def fetch(url, token):
 
 def write_phone_len(file_date):
     file_name = file_date + "_점핑몬스터 미사점_고객정보.xlsx"
-    file_path = os.path.join(log_dir, file_name)
+    file_path = log_dir / file_name
     df = pd.read_excel(file_path, dtype = 'str')
     df['전화번호길이'] = df['전화번호'].str.len()
     len_file_name = file_date + "_len_점핑몬스터 미사점_고객정보.xlsx"
-    len_file_path = os.path.join(log_dir, len_file_name)
+    len_file_path = log_dir / len_file_name
     df.to_excel(len_file_path, engine='openpyxl')
     print(f'WRITING {len_file_name} is OK.')
 
@@ -224,10 +224,10 @@ def authenticate_google_drive():
     SCOPES = ['https://www.googleapis.com/auth/drive.file']
     creds = None
 
-    token_file = credentials_dir + '/token.json'
-    credentials_file = credentials_dir + '/credentials.json'
+    token_file = credentials_dir / 'token.json'
+    credentials_file = credentials_dir / 'credentials.json'
 
-    if os.path.exists(token_file):
+    if token_file.exists():
         creds = Credentials.from_authorized_user_file(token_file, SCOPES)
 
     if not creds or not creds.valid:
@@ -258,7 +258,7 @@ def upload_file(folder_id, file_name, mtype=None):
     creds = authenticate_google_drive()
     service = build('drive', 'v3', credentials=creds)
 
-    local_file_path = os.path.join(log_dir, file_name)
+    local_file_path = log_dir / file_name
     if mtype == "xlsx":
         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     else:
