@@ -15,9 +15,11 @@ from googleapiclient.discovery import build
 
 import pandas as pd
 import os, time, tomllib, requests
+from pathlib import Path
 
-log_dir = os.path.join(os.path.dirname(__file__), "log")
-credentials_dir = os.path.join(os.path.dirname(__file__), "credentials")
+BASE_DIR = Path(__file__).resolve().parent
+log_dir = BASE_DIR / "log"
+credentials_dir= BASE_DIR / "credentials"
 
 # webdriver
 
